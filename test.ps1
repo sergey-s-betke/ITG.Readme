@@ -3,7 +3,7 @@
         -path ( ( [System.IO.FileInfo] ( $myinvocation.mycommand.path ) ).directory ) `
         -childPath 'ITG.Utils' `
     ) `
-    -force `
+    -Force `
 	-Verbose `
 ;
 
@@ -47,19 +47,24 @@ set-variable `
     } `
 ;
 
-<#
-$test `
-| ConvertFrom-Dictonary `
-;
-#>
+#$test `
+#| Get-Pair `
+#| Add-Pair -PassThru `
+#;
 
-@{
-    'А'='A';
-    'Б'='B';
-    'В'='V';
-    'Г'='G';
-} `
-| ConvertFrom-Dictonary `
-| ? { 'А','Б' -contains $_.key } `
-| ConvertTo-HashTable `
-;
+#$test `
+#| get-pair `
+#| Add-Pair -InputObject (@{a=2;zzzzzzzzzzzz=3}) -PassThru
+
+#$test `
+#| Add-Pair -key zzzzzzzzzzzz -value 3 -PassThru
+#;
+
+#$test `
+#| Add-Pair -key zzzzzzzzzzzz -value 3;
+#$test;
+
+$test `
+| get-pair `
+| Add-CustomMember
+
