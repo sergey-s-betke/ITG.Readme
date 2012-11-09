@@ -2,7 +2,7 @@
 	<#
 		.Synopsis
 			Конвертация таблицы транслитерации и любых других словарей в массив объектов
-            с целью дальнейшей сериализации.
+			с целью дальнейшей сериализации.
 		.Example
 			@{
 				'А'='A';
@@ -31,6 +31,8 @@
 		$InputObject.GetEnumerator();
 	}
 }
+
+New-Alias -Name Get-Pair -Value ConvertFrom-Dictionary;
 
 function Add-Pair {
 	<#
@@ -67,7 +69,9 @@ function Add-Pair {
 		.Example
 			Add-Pair -InputObject $test -key prop -value 'val' -PassThru;
 	#>
-
+	[CmdletBinding(
+		DefaultParameterSetName="NewObject"
+	)]
 	param (
 		# Ключ key для hashtable.
 		[Parameter(
@@ -87,40 +91,57 @@ function Add-Pair {
 		)]
 		$Value
 	,
+		# Тип словаря, будет использован при создании нового словаря.
+		[Parameter(
+			Mandatory=$false
+			, ParameterSetName="NewObject"
+		)]
+		[Type]
+		$TypeName = [HashTable]
+	,
 		# Исходный словарь, в который будут добавлены сопоставления.
 		[Parameter(
 			Mandatory=$false
 			, ValueFromPipeline=$true
+			, ParameterSetName="ExistingObject"
 		)]
 		[AllowEmptyCollection()]
 		[System.Collections.IDictionary]
-		$InputObject = @{}
+		$InputObject
 	,
 		[switch]
 		$PassThru
 	)
 
 	begin {
-		if ( $InputObject ) {
-			$res = $InputObject;
-		} else {
-			$res = @{};
+		switch ( $PSCmdlet.ParameterSetName ) {
+            'NewObject' { $res = ( New-Object -TypeName $TypeName ); }
+            'ExistingObject' { $res = $InputObject; }
 		};
 	}
 	process {
-        (&{
-    		if ( -not $_ ) { $InputObject } `
-            elseif ( $_ -is [System.Collections.IDictionary] ) { $_ } `
-    		else { $res } `
-		}).Add( $Key, $Value );
-		if ( $PassThru -and ( $_ -is [System.Collections.IDictionary] ) ) {
-			return $_;
+		$InputObject = (&{
+			if ( -not $_ ) {
+				if ( $PSCmdlet.ParameterSet -eq 'NewObject' ) { New-Object -TypeName $TypeName } `
+				else { $InputObject };
+			} `
+			elseif ( $_ -is [System.Collections.IDictionary] ) { $_ } `
+			else { $res } `
+		});
+        $InputObject.Add( $Key, $Value );
+		if ( 
+            $PassThru `
+            -and ( ( -not $_ ) -or ( $_ -is [System.Collections.IDictionary] ) ) 
+        ) {
+			return $InputObject;
 		};
 	}
 	end {
 		if ( $PassThru ) { return $res; };
 	}
 }
+
+New-Alias -Name ConvertTo-Dictionary -Value Add-Pair;
 
 function Add-CustomMember {
 	<#
@@ -209,7 +230,11 @@ function Add-CustomMember {
 }
 
 Export-ModuleMember `
-	ConvertFrom-Dictionary `
-	, Add-Pair `
-	, Add-CustomMember `
+	-Alias `
+		Get-Pair `
+		, ConvertTo-Dictionary `
+	-Function `
+		ConvertFrom-Dictionary `
+		, Add-Pair `
+		, Add-CustomMember `
 ;

@@ -57,13 +57,12 @@ set-variable `
 
 #$test `
 #| Add-Pair -key zzzzzzzzzzzz -value 3 -PassThru
-#;
 
 #$test `
 #| Add-Pair -key zzzzzzzzzzzz -value 3;
 #$test;
 
-#Add-Pair -InputObject $test -key prop -value 'val' ;
+#Add-Pair -InputObject $test -key prop -value 'val' -PassThru;
 
 #$test `
 #| ConvertFrom-Dictionary `
