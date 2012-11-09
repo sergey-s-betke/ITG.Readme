@@ -66,5 +66,5 @@ set-variable `
 
 #$test `
 #| ConvertFrom-Dictionary `
-#| Add-CustomMember
-
+#| ConvertTo-PSObject -PassThru `
+#

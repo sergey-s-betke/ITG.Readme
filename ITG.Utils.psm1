@@ -34,10 +34,10 @@
 
 New-Alias -Name Get-Pair -Value ConvertFrom-Dictionary;
 
-function Add-Pair {
+function Set-ObjectProperty {
 	<#
 		.Synopsis
-			Преобразование / добавление однотипных объектов со свойствами key и value в hashtable / любой другой словарь.
+            Добавление либо изменение свойств объекта, поступающего по контейнеру 
 		.Example
 			@{
 				'А'='A';
@@ -45,39 +45,17 @@ function Add-Pair {
 				'В'='V';
 				'Г'='G';
 			} `
-			| ConvertFrom-Dictionary `
-			| ? { 'А','Б' -contains $_.key } `
-			| Add-Pair -PassThru `
-			;
+			| Set-ObjectProperty -key zzzzzzzzzzzz -value 3 -PassThru
 		.Example
-			@{
-				'А'='A';
-				'Б'='B';
-				'В'='V';
-				'Г'='G';
-			} `
-			| ConvertFrom-Dictionary `
-			| Add-Pair -InputObject (@{a=2;zzzzzzzzzzzz=3}) -PassThru
-		.Example
-			@{
-				'А'='A';
-				'Б'='B';
-				'В'='V';
-				'Г'='G';
-			} `
-			| Add-Pair -key zzzzzzzzzzzz -value 3 -PassThru
-		.Example
-			Add-Pair -InputObject $test -key prop -value 'val' -PassThru;
+			Set-ObjectProperty -InputObject $test -key prop -value 'val' -PassThru;
 	#>
 	[CmdletBinding(
-		DefaultParameterSetName="NewObject"
 	)]
 	param (
 		# Ключ key для hashtable.
 		[Parameter(
 			Mandatory=$true
 			, Position=0
-			, ValueFromPipelineByPropertyName=$true
 		)]
 		[ValidateNotNullOrEmpty()]
 		[string]
@@ -87,6 +65,68 @@ function Add-Pair {
 		[Parameter(
 			Mandatory=$true
 			, Position=1
+		)]
+		$Value
+	,
+		# Исходный словарь, в который будут добавлены сопоставления.
+		[Parameter(
+			Mandatory=$true
+			, ValueFromPipeline=$true
+		)]
+		[ValidateNotNull()]
+		$InputObject
+	,
+		[switch]
+		$PassThru
+	)
+
+	process {
+        $InputObject.$Key = $Value;
+		if ( $PassThru ) { return $InputObject;	};
+	}
+}
+
+function ConvertTo-ObjectProperty {
+	<#
+		.Synopsis
+			Добавление поступающих по конвейеру описателей свойств в новый либо указанный объект.
+		.Example
+			@{
+				'А'='A';
+				'Б'='B';
+				'В'='V';
+				'Г'='G';
+			} `
+			| ConvertFrom-Dictionary `
+			| ? { 'А','Б' -contains $_.key } `
+			| ConvertTo-ObjectProperty -PassThru `
+			;
+		.Example
+			@{
+				'А'='A';
+				'Б'='B';
+				'В'='V';
+				'Г'='G';
+			} `
+			| ConvertFrom-Dictionary `
+			| ConvertTo-ObjectProperty -InputObject (@{a=2;zzzzzzzzzzzz=3}) -PassThru
+	#>
+	[CmdletBinding(
+		DefaultParameterSetName="NewObject"
+	)]
+	param (
+		# Ключ key для hashtable.
+		[Parameter(
+			Mandatory=$true
+			, ValueFromPipelineByPropertyName=$true
+		)]
+		[ValidateNotNullOrEmpty()]
+		[string]
+		$Key
+	,
+		# Значение Value для hashtable.
+		[Parameter(
+			Mandatory=$true
 			, ValueFromPipelineByPropertyName=$true
 		)]
 		$Value
@@ -97,7 +137,7 @@ function Add-Pair {
 			, ParameterSetName="NewObject"
 		)]
 		[Type]
-		$TypeName = [HashTable]
+		$TypeName = [PSObject]
 	,
 		# Исходный словарь, в который будут добавлены сопоставления.
 		[Parameter(
@@ -120,121 +160,31 @@ function Add-Pair {
 		};
 	}
 	process {
-		$InputObject = (&{
-			if ( -not $_ ) {
-				if ( $PSCmdlet.ParameterSet -eq 'NewObject' ) { New-Object -TypeName $TypeName } `
-				else { $InputObject };
-			} `
-			elseif ( $_ -is [System.Collections.IDictionary] ) { $_ } `
-			else { $res } `
-		});
-        $InputObject.Add( $Key, $Value );
-		if ( 
-            $PassThru `
-            -and ( ( -not $_ ) -or ( $_ -is [System.Collections.IDictionary] ) ) 
+        if ( 
+            ( $res -is [System.Collections.IDictionary] ) `
+            -or ( Get-Member -InputObject $res -MemberType Properties -Name $Key ) 
         ) {
-			return $InputObject;
-		};
+            $res.$Key = $Value;
+        } else {
+            Add-Member -InputObject $res -MemberType NoteProperty -Name $Key -Value $Value;
+        };
 	}
 	end {
 		if ( $PassThru ) { return $res; };
 	}
 }
 
-New-Alias -Name ConvertTo-Dictionary -Value Add-Pair;
-
-function Add-CustomMember {
-	<#
-		.Synopsis
-			Преобразование однотипных объектов со свойствами key и value в единый объект,
-			свойства которого определены поданными на конвейер парами.
-		.Example
-			@{
-				'А'='A';
-				'Б'='B';
-				'В'='V';
-				'Г'='G';
-			} `
-			| Add-CustomMember `
-			;
-	#>
-	
-	[CmdletBinding(
-	)]
-
-	param (
-		# Идентификатор свойства
-		[Parameter(
-			Mandatory=$true
-			, Position=0
-			, ValueFromPipelineByPropertyName=$true
-		)]
-		[ValidateNotNullOrEmpty()]
-		[string]
-		[Alias("Key")]
-		$Name
-	,
-		# Значение Value для hashtable
-		[Parameter(
-			Mandatory=$true
-			, Position=1
-			, ValueFromPipelineByPropertyName=$true
-		)]
-		$Value
-#	,
-#		# Тип добавляемого члена объекта
-#		[Parameter(
-#			Mandatory=$false
-#			, ValueFromPipelineByPropertyName=$true
-#		)]
-#		[System.Management.Automation.PSMemberTypes]
-#		$MemberType = [System.Management.Automation.PSMemberTypes]::NoteProperty
-#	,
-#		# Исходный словарь, в который будут добавлены сопоставления.
-#		[Parameter(
-#			Mandatory=$false
-#		)]
-#		[PSObject]
-#		$InputObject = ( New-Object -TypeName PSObject )
-#	,
-#		[switch]
-#		$PassThru
-	,
-		[switch]
-		$Force
-	)
-
-	begin {
-#		if ( $InputObject ) {
-#			$res = $InputObject;
-#		} else {
-			$res = New-Object -TypeName PSObject;
-#		};
-	}
-	process {
-#		if ( $res ) {
-			Add-Member `
-				-InputObject $res `
-				-MemberType NoteProperty `
-				@PSBoundParameters `
-			;
-#		} else {
-#			Add-Member -MemberType NoteProperty @PSBoundParameters;
-#		};
-	}
-	end {
-#		if ( $PassThru ) {
-			return $res;
-#		};
-	}
-}
+New-Alias -Name ConvertTo-PSObject -Value ConvertTo-ObjectProperty;
+New-Alias -Name Add-Pair -Value ConvertTo-ObjectProperty;
 
 Export-ModuleMember `
 	-Alias `
 		Get-Pair `
+		, Add-Pair `
 		, ConvertTo-Dictionary `
+        , ConvertTo-PSObject `
 	-Function `
 		ConvertFrom-Dictionary `
-		, Add-Pair `
-		, Add-CustomMember `
+		, Set-ObjectProperty `
+		, ConvertTo-ObjectProperty `
 ;
