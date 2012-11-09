@@ -1,7 +1,8 @@
-﻿function Get-Pair {
+﻿function ConvertFrom-Dictionary {
 	<#
 		.Synopsis
-			Конвертация таблицы транслитерации и любых других словарей в массив объектов с целью дальнейшей сериализации.
+			Конвертация таблицы транслитерации и любых других словарей в массив объектов
+            с целью дальнейшей сериализации.
 		.Example
 			@{
 				'А'='A';
@@ -9,7 +10,7 @@
 				'В'='V';
 				'Г'='G';
 			} `
-			| Get-Pair `
+			| ConvertFrom-Dictionary `
 			;
 	#>
 	
@@ -42,7 +43,7 @@ function Add-Pair {
 				'В'='V';
 				'Г'='G';
 			} `
-			| Get-Pair `
+			| ConvertFrom-Dictionary `
 			| ? { 'А','Б' -contains $_.key } `
 			| Add-Pair -PassThru `
 			;
@@ -53,7 +54,7 @@ function Add-Pair {
 				'В'='V';
 				'Г'='G';
 			} `
-			| Get-Pair `
+			| ConvertFrom-Dictionary `
 			| Add-Pair -InputObject (@{a=2;zzzzzzzzzzzz=3}) -PassThru
 		.Example
 			@{
@@ -206,7 +207,7 @@ function Add-CustomMember {
 }
 
 Export-ModuleMember `
-	Get-Pair `
+	ConvertFrom-Dictionary `
 	, Add-Pair `
 	, Add-CustomMember `
 ;
