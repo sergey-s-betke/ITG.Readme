@@ -64,6 +64,8 @@ function Add-Pair {
 				'Г'='G';
 			} `
 			| Add-Pair -key zzzzzzzzzzzz -value 3 -PassThru
+		.Example
+			Add-Pair -InputObject $test -key prop -value 'val' -PassThru;
 	#>
 
 	param (
@@ -106,11 +108,11 @@ function Add-Pair {
 		};
 	}
 	process {
-		if ( $_ -is [System.Collections.IDictionary] ) {
-			$_.Add( $Key, $Value );
-		} else {
-			$res.Add( $Key, $Value );
-		};
+        (&{
+    		if ( -not $_ ) { $InputObject } `
+            elseif ( $_ -is [System.Collections.IDictionary] ) { $_ } `
+    		else { $res } `
+		}).Add( $Key, $Value );
 		if ( $PassThru -and ( $_ -is [System.Collections.IDictionary] ) ) {
 			return $_;
 		};

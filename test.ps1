@@ -48,12 +48,11 @@ set-variable `
 ;
 
 #$test `
-#| Get-Pair `
+#| ConvertFrom-Dictionary `
 #| Add-Pair -PassThru `
-#;
 
 #$test `
-#| get-pair `
+#| ConvertFrom-Dictionary `
 #| Add-Pair -InputObject (@{a=2;zzzzzzzzzzzz=3}) -PassThru
 
 #$test `
@@ -64,7 +63,9 @@ set-variable `
 #| Add-Pair -key zzzzzzzzzzzz -value 3;
 #$test;
 
-$test `
-| get-pair `
-| Add-CustomMember
+#Add-Pair -InputObject $test -key prop -value 'val' ;
+
+#$test `
+#| ConvertFrom-Dictionary `
+#| Add-CustomMember
 
