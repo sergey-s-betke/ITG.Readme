@@ -205,8 +205,103 @@ function Add-CustomMember {
 	}
 }
 
+function Get-ModuleReadme {
+	<#
+		.Synopsis
+			Генерирует readme файл с md разметкой по данным модуля и комментариям к его функциям.
+			Файл предназначен, в частности, для размещения в репозиториях github.
+		.Link
+			http://daringfireball.net/projects/markdown/syntax
+		.Example
+			Get-Module 'ITG.Yandex.DnsServer' `
+			| Get-ModuleReadme `
+			| Out-File `
+				-Path 'readme.md' `
+				-Force `
+				-Encoding 'UTF8' `
+				-Width 1024 `
+			;
+	#>
+	
+	[CmdletBinding(
+	)]
+
+	param (
+		# Описатель модуля
+		[Parameter(
+			Mandatory=$true
+			, Position=0
+			, ValueFromPipeline=$true
+		)]
+		[ValidateNotNullOrEmpty()]
+		[PSModuleInfo]
+		$Module
+	)
+
+	process {
+		@"
+$($Module.Name)
+$($Module.Name -replace '.','=')
+
+$($Module.Description)
+
+Функции модуля
+--------------
+"@
+		$Funcs = `
+		Get-Command `
+			-Module $Module `
+		| % {
+			$_ `
+			| Add-Member -PassThru -Name Verb -MemberType NoteProperty -Value ( ( $_.Name -split '-')[0] ) `
+			| Add-Member -PassThru -Name Noun -MemberType NoteProperty -Value ( ( $_.Name -split '-' )[1] ) `
+		} `
+		| Sort-Object Noun, Verb `
+		;
+		$Funcs `
+		| Group-Object Noun `
+		| % {
+@"
+			
+### $($_.Name)
+"@
+			$_.Group `
+			| % {
+@"
+			
+#### $($_.Name)
+
+$( ( $_ | Get-Help -Full ).Synopsis )
+
+$(
+				Get-Command `
+					-Name $_.Name `
+					-Module $Module `
+					-Syntax `
+)
+"@
+			};
+		};
+#		@"
+#
+#Подробное описание функций модуля
+#---------------------------------
+#"@
+#		$Funcs `
+#		| % {
+#@"
+#			
+##### $($_.Name)
+#
+#"@
+#			$_ | Get-Help -Full;
+#		};
+	}
+}
+
 Export-ModuleMember `
 	Get-Pair `
 	, Add-Pair `
 	, Add-CustomMember `
+	, Get-ModuleReadMe `
 ;

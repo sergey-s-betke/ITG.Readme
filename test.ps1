@@ -64,7 +64,19 @@ set-variable `
 #| Add-Pair -key zzzzzzzzzzzz -value 3;
 #$test;
 
-$test `
-| get-pair `
-| Add-CustomMember
+#$test `
+#| get-pair `
+#| Add-CustomMember
 
+Get-Module 'ITG.Yandex.DnsServer' `
+| Tee-Object -Variable Module `
+| Get-ModuleReadme `
+| Out-File `
+	-FilePath ( Join-Path `
+        -Path ( Split-Path -Path ( $Module.Path ) -Parent ) `
+        -ChildPath 'readme.md' `
+    ) `
+	-Force `
+	-Encoding 'UTF8' `
+	-Width 1024 `
+;
