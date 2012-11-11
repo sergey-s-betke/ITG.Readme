@@ -68,18 +68,18 @@ set-variable `
 #| get-pair `
 #| Add-CustomMember
 
-Get-Module 'ITG.Yandex.DnsServer' `
-| Tee-Object -Variable Module `
-| Get-ModuleReadme `
-| Out-File `
-	-FilePath ( Join-Path `
-        -Path ( Split-Path -Path ( $Module.Path ) -Parent ) `
-        -ChildPath 'readme.md' `
-    ) `
-	-Force `
-	-Encoding 'UTF8' `
-	-Width 1024 `
-;
+#Get-Module 'ITG.Yandex.DnsServer' `
+#| Tee-Object -Variable Module `
+#| Get-ModuleReadme `
+#| Out-File `
+#	-FilePath ( Join-Path `
+#        -Path ( Split-Path -Path ( $Module.Path ) -Parent ) `
+#        -ChildPath 'readme.md' `
+#    ) `
+#	-Force `
+#	-Encoding 'UTF8' `
+#	-Width 1024 `
+#;
 
 Get-Module 'ITG.Yandex.DnsServer' `
 | Tee-Object -Variable Module `
