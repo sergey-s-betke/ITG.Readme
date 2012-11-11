@@ -236,9 +236,13 @@ function Get-ModuleReadme {
 		[ValidateNotNullOrEmpty()]
 		[PSModuleInfo]
 		$Module
+,
+		[switch]
+		$OutDefaultFile
 	)
 
 	process {
+		$ReadMeContent = & {
 		@"
 $($Module.Name)
 $($Module.Name -replace '.','=')
@@ -296,6 +300,21 @@ $(
 #"@
 #			$_ | Get-Help -Full;
 #		};
+		};
+		if ( $OutDefaultFile ) {
+			$ReadMeContent `
+			| Out-File `
+				-FilePath ( Join-Path `
+			        -Path ( Split-Path -Path ( $Module.Path ) -Parent ) `
+			        -ChildPath 'readme.md' `
+			    ) `
+				-Force `
+				-Encoding 'UTF8' `
+				-Width 1024 `
+			;
+		} else {
+			return $ReadMeContent;
+		};
 	}
 }
 

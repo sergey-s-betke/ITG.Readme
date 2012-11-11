@@ -80,3 +80,8 @@ Get-Module 'ITG.Yandex.DnsServer' `
 	-Encoding 'UTF8' `
 	-Width 1024 `
 ;
+
+Get-Module 'ITG.Yandex.DnsServer' `
+| Tee-Object -Variable Module `
+| Get-ModuleReadme -OutDefaultFile `
+;
