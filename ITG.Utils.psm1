@@ -122,7 +122,7 @@ function Add-Pair {
 function Add-CustomMember {
 	<#
 		.Synopsis
-			Преобразование однотипных объектов со свойствами key и value в единый объект,
+			Преобразование однотипных объектов со свойствами key и value в единый объект, 
 			свойства которого определены поданными на конвейер парами.
 		.Example
 			@{
@@ -208,7 +208,7 @@ function Add-CustomMember {
 function Get-ModuleReadme {
 	<#
 		.Synopsis
-			Генерирует readme файл с md разметкой по данным модуля и комментариям к его функциям.
+			Генерирует readme файл с md разметкой по данным модуля и комментариям к его функциям. 
 			Файл предназначен, в частности, для размещения в репозиториях github.
 		.Link
 			http://daringfireball.net/projects/markdown/syntax
