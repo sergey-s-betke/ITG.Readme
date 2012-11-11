@@ -37,7 +37,7 @@ New-Alias -Name Get-Pair -Value ConvertFrom-Dictionary;
 function Set-ObjectProperty {
 	<#
 		.Synopsis
-            Добавление либо изменение свойств объекта, поступающего по контейнеру 
+			Добавление либо изменение свойств объекта, поступающего по контейнеру
 		.Example
 			@{
 				'А'='A';
@@ -81,7 +81,7 @@ function Set-ObjectProperty {
 	)
 
 	process {
-        $InputObject.$Key = $Value;
+		$InputObject.$Key = $Value;
 		if ( $PassThru ) { return $InputObject;	};
 	}
 }
@@ -89,7 +89,8 @@ function Set-ObjectProperty {
 function ConvertTo-ObjectProperty {
 	<#
 		.Synopsis
-			Добавление поступающих по конвейеру описателей свойств в новый либо указанный объект.
+			Преобразование однотипных объектов со свойствами key и value в единый объект,
+			свойства которого определены поданными на конвейер парами.
 		.Example
 			@{
 				'А'='A';
@@ -155,19 +156,19 @@ function ConvertTo-ObjectProperty {
 
 	begin {
 		switch ( $PSCmdlet.ParameterSetName ) {
-            'NewObject' { $res = ( New-Object -TypeName $TypeName ); }
-            'ExistingObject' { $res = $InputObject; }
+			'NewObject' { $res = ( New-Object -TypeName $TypeName ); }
+			'ExistingObject' { $res = $InputObject; }
 		};
 	}
 	process {
-        if ( 
-            ( $res -is [System.Collections.IDictionary] ) `
-            -or ( Get-Member -InputObject $res -MemberType Properties -Name $Key ) 
-        ) {
-            $res.$Key = $Value;
-        } else {
-            Add-Member -InputObject $res -MemberType NoteProperty -Name $Key -Value $Value;
-        };
+		if (
+			( $res -is [System.Collections.IDictionary] ) `
+			-or ( Get-Member -InputObject $res -MemberType Properties -Name $Key )
+		) {
+			$res.$Key = $Value;
+		} else {
+			Add-Member -InputObject $res -MemberType NoteProperty -Name $Key -Value $Value;
+		};
 	}
 	end {
 		if ( $PassThru ) { return $res; };
@@ -177,14 +178,129 @@ function ConvertTo-ObjectProperty {
 New-Alias -Name ConvertTo-PSObject -Value ConvertTo-ObjectProperty;
 New-Alias -Name Add-Pair -Value ConvertTo-ObjectProperty;
 
+function Get-ModuleReadme {
+	<#
+		.Synopsis
+			Генерирует readme файл с md разметкой по данным модуля и комментариям к его функциям.
+			Файл предназначен, в частности, для размещения в репозиториях github.
+		.Link
+			http://daringfireball.net/projects/markdown/syntax
+		.Example
+			Get-Module 'ITG.Yandex.DnsServer' `
+			| Get-ModuleReadme `
+			| Out-File `
+				-Path 'readme.md' `
+				-Force `
+				-Encoding 'UTF8' `
+				-Width 1024 `
+			;
+	#>
+	
+	[CmdletBinding(
+	)]
+
+	param (
+		# Описатель модуля
+		[Parameter(
+			Mandatory=$true
+			, Position=0
+			, ValueFromPipeline=$true
+		)]
+		[ValidateNotNullOrEmpty()]
+		[PSModuleInfo]
+		$Module
+,
+		[switch]
+		$OutDefaultFile
+	)
+
+	process {
+		$ReadMeContent = & {
+		@"
+$($Module.Name)
+$($Module.Name -replace '.','=')
+
+$($Module.Description)
+
+Функции модуля
+--------------
+"@
+		$Funcs = `
+		Get-Command `
+			-Module $Module `
+			-CommandType Function, Filter `
+		| % {
+			$_ `
+			| Add-Member -PassThru -Name Verb -MemberType NoteProperty -Value ( ( $_.Name -split '-')[0] ) `
+			| Add-Member -PassThru -Name Noun -MemberType NoteProperty -Value ( ( $_.Name -split '-' )[1] ) `
+		} `
+		| Sort-Object Noun, Verb `
+		;
+		$Funcs `
+		| Group-Object Noun `
+		| % {
+@"
+			
+### $($_.Name)
+"@
+			$_.Group `
+			| % {
+@"
+			
+#### $($_.Name)
+
+$( ( $_ | Get-Help -Full ).Synopsis )
+
+$(
+				Get-Command `
+					-Name $_.Name `
+					-Module $Module `
+					-Syntax `
+)
+"@
+			};
+		};
+#		@"
+#
+#Подробное описание функций модуля
+#---------------------------------
+#"@
+#		$Funcs `
+#		| % {
+#@"
+#			
+##### $($_.Name)
+#
+#"@
+#			$_ | Get-Help -Full;
+#		};
+		};
+		if ( $OutDefaultFile ) {
+			$ReadMeContent `
+			| Out-File `
+				-FilePath ( Join-Path `
+					-Path ( Split-Path -Path ( $Module.Path ) -Parent ) `
+					-ChildPath 'readme.md' `
+				) `
+				-Force `
+				-Encoding 'UTF8' `
+				-Width 1024 `
+			;
+		} else {
+			return $ReadMeContent;
+		};
+	}
+}
+
 Export-ModuleMember `
 	-Alias `
 		Get-Pair `
 		, Add-Pair `
 		, ConvertTo-Dictionary `
-        , ConvertTo-PSObject `
+		, ConvertTo-PSObject `
 	-Function `
 		ConvertFrom-Dictionary `
 		, Set-ObjectProperty `
 		, ConvertTo-ObjectProperty `
+		, Get-ModuleReadme `
 ;
