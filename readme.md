@@ -1,43 +1,128 @@
 ﻿ITG.Utils
 =========
 
-Набор вспомогательных командлет и функций для сценариев PowerShell.
+Набор вспомогательных командлет и функций для PowerShell.
+
+Версия модуля: **1.3.3**
 
 Функции модуля
 --------------
 			
-### CustomMember
+### Dictionary
 			
-#### Add-CustomMember
+#### ConvertFrom-Dictionary
 
-Преобразование однотипных объектов со свойствами key и value в единый объект, 
-свойства которого определены поданными на конвейер парами.
-
-Add-CustomMember [-Name] <String> [-Value] <Object> [-Force] [-Verbose] [-Debug] [-ErrorAction <ActionPreference>] [-WarningAction <ActionPreference>] [-ErrorVariable <String>] [-WarningVariable <String>] [-OutVariable <String>] [-OutBuffer <Int32>]
-
+Конвертация таблицы транслитерации и любых других словарей в массив объектов
+с целью дальнейшей сериализации.
+	
+	ConvertFrom-Dictionary [-InputObject] <IDictionary> <CommonParameters>
 			
 ### ModuleReadme
 			
 #### Get-ModuleReadme
 
-Генерирует readme файл с md разметкой по данным модуля и комментариям к его функциям. 
+Генерирует readme файл с md разметкой по данным модуля и комментариям к его функциям.
+Файл предназначен, в частности, для размещения в репозиториях github.
+	
+	Get-ModuleReadme [-Module] <PSModuleInfo> [-OutDefaultFile] <CommonParameters>
+			
+### ObjectProperty
+			
+#### ConvertTo-ObjectProperty
+
+Преобразование однотипных объектов со свойствами key и value в единый объект,
+свойства которого определены поданными на конвейер парами.
+	
+	ConvertTo-ObjectProperty -Key <String> -Value <Object> [-TypeName <Type>] [-PassThru] <CommonParameters>
+	
+	ConvertTo-ObjectProperty -Key <String> -Value <Object> [-InputObject <IDictionary>] [-PassThru] <CommonParameters>
+			
+#### Set-ObjectProperty
+
+Добавление либо изменение свойств объекта, поступающего по контейнеру
+	
+	Set-ObjectProperty [-Key] <String> [-Value] <Object> -InputObject <Object> [-PassThru] <CommonParameters>
+
+Подробное описание функций модуля
+---------------------------------
+			
+#### ConvertFrom-Dictionary
+
+Конвертация таблицы транслитерации и любых других словарей в массив объектов
+с целью дальнейшей сериализации.
+
+##### Синтаксис
+	
+	ConvertFrom-Dictionary [-InputObject] <IDictionary> <CommonParameters>
+
+##### Примеры использования	
+
+1. Пример 1.
+
+		@{'А'='A'; 'Б'='B'; 'В'='V'} | ConvertFrom-Dictionary;
+			
+#### Get-ModuleReadme
+
+Генерирует readme файл с md разметкой по данным модуля и комментариям к его функциям.
 Файл предназначен, в частности, для размещения в репозиториях github.
 
-Get-ModuleReadme [-Module] <PSModuleInfo> [-OutDefaultFile] [-Verbose] [-Debug] [-ErrorAction <ActionPreference>] [-WarningAction <ActionPreference>] [-ErrorVariable <String>] [-WarningVariable <String>] [-OutVariable <String>] [-OutBuffer <Int32>]
+##### Синтаксис
+	
+	Get-ModuleReadme [-Module] <PSModuleInfo> [-OutDefaultFile] <CommonParameters>
 
+##### Примеры использования	
+
+1. Генерация readme.md файла для модуля `ITG.Yandex.DnsServer` 
+в текущем каталоге.
+
+		Get-Module 'ITG.Yandex.DnsServer' | Get-ModuleReadme | Out-File -Path 'readme.md' -Encoding 'UTF8' -Width 1024;
+
+2. Генерация readme.md файла для модуля `ITG.Yandex.DnsServer` 
+в каталоге модуля.
+
+		Get-Module 'ITG.Yandex.DnsServer' | Get-ModuleReadme -OutDefaultFile;
+
+##### Связанные ссылки
+
+- [MarkDown (md) Syntax](http://daringfireball.net/projects/markdown/syntax)
+- [about_comment_based_help](http://technet.microsoft.com/ru-ru/library/dd819489.aspx)
+- [Написание справки для командлетов](http://go.microsoft.com/fwlink/?LinkID=123415)
 			
-### Pair
+#### ConvertTo-ObjectProperty
+
+Преобразование однотипных объектов со свойствами key и value в единый объект,
+свойства которого определены поданными на конвейер парами.
+
+##### Синтаксис
+	
+	ConvertTo-ObjectProperty -Key <String> -Value <Object> [-TypeName <Type>] [-PassThru] <CommonParameters>
+	
+	ConvertTo-ObjectProperty -Key <String> -Value <Object> [-InputObject <IDictionary>] [-PassThru] <CommonParameters>
+
+##### Примеры использования	
+
+1. Пример 1.
+
+		@{'А'='A'; 'Б'='B'} | ConvertFrom-Dictionary | ? { 'А' -contains $_.key } | ConvertTo-ObjectProperty -PassThru;
+
+2. Пример 2.
+
+		@{'А'='A'; 'Б'='B'} | ConvertFrom-Dictionary | ConvertTo-ObjectProperty -InputObject (@{a=2;zzzzz=3}) -PassThru;
 			
-#### Add-Pair
+#### Set-ObjectProperty
 
-Преобразование / добавление однотипных объектов со свойствами key и value в hashtable / любой другой словарь.
+Добавление либо изменение свойств объекта, поступающего по контейнеру
 
-Add-Pair [-Key] <String> [-Value] <Object> [-InputObject <IDictionary>] [-PassThru] [-Verbose] [-Debug] [-ErrorAction <ActionPreference>] [-WarningAction <ActionPreference>] [-ErrorVariable <String>] [-WarningVariable <String>] [-OutVariable <String>] [-OutBuffer <Int32>]
+##### Синтаксис
+	
+	Set-ObjectProperty [-Key] <String> [-Value] <Object> -InputObject <Object> [-PassThru] <CommonParameters>
 
-			
-#### Get-Pair
+##### Примеры использования	
 
-Конвертация таблицы транслитерации и любых других словарей в массив объектов с целью дальнейшей сериализации.
+1. Добавляем в hashtable (можно и PSObject) свойство zz со значением 3.
 
-Get-Pair [-InputObject] <IDictionary> [-Verbose] [-Debug] [-ErrorAction <ActionPreference>] [-WarningAction <ActionPreference>] [-ErrorVariable <String>] [-WarningVariable <String>] [-OutVariable <String>] [-OutBuffer <Int32>]
+		@{'А'='A'; 'Б'='B'; 'В'='V'} | Set-ObjectProperty -key zz -value 3 -PassThru
 
+2. Пример 2.
+
+		Set-ObjectProperty -InputObject $test -key prop -value 'val' -PassThru;

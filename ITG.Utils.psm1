@@ -208,39 +208,42 @@ function Get-ModuleReadme {
 		} `
 		| Sort-Object Noun, Verb `
 		| % {
+			$cmd = $_;
+			Add-Member `
+				-InputObject $_ `
+				-Name Help `
+				-MemberType NoteProperty `
+				-Value ( $_ | Get-Help -Full ) `
+			;
 			Add-Member `
 				-InputObject $_ `
 				-Name Syntax `
 				-MemberType NoteProperty `
 				-Value (
-					( (
-						Get-Command `
-							-Name $_.Name `
-							-Module $Module `
-							-Syntax `
-					) -split "(?m)$" ) `
-					| ? { -not ( [string]::IsNullOrWhiteSpace( $_ ) ) } `
-				) `
-				-PassThru `
-			| Add-Member `
-				-Name Help `
-				-MemberType NoteProperty `
-				-Value ( $_ | Get-Help -Full ) `
-				-PassThru `
-			| Add-Member `
-				-InputObject $_ `
-				-Name Syntax2 `
-				-MemberType NoteProperty `
-				-Value (
 					$_.Help.Syntax.SyntaxItem `
 					| % {
-						$_.Name,
-						( 
+						,$_.Name `
+						+ ( 
 							$_.Parameter `
 							| % {
-								"-$($_.Name)"
+								$name="-$($_.Name)";
+								if ( $_.position -ne 'named' ) {
+									$name="[$name]";
+								};
+								if ( $_.parameterValue ) {
+									$param = "$name <$($_.parameterValue)>";
+								} else {
+									$param = "$name";
+								};
+								if ( $_.required -ne 'true' ) {
+									$param = "[$param]";
+								};
+								$param;
 							}
 						) `
+						+ ( & {
+							if ( $cmd.CmdletBinding ) { '<CommonParameters>' }
+						} ) `
 						-join ' '
 					}
 <#
@@ -274,7 +277,8 @@ position       NoteProperty System.String position=named
 required       NoteProperty System.String required=true                                                                
 #>
 				) `
-				-PassThru `
+			;
+			$_;
 		} `
 		;
 @"
