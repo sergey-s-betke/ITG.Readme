@@ -78,7 +78,7 @@
 
 ##### Параметры	
 
-- Key <String>
+- `[Key <String>]`
         Ключ key для hashtable.
         
         Требуется?                    true
@@ -87,7 +87,7 @@
         Принимать входные данные конвейера?true (ByPropertyName)
         Принимать подстановочные знаки?
         
-- Value <Object>
+- `[Value <Object>]`
         Значение Value для hashtable.
         
         Требуется?                    true
@@ -96,7 +96,7 @@
         Принимать входные данные конвейера?true (ByPropertyName)
         Принимать подстановочные знаки?
         
-- TypeName <Type>
+- `[TypeName <Type>]`
         Тип словаря, будет использован при создании нового словаря.
         
         Требуется?                    false
@@ -105,7 +105,7 @@
         Принимать входные данные конвейера?false
         Принимать подстановочные знаки?
         
-- InputObject <IDictionary>
+- `[InputObject <IDictionary>]`
         Исходный словарь, в который будут добавлены сопоставления.
         
         Требуется?                    false
@@ -114,7 +114,7 @@
         Принимать входные данные конвейера?true (ByValue)
         Принимать подстановочные знаки?
         
-- PassThru [<SwitchParameter>]
+- `[PassThru [<SwitchParameter>]]`
         
         Требуется?                    false
         Позиция?                    named
@@ -122,7 +122,7 @@
         Принимать входные данные конвейера?false
         Принимать подстановочные знаки?
         
-- <CommonParameters>
+- `[<CommonParameters>]`
         Данный командлет поддерживает общие параметры: Verbose, Debug,
         ErrorAction, ErrorVariable, WarningAction, WarningVariable,
         OutBuffer и OutVariable. Для получения дополнительных сведений введите
@@ -152,7 +152,7 @@
 
 ##### Параметры	
 
-- Key <String>
+- `[Key <String>]`
         Ключ key для hashtable.
         
         Требуется?                    true
@@ -161,7 +161,7 @@
         Принимать входные данные конвейера?false
         Принимать подстановочные знаки?
         
-- Value <Object>
+- `[Value <Object>]`
         Значение Value для hashtable.
         
         Требуется?                    true
@@ -170,7 +170,7 @@
         Принимать входные данные конвейера?false
         Принимать подстановочные знаки?
         
-- InputObject <Object>
+- `[InputObject <Object>]`
         Исходный словарь, в который будут добавлены сопоставления.
         
         Требуется?                    true
@@ -179,7 +179,7 @@
         Принимать входные данные конвейера?true (ByValue)
         Принимать подстановочные знаки?
         
-- PassThru [<SwitchParameter>]
+- `[PassThru [<SwitchParameter>]]`
         
         Требуется?                    false
         Позиция?                    named
@@ -187,7 +187,7 @@
         Принимать входные данные конвейера?false
         Принимать подстановочные знаки?
         
-- <CommonParameters>
+- `[<CommonParameters>]`
         Данный командлет поддерживает общие параметры: Verbose, Debug,
         ErrorAction, ErrorVariable, WarningAction, WarningVariable,
         OutBuffer и OutVariable. Для получения дополнительных сведений введите
@@ -222,7 +222,7 @@
 
 ##### Параметры	
 
-- ModuleInfo <PSModuleInfo>
+- `[ModuleInfo <PSModuleInfo>]`
         Описатель модуля
         
         Требуется?                    true
@@ -231,7 +231,7 @@
         Принимать входные данные конвейера?true (ByValue)
         Принимать подстановочные знаки?
         
-- OutDefaultFile [<SwitchParameter>]
+- `[OutDefaultFile [<SwitchParameter>]]`
         
         Требуется?                    false
         Позиция?                    named
@@ -239,7 +239,7 @@
         Принимать входные данные конвейера?false
         Принимать подстановочные знаки?
         
-- ExternalScriptInfo <ExternalScriptInfo>
+- `[ExternalScriptInfo <ExternalScriptInfo>]`
         Описатель внешнего сценария
         
         Требуется?                    true
@@ -248,7 +248,7 @@
         Принимать входные данные конвейера?true (ByValue)
         Принимать подстановочные знаки?
         
-- FunctionInfo <FunctionInfo>
+- `[FunctionInfo <FunctionInfo>]`
         Описатель внешнего сценария
         
         Требуется?                    true
@@ -257,7 +257,7 @@
         Принимать входные данные конвейера?true (ByValue)
         Принимать подстановочные знаки?
         
-- ShortDescription [<SwitchParameter>]
+- `[ShortDescription [<SwitchParameter>]]`
         
         Требуется?                    false
         Позиция?                    named
@@ -265,7 +265,7 @@
         Принимать входные данные конвейера?false
         Принимать подстановочные знаки?
         
-- <CommonParameters>
+- `[<CommonParameters>]`
         Данный командлет поддерживает общие параметры: Verbose, Debug,
         ErrorAction, ErrorVariable, WarningAction, WarningVariable,
         OutBuffer и OutVariable. Для получения дополнительных сведений введите
