@@ -164,6 +164,11 @@ function Get-Readme {
 			- ввести поддержку генерации файла для внешних скриптов (именно - с генерацией файла)
 			- а также для прочих членов модуля
 			- about_commonparameters и другие аналогичные так же в ссылки преобразовывать
+		.Inputs
+			Через конвейер функция принимает описатели модулей, функций, скриптов. Именно для них и будет сгенерирован readme.md. 
+			Получены описатели могут быть через Get-Module, Get-Command и так далее.
+		.Outputs
+			String. Содержимое readme.md.
 		.Link
 			[MarkDown (md) Syntax](http://daringfireball.net/projects/markdown/syntax)
 		.Link
@@ -323,14 +328,6 @@ $($ModuleInfo.Description)
 						} ) `
 						-join ' '
 					}
-<#
-description    NoteProperty System.Management.Automation.PSObject[] description=System.Management.Automation.PSObject[]
-name           NoteProperty System.String name=Key                                                                     
-parameterValue NoteProperty System.String parameterValue=String                                                        
-pipelineInput  NoteProperty System.String pipelineInput=true (ByPropertyName)                                          
-position       NoteProperty System.String position=named                                                               
-required       NoteProperty System.String required=true                                                                
-#>
 				);
 @"
 			
@@ -389,6 +386,23 @@ $($Help.Component)
 "@
 					};
 
+					if ( $Help.Inputs ) {
+@"
+
+##### Принимаемые данные по конвейеру
+
+$($Help.Inputs)
+"@
+					};
+					if ( $Help.Outputs ) {
+@"
+
+##### Передаваемые по конвейеру данные
+
+$($Help.Outputs)
+"@
+					};
+					
 					if ( $Help.Parameters.parameter.Count ) {
 @"
 
@@ -396,32 +410,6 @@ $($Help.Component)
 $( $Help.Parameters | Out-String )
 "@
 					};
-<#
-					if ( $FunctionInfo.Parameters.Count ) {
-@"
-
-##### Параметры	
-"@
-						$FunctionInfo.Parameters.Values `
-						| % {
-							$aliases = ''
-							if ( $_.Aliases ) {
-								$aliases = "(псевдонимы: $( $_.Aliases -join ', ' ))"
-							};
-							if ( $_.SwitchParameter ) {
-@"
-
--$($_.Name), флаг $aliases
-"@
-							} else {
-@"
-
--$($_.Name) <$($_.ParameterType.Name)> $aliases
-"@
-							};
-						};
-					};
-#>
 					
 					if ( ( @( $Help.examples ) ).count ) {
 						$Help.Examples.example `
