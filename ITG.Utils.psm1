@@ -407,7 +407,8 @@ $($Help.Outputs)
 						$ParamsDescription = `
 							( $Help.Parameters | Out-String ) `
 							-replace '(?m)^\p{Z}{4}' `
-							-replace '<CommonParameters>', '-<CommonParameters>' `
+							-replace '(?m)^-','- ' `
+							-replace '<CommonParameters>', '- <CommonParameters>' `
 						;
 @"
 
