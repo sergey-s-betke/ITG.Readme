@@ -17,15 +17,6 @@
 	
 	ConvertFrom-Dictionary [-InputObject] <IDictionary> <CommonParameters>
 			
-### ModuleReadme
-			
-#### Get-ModuleReadme
-
-Генерирует readme файл с md разметкой по данным модуля и комментариям к его функциям.
-Файл предназначен, в частности, для размещения в репозиториях github.
-	
-	Get-ModuleReadme [-Module] <PSModuleInfo> [-OutDefaultFile] <CommonParameters>
-			
 ### ObjectProperty
 			
 #### ConvertTo-ObjectProperty
@@ -42,6 +33,19 @@
 Добавление либо изменение свойств объекта, поступающего по контейнеру
 	
 	Set-ObjectProperty [-Key] <String> [-Value] <Object> -InputObject <Object> [-PassThru] <CommonParameters>
+			
+### Readme
+			
+#### Get-Readme
+
+Генерирует readme файл с md разметкой по данным модуля и комментариям к его функциям. 
+Файл предназначен, в частности, для размещения в репозиториях github.
+	
+	Get-Readme [-ModuleInfo] <PSModuleInfo> [-OutDefaultFile] [-ShortDescription] <CommonParameters>
+	
+	Get-Readme [-ExternalScriptInfo] <ExternalScriptInfo> [-ShortDescription] <CommonParameters>
+	
+	Get-Readme [-FunctionInfo] <FunctionInfo> [-ShortDescription] <CommonParameters>
 
 Подробное описание функций модуля
 ---------------------------------
@@ -60,33 +64,6 @@
 1. Пример 1.
 
 		@{'А'='A'; 'Б'='B'; 'В'='V'} | ConvertFrom-Dictionary;
-			
-#### Get-ModuleReadme
-
-Генерирует readme файл с md разметкой по данным модуля и комментариям к его функциям.
-Файл предназначен, в частности, для размещения в репозиториях github.
-
-##### Синтаксис
-	
-	Get-ModuleReadme [-Module] <PSModuleInfo> [-OutDefaultFile] <CommonParameters>
-
-##### Примеры использования	
-
-1. Генерация readme.md файла для модуля `ITG.Yandex.DnsServer` 
-в текущем каталоге.
-
-		Get-Module 'ITG.Yandex.DnsServer' | Get-ModuleReadme | Out-File -Path 'readme.md' -Encoding 'UTF8' -Width 1024;
-
-2. Генерация readme.md файла для модуля `ITG.Yandex.DnsServer` 
-в каталоге модуля.
-
-		Get-Module 'ITG.Yandex.DnsServer' | Get-ModuleReadme -OutDefaultFile;
-
-##### Связанные ссылки
-
-- [MarkDown (md) Syntax](http://daringfireball.net/projects/markdown/syntax)
-- [about_comment_based_help](http://technet.microsoft.com/ru-ru/library/dd819489.aspx)
-- [Написание справки для командлетов](http://go.microsoft.com/fwlink/?LinkID=123415)
 			
 #### ConvertTo-ObjectProperty
 
@@ -126,3 +103,34 @@
 2. Пример 2.
 
 		Set-ObjectProperty -InputObject $test -key prop -value 'val' -PassThru;
+			
+#### Get-Readme
+
+Генерирует readme файл с md разметкой по данным модуля и комментариям к его функциям. 
+Файл предназначен, в частности, для размещения в репозиториях github.
+
+##### Синтаксис
+	
+	Get-Readme [-ModuleInfo] <PSModuleInfo> [-OutDefaultFile] [-ShortDescription] <CommonParameters>
+	
+	Get-Readme [-ExternalScriptInfo] <ExternalScriptInfo> [-ShortDescription] <CommonParameters>
+	
+	Get-Readme [-FunctionInfo] <FunctionInfo> [-ShortDescription] <CommonParameters>
+
+##### Примеры использования	
+
+1. Генерация readme.md файла для модуля `ITG.Yandex.DnsServer` 
+в текущем каталоге.
+
+		Get-Module 'ITG.Yandex.DnsServer' | Get-Readme | Out-File -Path 'readme.md' -Encoding 'UTF8' -Width 1024;
+
+2. Генерация readme.md файла для модуля `ITG.Yandex.DnsServer` 
+в каталоге модуля.
+
+		Get-Module 'ITG.Yandex.DnsServer' | Get-Readme -OutDefaultFile;
+
+##### Связанные ссылки
+
+- [MarkDown (md) Syntax](http://daringfireball.net/projects/markdown/syntax)
+- [about_comment_based_help](http://technet.microsoft.com/ru-ru/library/dd819489.aspx)
+- [Написание справки для командлетов](http://go.microsoft.com/fwlink/?LinkID=123415)

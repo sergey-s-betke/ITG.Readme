@@ -150,10 +150,10 @@ function ConvertTo-ObjectProperty {
 New-Alias -Name ConvertTo-PSObject -Value ConvertTo-ObjectProperty;
 New-Alias -Name Add-Pair -Value ConvertTo-ObjectProperty;
 
-function Get-ModuleReadme {
+function Get-Readme {
 	<#
 		.Synopsis
-			Генерирует readme файл с md разметкой по данным модуля и комментариям к его функциям.
+			Генерирует readme файл с md разметкой по данным модуля и комментариям к его функциям. 
 			Файл предназначен, в частности, для размещения в репозиториях github.
 		.Notes
 			To-Do:
@@ -168,16 +168,17 @@ function Get-ModuleReadme {
 		.Link
 			[Написание справки для командлетов](http://go.microsoft.com/fwlink/?LinkID=123415)
 		.Example
-			Get-Module 'ITG.Yandex.DnsServer' | Get-ModuleReadme | Out-File -Path 'readme.md' -Encoding 'UTF8' -Width 1024;
+			Get-Module 'ITG.Yandex.DnsServer' | Get-Readme | Out-File -Path 'readme.md' -Encoding 'UTF8' -Width 1024;
 			Генерация readme.md файла для модуля `ITG.Yandex.DnsServer` 
 			в текущем каталоге.
 		.Example
-			Get-Module 'ITG.Yandex.DnsServer' | Get-ModuleReadme -OutDefaultFile;
+			Get-Module 'ITG.Yandex.DnsServer' | Get-Readme -OutDefaultFile;
 			Генерация readme.md файла для модуля `ITG.Yandex.DnsServer` 
 			в каталоге модуля.
 	#>
 	
 	[CmdletBinding(
+		DefaultParametersetName='ModuleInfo'
 	)]
 
 	param (
@@ -186,46 +187,119 @@ function Get-ModuleReadme {
 			Mandatory=$true
 			, Position=0
 			, ValueFromPipeline=$true
+			, ParameterSetName='ModuleInfo'
 		)]
-		[ValidateNotNullOrEmpty()]
 		[PSModuleInfo]
-		$Module
+		[Alias('Module')]
+		$ModuleInfo
 ,
+		[Parameter(
+			ParameterSetName='ModuleInfo'
+		)]
 		[switch]
 		$OutDefaultFile
-	)
+,
+		# Описатель внешнего сценария
+		[Parameter(
+			Mandatory=$true
+			, Position=0
+			, ValueFromPipeline=$true
+			, ParameterSetName='ExternalScriptInfo'
+		)]
+		[System.Management.Automation.ExternalScriptInfo]
+		$ExternalScriptInfo
+,
+		# Описатель внешнего сценария
+		[Parameter(
+			Mandatory=$true
+			, Position=0
+			, ValueFromPipeline=$true
+			, ParameterSetName='FunctionInfo'
+		)]
+		[System.Management.Automation.FunctionInfo]
+		$FunctionInfo
+,
+		[switch]
+		[Alias('Short')]
+		$ShortDescription
+)
 
 	process {
-		$ReadMeContent = & {
-		$Funcs = `
-		Get-Command `
-			-Module $Module `
-			-CommandType Function, Filter `
-		| % {
-			$_ `
-			| Add-Member -PassThru -Name Verb -MemberType NoteProperty -Value ( ( $_.Name -split '-')[0] ) `
-			| Add-Member -PassThru -Name Noun -MemberType NoteProperty -Value ( ( $_.Name -split '-' )[1] ) `
-		} `
-		| Sort-Object Noun, Verb `
-		| % {
-			$cmd = $_;
-			Add-Member `
-				-InputObject $_ `
-				-Name Help `
-				-MemberType NoteProperty `
-				-Value ( $_ | Get-Help -Full ) `
-			;
-			Add-Member `
-				-InputObject $_ `
-				-Name Syntax `
-				-MemberType NoteProperty `
-				-Value (
-					$_.Help.Syntax.SyntaxItem `
+		switch ( $PsCmdlet.ParameterSetName ) {
+			'ModuleInfo' {
+				$Funcs = @( `
+					$ModuleInfo.ExportedFunctions.Values `
+					| Sort-Object -Property `
+						@{ Expression={ ( $_.Name -split '-' )[1] } } `
+						, @{ Expression={ ( $_.Name -split '-' )[0] } } `
+				);
+				$ReadMeContent = & { `
+@"
+$($ModuleInfo.Name)
+$($ModuleInfo.Name -replace '.','=')
+
+$($ModuleInfo.Description)
+
+Версия модуля: **$( $ModuleInfo.Version.ToString() )**
+"@
+					$Funcs `
+					| Group-Object -Property `
+						@{ Expression={ ( $_.Name -split '-' )[1] } } `
+					| % -Begin {
+@"
+
+Функции модуля
+--------------
+"@
+					} `
+					-Process {
+@"
+			
+### $($_.Name)
+"@
+						$_.Group `
+						| Get-Readme -ShortDescription `
+						;
+					};
+
+					if ( -not $ShortDescription ) {
+@"
+
+Подробное описание функций модуля
+---------------------------------
+"@
+						$Funcs `
+						| Get-Readme `
+						;
+					};
+				};
+				if ( $OutDefaultFile ) {
+					$ReadMeContent `
+					| Out-File `
+						-FilePath ( Join-Path `
+							-Path ( Split-Path -Path ( $ModuleInfo.Path ) -Parent ) `
+							-ChildPath 'readme.md' `
+						) `
+						-Force `
+						-Encoding 'UTF8' `
+						-Width 1024 `
+					;
+				} else {
+					return $ReadMeContent;
+				};
+			}
+			'ExternalScriptInfo' {
+			}
+			'FunctionInfo' {
+				$Help = ( $FunctionInfo | Get-Help -Full );
+				$Syntax = (
+					$Help.Syntax.SyntaxItem `
 					| % {
 						,$_.Name `
 						+ ( 
 							$_.Parameter `
 							| % {
+								#MamlCommandHelpInfo#parameter
 								$name="-$($_.Name)";
 								if ( $_.position -ne 'named' ) {
 									$name="[$name]";
@@ -242,33 +316,11 @@ function Get-ModuleReadme {
 							}
 						) `
 						+ ( & {
-							if ( $cmd.CmdletBinding ) { '<CommonParameters>' }
+							if ( $FunctionInfo.CmdletBinding ) { '<CommonParameters>' }
 						} ) `
 						-join ' '
 					}
 <#
-Синтаксис можно полностью построить и самостоятельно:
-$s1=(Get-Help convertto-ObjectProperty -Full).syntax.syntaxitem[0]
-$s1.Name
-$s1.parameter[0]
-
--Key <String>
-    Ключ key для hashtable.
-    
-    Требуется?                    true
-    Позиция?                    named
-    Значение по умолчанию                
-    Принимать входные данные конвейера?true (ByPropertyName)
-    Принимать подстановочные знаки?
-PS C:\Users\Sergey.S.Betke\Documents> $p1 =$s1.parameter[0]
-PS C:\Users\Sergey.S.Betke\Documents> $p1 | gm
-   TypeName: MamlCommandHelpInfo#parameter
-Name           MemberType   Definition                                                                                 
-----           ----------   ----------                                                                                 
-Equals         Method       bool Equals(System.Object obj)                                                             
-GetHashCode    Method       int GetHashCode()                                                                          
-GetType        Method       type GetType()                                                                             
-ToString       Method       string ToString()                                                                          
 description    NoteProperty System.Management.Automation.PSObject[] description=System.Management.Automation.PSObject[]
 name           NoteProperty System.String name=Key                                                                     
 parameterValue NoteProperty System.String parameterValue=String                                                        
@@ -276,151 +328,93 @@ pipelineInput  NoteProperty System.String pipelineInput=true (ByPropertyName)
 position       NoteProperty System.String position=named                                                               
 required       NoteProperty System.String required=true                                                                
 #>
-				) `
-			;
-			$_;
-		} `
-		;
-@"
-$($Module.Name)
-$($Module.Name -replace '.','=')
-
-$($Module.Description)
-
-Версия модуля: **$( $Module.Version.ToString() )**
-"@
-		$Funcs `
-		| Group-Object Noun `
-		| % -Begin {
-@"
-
-Функции модуля
---------------
-"@
-		} `
-		-Process {
+				);
 @"
 			
-### $($_.Name)
-"@
-			$_.Group `
-			| % {
-@"
-			
-#### $($_.Name)
+#### $($FunctionInfo.Name)
 
-$( $_.Help.Synopsis )
 "@
-				$_.Syntax `
-				| % {
+				if ( $ShortDescription ) {
+					$Help.Synopsis;
+					$Syntax `
+					| % {
 @"
 	
 	$_
 "@
-				};
-			};
-		};
-
-		$Funcs `
-		| % -Begin {
+					};
+				} else {
+					if ( $Help.Description ) {
+						$Help.Description;
+					} else {
+						$Help.Synopsis;
+					}
 @"
-
-Подробное описание функций модуля
----------------------------------
-"@
-		} `
-		-Process {
-@"
-			
-#### $($_.Name)
-
-$( & {
-	if ( $_.Help.Description ) {
-		$_.Help.Description;
-	} else {
-		$_.Help.Synopsis;
-	}
-} )
 
 ##### Синтаксис
 "@
-			$_.Syntax `
-			| % {
+					$Syntax `
+					| % {
 @"
 	
 	$_
 "@
-			};
+					};
 
-			if ( ( @( $_.Help.examples) ).count ) {
-				$_.Help.Examples.example `
-				| % -Begin {
-					$ExNum=0;
+					if ( ( @( $Help.examples ) ).count ) {
+						$Help.Examples.example `
+						| % -Begin {
+							$ExNum=0;
 @"
 
 ##### Примеры использования	
 "@
-				} `
-				-Process {
-					++$ExNum;
-					$Comment = (
-						( 
-							$_.remarks `
-							| % { $_.Text } 
-						) -join ' ' 
-					).Trim( ' ', (("`t").Normalize()) );
-					if ( $Comment ) {
+						} `
+						-Process {
+							++$ExNum;
+							$Comment = (
+								( 
+									$_.remarks `
+									| % { $_.Text } 
+								) -join ' ' 
+							).Trim( ' ', (("`t").Normalize()) );
+							if ( $Comment ) {
 @"
 
 $ExNum. $Comment
 "@
-					} else {
+							} else {
 @"
 
 $ExNum. Пример $ExNum.
 "@
-					};
+							};
 @"
 
 		$($_.code)
 "@
-				};
-			};
+						};
+					};
 
-			$links = `
-				$_.Help.relatedLinks.navigationLink `
-				| ? { $_.LinkText } `
-			;
-			if ( $links ) {
-				$links `
-				| % -Begin {
+					$links = `
+						$Help.relatedLinks.navigationLink `
+						| ? { $_.LinkText } `
+					;
+					if ( $links ) {
 @"
 
 ##### Связанные ссылки
 
 "@
-				} `
-				-Process {
+						$links `
+						| % {
 @"
 - $($_.LinkText)
 "@
+						};
+					};
 				};
 			};
-		};
-		};
-		if ( $OutDefaultFile ) {
-			$ReadMeContent `
-			| Out-File `
-				-FilePath ( Join-Path `
-					-Path ( Split-Path -Path ( $Module.Path ) -Parent ) `
-					-ChildPath 'readme.md' `
-				) `
-				-Force `
-				-Encoding 'UTF8' `
-				-Width 1024 `
-			;
-		} else {
-			return $ReadMeContent;
 		};
 	}
 }
@@ -435,5 +429,5 @@ Export-ModuleMember `
 		ConvertFrom-Dictionary `
 		, Set-ObjectProperty `
 		, ConvertTo-ObjectProperty `
-		, Get-ModuleReadme `
+		, Get-Readme `
 ;

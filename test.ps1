@@ -10,7 +10,7 @@ $Module = Import-Module `
 	-Verbose `
 	-PassThru `
 ;
-Get-ModuleReadme -Module $Module -OutDefaultFile;
+Get-Readme -Module $Module -OutDefaultFile;
 
 set-variable `
 	-name test `
