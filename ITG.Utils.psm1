@@ -406,9 +406,8 @@ $($Help.Outputs)
 					if ( $Help.Parameters.parameter.Count ) {
 						$ParamsDescription = `
 							( $Help.Parameters | Out-String ) `
-							-replace '(?m)^\p{Z}{4}' `
-							-replace '(?m)^-','- ' `
-							-replace '<CommonParameters>', '- <CommonParameters>' `
+							-replace '<CommonParameters>', '-<CommonParameters>' `
+							-replace '(?m)^\p{Z}{4}-', '- ' `
 						;
 @"
 
