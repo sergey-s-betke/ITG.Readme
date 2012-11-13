@@ -161,6 +161,9 @@ function Get-Readme {
 			- подробное описание функций после краткого обзора
 			- генерация ссылок по наименованиям других функций модуля, и других модулей, если таковые указаны
 			- автоматическое выделение url и формирование синтаксиса ссылки в разделах Link
+			- ввести поддержку генерации файла для внешних скриптов (именно - с генерацией файла)
+			- а также для прочих членов модуля
+			- about_commonparameters и другие аналогичные так же в ссылки преобразовывать
 		.Link
 			[MarkDown (md) Syntax](http://daringfireball.net/projects/markdown/syntax)
 		.Link
@@ -348,7 +351,7 @@ required       NoteProperty System.String required=true
 						$Help.Description;
 					} else {
 						$Help.Synopsis;
-					}
+					};
 @"
 
 ##### Синтаксис
@@ -360,7 +363,66 @@ required       NoteProperty System.String required=true
 	$_
 "@
 					};
+					if ( $Help.Component ) {
+@"
 
+##### Компонент
+
+$($Help.Component)
+"@
+					};
+					if ( $Help.Functionality ) {
+@"
+
+##### Функциональность
+
+Описываемая функция предоставляет следующую функциональность: $($Help.Functionality).
+"@
+					};
+					if ( $Help.Role ) {
+@"
+
+##### Требуемая роль пользователя
+
+Для выполнения функции $($FunctionInfo.Name) требуется роль $($Help.Component) для учётной записи,
+от имени которой будет выполнена описываемая функция.
+"@
+					};
+
+					if ( $Help.Parameters.parameter.Count ) {
+@"
+
+##### Параметры	
+$( $Help.Parameters | Out-String )
+"@
+					};
+<#
+					if ( $FunctionInfo.Parameters.Count ) {
+@"
+
+##### Параметры	
+"@
+						$FunctionInfo.Parameters.Values `
+						| % {
+							$aliases = ''
+							if ( $_.Aliases ) {
+								$aliases = "(псевдонимы: $( $_.Aliases -join ', ' ))"
+							};
+							if ( $_.SwitchParameter ) {
+@"
+
+-$($_.Name), флаг $aliases
+"@
+							} else {
+@"
+
+-$($_.Name) <$($_.ParameterType.Name)> $aliases
+"@
+							};
+						};
+					};
+#>
+					
 					if ( ( @( $Help.examples ) ).count ) {
 						$Help.Examples.example `
 						| % -Begin {
