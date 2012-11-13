@@ -161,6 +161,14 @@ function Get-Readme {
 			- подробное описание функций после краткого обзора
 			- генерация ссылок по наименованиям других функций модуля, и других модулей, если таковые указаны
 			- автоматическое выделение url и формирование синтаксиса ссылки в разделах Link
+			- ввести поддержку генерации файла для внешних скриптов (именно - с генерацией файла)
+			- а также для прочих членов модуля
+			- about_commonparameters и другие аналогичные так же в ссылки преобразовывать
+		.Inputs
+			Через конвейер функция принимает описатели модулей, функций, скриптов. Именно для них и будет сгенерирован readme.md. 
+			Получены описатели могут быть через Get-Module, Get-Command и так далее.
+		.Outputs
+			String. Содержимое readme.md.
 		.Link
 			[MarkDown (md) Syntax](http://daringfireball.net/projects/markdown/syntax)
 		.Link
@@ -320,14 +328,6 @@ $($ModuleInfo.Description)
 						} ) `
 						-join ' '
 					}
-<#
-description    NoteProperty System.Management.Automation.PSObject[] description=System.Management.Automation.PSObject[]
-name           NoteProperty System.String name=Key                                                                     
-parameterValue NoteProperty System.String parameterValue=String                                                        
-pipelineInput  NoteProperty System.String pipelineInput=true (ByPropertyName)                                          
-position       NoteProperty System.String position=named                                                               
-required       NoteProperty System.String required=true                                                                
-#>
 				);
 @"
 			
@@ -348,7 +348,7 @@ required       NoteProperty System.String required=true
 						$Help.Description;
 					} else {
 						$Help.Synopsis;
-					}
+					};
 @"
 
 ##### Синтаксис
@@ -360,7 +360,62 @@ required       NoteProperty System.String required=true
 	$_
 "@
 					};
+					if ( $Help.Component ) {
+@"
 
+##### Компонент
+
+$($Help.Component)
+"@
+					};
+					if ( $Help.Functionality ) {
+@"
+
+##### Функциональность
+
+Описываемая функция предоставляет следующую функциональность: $($Help.Functionality).
+"@
+					};
+					if ( $Help.Role ) {
+@"
+
+##### Требуемая роль пользователя
+
+Для выполнения функции $($FunctionInfo.Name) требуется роль $($Help.Component) для учётной записи,
+от имени которой будет выполнена описываемая функция.
+"@
+					};
+
+					if ( $Help.Inputs ) {
+@"
+
+##### Принимаемые данные по конвейеру
+
+$($Help.Inputs)
+"@
+					};
+					if ( $Help.Outputs ) {
+@"
+
+##### Передаваемые по конвейеру данные
+
+$($Help.Outputs)
+"@
+					};
+					
+					if ( $Help.Parameters.parameter.Count ) {
+						$ParamsDescription = `
+							( $Help.Parameters | Out-String ) `
+							-replace '<CommonParameters>', '-<CommonParameters>' `
+							-replace '(?m)^\p{Z}{4}-(.+)?$', '- `[$1]`' `
+						;
+@"
+
+##### Параметры	
+$ParamsDescription
+"@
+					};
+					
 					if ( ( @( $Help.examples ) ).count ) {
 						$Help.Examples.example `
 						| % -Begin {
