@@ -404,10 +404,15 @@ $($Help.Outputs)
 					};
 					
 					if ( $Help.Parameters.parameter.Count ) {
+						$ParamsDescription = `
+							( $Help.Parameters | Out-String ) `
+							-replace '(?m)^\p{Z}{4}' `
+							-replace '<CommonParameters>', '-<CommonParameters>' `
+						;
 @"
 
 ##### Параметры	
-$( $Help.Parameters | Out-String )
+$ParamsDescription
 "@
 					};
 					
