@@ -193,7 +193,9 @@ $($ModuleInfo.Description)
 					};
 				} else {
 					if ( $Help.Description ) {
-						$Help.Description;
+						$Help.Description `
+						| Select-Object -ExpandProperty Text `
+						;
 					} else {
 						$Help.Synopsis;
 					};
@@ -265,7 +267,8 @@ $ParamsDescription
 					};
 					
 					if ( ( @( $Help.examples ) ).count ) {
-						$Help.Examples.example `
+						$Help.Examples `
+						| Select-Object -ExpandProperty Example `
 						| % -Begin {
 							$ExNum=0;
 @"
@@ -278,8 +281,9 @@ $ParamsDescription
 							$Comment = (
 								( 
 									$_.remarks `
-									| % { $_.Text } 
-								) -join ' ' 
+									| Select-Object -ExpandProperty Text `
+									| ? { $_ } `
+								) -join ' ' `
 							).Trim( ' ', (("`t").Normalize()) );
 							if ( $Comment ) {
 @"
