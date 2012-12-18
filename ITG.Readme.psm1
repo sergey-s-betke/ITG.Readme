@@ -5,7 +5,7 @@
 			Файл предназначен, в частности, для размещения в репозиториях github.
 		.Functionality
 			Генерирует readme файл с md разметкой по данным модуля и комментариям к его функциям. 
-			Файл предназначен, в частности, для размещения в репозиториях github.
+			Файл предназначен, в частности, для размещения в репозиториях github. 
 			
 			Описание может быть сгенерировано для модуля, функции, внешего сценария.
 		.Role
@@ -20,8 +20,20 @@
 			- а также для прочих членов модуля
 			- about_commonparameters и другие аналогичные так же в ссылки преобразовывать
 		.Inputs
-			Через конвейер функция принимает описатели модулей, функций, скриптов. Именно для них и будет сгенерирован readme.md. 
-			Получены описатели могут быть через Get-Module, Get-Command и так далее.
+			System.Management.Automation.PSModuleInfo - 
+			Описатели модулей. Именно для них и будет сгенерирован readme.md. 
+			Получены описатели могут быть через Get-Module.
+		.Inputs
+			System.Management.Automation.CmdletInfo - 
+			Через конвейер функция принимает описатели командлет. Именно для них и будет сгенерирован readme.md. 
+			Получены описатели могут быть через Get-Command.
+		.Inputs
+			System.Management.Automation.FunctionInfo - 
+			Через конвейер функция принимает описатели функций. Именно для них и будет сгенерирован readme.md. 
+			Получены описатели могут быть через Get-Command.
+		.Inputs
+			System.Management.Automation.ExternalScriptInfo - 
+			Через конвейер функция принимает описатели внешних сценариев. Именно для них и будет сгенерирован readme.md. 
 		.Outputs
 			String. Содержимое readme.md.
 		.Link
@@ -253,24 +265,34 @@ $($Help.Functionality)
 "@
 					};
 
-					if ( $Help.Inputs ) {
+					if ( $Help.inputTypes ) {
 @"
 
 ##### Принимаемые данные по конвейеру
-
-$($Help.Inputs)
 "@
+						$Help.inputTypes.inputType `
+						| % {
+@"
+
+$($_.type.name)
+"@
+						};
 					};
-					if ( $Help.Outputs ) {
+					if ( $Help.returnValues ) {
 @"
 
 ##### Передаваемые по конвейеру данные
-
-$($Help.Outputs)
 "@
+						$Help.returnValues.returnValue `
+						| % {
+@"
+
+$($_.type.name)
+"@
+						};
 					};
 					
-					if ( $Help.Parameters.parameter.Count ) {
+					if ( $Help.Parameters ) {
 						$ParamsDescription = `
 							( $Help.Parameters | Out-String ) `
 							-replace '<CommonParameters>', '-<CommonParameters>' `
@@ -319,17 +341,13 @@ $ExNum. Пример $ExNum.
 						};
 					};
 
-					$links = `
-						$Help.relatedLinks.navigationLink `
-						| ? { $_.LinkText } `
-					;
-					if ( $links ) {
+					if ( $Help.relatedLinks ) {
 @"
 
 ##### Связанные ссылки
 
 "@
-						$links `
+						$Help.relatedLinks.navigationLink `
 						| % {
 @"
 - $($_.LinkText)
