@@ -107,10 +107,12 @@ $($ModuleInfo.Description)
 "@
 						} `
 						-Process {
+							if ( $_.Name ) {
 @"
 			
 ### $($_.Name)
 "@
+							};
 							$_.Group `
 							| Get-Readme -ShortDescription `
 							;
@@ -150,35 +152,39 @@ $($ModuleInfo.Description)
 			}
 			'FunctionInfo' {
 				$Help = ( $FunctionInfo | Get-Help -Full );
-				$Syntax = (
-					$Help.Syntax.SyntaxItem `
-					| % {
-						,$_.Name `
-						+ ( 
-							$_.Parameter `
-							| % {
-								#MamlCommandHelpInfo#parameter
-								$name="-$($_.Name)";
-								if ( $_.position -ne 'named' ) {
-									$name="[$name]";
-								};
-								if ( $_.parameterValue ) {
-									$param = "$name <$($_.parameterValue)>";
-								} else {
-									$param = "$name";
-								};
-								if ( $_.required -ne 'true' ) {
-									$param = "[$param]";
-								};
-								$param;
-							}
-						) `
-						+ ( & {
-							if ( $FunctionInfo.CmdletBinding ) { '<CommonParameters>' }
-						} ) `
-						-join ' '
-					}
-				);
+				if ( $Help.Syntax ) {
+					$Syntax = (
+						$Help.Syntax.SyntaxItem `
+						| % {
+							,$_.Name `
+							+ ( 
+								$_.Parameter `
+								| % {
+									#MamlCommandHelpInfo#parameter
+									$name="-$($_.Name)";
+									if ( $_.position -ne 'named' ) {
+										$name="[$name]";
+									};
+									if ( $_.parameterValue ) {
+										$param = "$name <$($_.parameterValue)>";
+									} else {
+										$param = "$name";
+									};
+									if ( $_.required -ne 'true' ) {
+										$param = "[$param]";
+									};
+									$param;
+								}
+							) `
+							+ ( & {
+								if ( $FunctionInfo.CmdletBinding ) { '<CommonParameters>' }
+							} ) `
+							-join ' '
+						}
+					);
+				} else {
+					$Syntax = $Help.Synopsis;
+				};
 @"
 			
 #### $($FunctionInfo.Name)
@@ -186,12 +192,14 @@ $($ModuleInfo.Description)
 "@
 				if ( $ShortDescription ) {
 					$Help.Synopsis;
-					$Syntax `
-					| % {
+					if ( $Help.Syntax ) {
+						$Syntax `
+						| % {
 @"
 	
 	$_
 "@
+						};
 					};
 				} else {
 					if ( $Help.Description ) {
