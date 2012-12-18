@@ -1,7 +1,7 @@
 ﻿function Get-Readme {
 	<#
 		.Synopsis
-			Генерирует readme файл с md разметкой по данным модуля и комментариям к его функциям.
+			Генерирует readme файл с md разметкой по данным модуля и комментариям к его функциям. 
 			Файл предназначен, в частности, для размещения в репозиториях github.
 		.Notes
 			To-Do:
@@ -13,7 +13,7 @@
 			- а также для прочих членов модуля
 			- about_commonparameters и другие аналогичные так же в ссылки преобразовывать
 		.Inputs
-			Через конвейер функция принимает описатели модулей, функций, скриптов. Именно для них и будет сгенерирован readme.md.
+			Через конвейер функция принимает описатели модулей, функций, скриптов. Именно для них и будет сгенерирован readme.md. 
 			Получены описатели могут быть через Get-Module, Get-Command и так далее.
 		.Outputs
 			String. Содержимое readme.md.
@@ -268,9 +268,8 @@ $ParamsDescription
 "@
 					};
 					
-					if ( ( @( $Help.examples ) ).count ) {
-						$Help.Examples `
-						| Select-Object -ExpandProperty Example `
+					if ( $Help.Examples ) {
+						$Help.Examples.Example `
 						| % -Begin {
 							$ExNum=0;
 @"
