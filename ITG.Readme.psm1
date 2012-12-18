@@ -83,12 +83,6 @@
 	process {
 		switch ( $PsCmdlet.ParameterSetName ) {
 			'ModuleInfo' {
-				$Funcs = @( `
-					$ModuleInfo.ExportedFunctions.Values `
-					| Sort-Object -Property `
-						@{ Expression={ ( $_.Name -split '-' )[1] } } `
-						, @{ Expression={ ( $_.Name -split '-' )[0] } } `
-				);
 				$ReadMeContent = & { `
 @"
 $($ModuleInfo.Name)
@@ -98,8 +92,11 @@ $($ModuleInfo.Description)
 
 Версия модуля: **$( $ModuleInfo.Version.ToString() )**
 "@
-					if ( $Funcs.Count ) {
-						$Funcs `
+					if ( $ModuleInfo.ExportedFunctions ) {
+						$ModuleInfo.ExportedFunctions.Values `
+						| Sort-Object -Property `
+							@{ Expression={ ( $_.Name -split '-' )[1] } } `
+							, @{ Expression={ ( $_.Name -split '-' )[0] } } `
 						| Group-Object -Property `
 							@{ Expression={ ( $_.Name -split '-' )[1] } } `
 						| % -Begin {
@@ -125,7 +122,10 @@ $($ModuleInfo.Description)
 Подробное описание функций модуля
 ---------------------------------
 "@
-							$Funcs `
+							$ModuleInfo.ExportedFunctions.Values `
+							| Sort-Object -Property `
+								@{ Expression={ ( $_.Name -split '-' )[1] } } `
+								, @{ Expression={ ( $_.Name -split '-' )[0] } } `
 							| Get-Readme `
 							;
 						};
