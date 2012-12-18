@@ -270,7 +270,7 @@ $($Help.Outputs)
 "@
 					};
 					
-					if ( $Help.Parameters.parameter.Count ) {
+					if ( $Help.Parameters ) {
 						$ParamsDescription = `
 							( $Help.Parameters | Out-String ) `
 							-replace '<CommonParameters>', '-<CommonParameters>' `
