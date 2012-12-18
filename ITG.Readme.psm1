@@ -24,11 +24,11 @@
 			Получены описатели могут быть через Get-Module, Get-Command и так далее.
 		.Outputs
 			String. Содержимое readme.md.
-		.Link
+		.Link1
 			[MarkDown (md) Syntax](http://daringfireball.net/projects/markdown/syntax)
-		.Link
+		.Link1
 			[about_comment_based_help](http://technet.microsoft.com/ru-ru/library/dd819489.aspx)
-		.Link
+		.Link1
 			[Написание справки для командлетов](http://go.microsoft.com/fwlink/?LinkID=123415)
 		.Example
 			Get-Module 'ITG.Yandex.DnsServer' | Get-Readme | Out-File -Path 'readme.md' -Encoding 'UTF8' -Width 1024;
@@ -319,17 +319,13 @@ $ExNum. Пример $ExNum.
 						};
 					};
 
-					$links = `
-						$Help.relatedLinks.navigationLink `
-						| ? { $_.LinkText } `
-					;
-					if ( $links ) {
+					if ( $Help.relatedLinks ) {
 @"
 
 ##### Связанные ссылки
 
 "@
-						$links `
+						$Help.relatedLinks.navigationLink `
 						| % {
 @"
 - $($_.LinkText)
