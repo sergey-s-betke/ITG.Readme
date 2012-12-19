@@ -131,12 +131,12 @@ String
 1. Генерация readme.md файла для модуля `ITG.Yandex.DnsServer`
 в текущем каталоге.
 
-		Get-Module 'ITG.Yandex.DnsServer' | [Get-Readme][] | Out-File -Path 'readme.md' -Encoding 'UTF8' -Width 1024;
+		Get-Module 'ITG.Yandex.DnsServer' | Get-Readme | Out-File -Path 'readme.md' -Encoding 'UTF8' -Width 1024;
 
 2. Генерация readme.md файла для модуля `ITG.Yandex.DnsServer`
 в каталоге модуля.
 
-		Get-Module 'ITG.Yandex.DnsServer' | [Get-Readme][] -OutDefaultFile;
+		Get-Module 'ITG.Yandex.DnsServer' | Get-Readme -OutDefaultFile;
 
 ##### Связанные ссылки
 
