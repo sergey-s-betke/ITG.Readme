@@ -291,20 +291,35 @@ $($ModuleInfo.Description)
 Версия модуля: **$( $ModuleInfo.Version.ToString() )**
 "@
 					if ( $ModuleInfo.ExportedFunctions ) {
+@"
+
+Функции модуля
+--------------
+
+"@
+						# генерация перечня функций
 						$ModuleInfo.ExportedFunctions.Values `
 						| Sort-Object -Property `
 							@{ Expression={ ( $_.Name -split '-' )[1] } } `
 							, @{ Expression={ ( $_.Name -split '-' )[0] } } `
 						| Group-Object -Property `
 							@{ Expression={ ( $_.Name -split '-' )[1] } } `
-						| % -Begin {
+						| % {
+							$_.Group `
+							| % {
 @"
-
-Функции модуля
---------------
+[$($_.Name)]: <#$($_.Name)>
 "@
-						} `
-						-Process {
+							};
+						};
+						# генерация краткого описания функций
+						$ModuleInfo.ExportedFunctions.Values `
+						| Sort-Object -Property `
+							@{ Expression={ ( $_.Name -split '-' )[1] } } `
+							, @{ Expression={ ( $_.Name -split '-' )[0] } } `
+						| Group-Object -Property `
+							@{ Expression={ ( $_.Name -split '-' )[1] } } `
+						| % {
 							if ( $_.Name ) {
 @"
 			
@@ -312,8 +327,15 @@ $($ModuleInfo.Description)
 "@
 							};
 							$_.Group `
-							| Get-Readme -ShortDescription `
-							;
+							| % {
+								$_ | Get-Readme -ShortDescription;
+								if ( -not $ShortDescription ) {
+@"
+	
+Подробнее - [$($_.Name)][].
+"@
+								};
+							};
 						};
 
 						if ( -not $ShortDescription ) {
@@ -389,12 +411,12 @@ $($ModuleInfo.Description)
 					} else {
 						$Syntax = $Help.Synopsis;
 					};
+					if ( $ShortDescription ) {
 @"
 			
-#### $($FunctionInfo.Name)
+#### Обзор $($FunctionInfo.Name)
 
 "@
-					if ( $ShortDescription ) {
 						$Help.Synopsis;
 						if ( $Help.Syntax ) {
 							$Syntax `
@@ -406,6 +428,11 @@ $($ModuleInfo.Description)
 							};
 						};
 					} else {
+@"
+			
+#### $($FunctionInfo.Name)
+
+"@
 						if ( $Help.Description ) {
 							$Help.Description `
 							| Select-Object -ExpandProperty Text `

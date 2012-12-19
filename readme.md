@@ -8,9 +8,11 @@
 Функции модуля
 --------------
 
+[Get-Readme]: <#Get-Readme>
+
 ### Readme
 
-#### Get-Readme
+#### Обзор Get-Readme
 
 Генерирует readme файл с md разметкой по данным модуля и комментариям к его функциям.
 Файл предназначен, в частности, для размещения в репозиториях github.
@@ -20,6 +22,8 @@
 	Get-Readme [-ExternalScriptInfo] <ExternalScriptInfo> [-ShortDescription] <CommonParameters>
 
 	Get-Readme [-FunctionInfo] <FunctionInfo> [-ShortDescription] <CommonParameters>
+
+Подробнее - [Get-Readme][].
 
 Подробное описание функций модуля
 ---------------------------------
