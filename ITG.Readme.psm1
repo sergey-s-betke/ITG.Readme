@@ -117,7 +117,7 @@ $PowerShellAboutTopics = @{
 	'about_WMI_Cmdlets' = 145766
 	'about_WS-Management_Cmdlets' = 145774
 };
-$PowerShellAboutTopicsTranslateRules = & {
+$PowerShellAboutTopicsTranslateRules = @( & {
 	foreach ( $PowerShellAboutTopic in $PowerShellAboutTopics.Keys ) {
 		$h = Get-Help $PowerShellAboutTopic -Full;
 		@{
@@ -133,7 +133,7 @@ $PowerShellAboutTopicsTranslateRules = & {
 			expression = "[$PowerShellAboutTopic](${PowerShellBaseHelpUrl}$($PowerShellAboutTopics.$PowerShellAboutTopic) `"$($h.Synopsis)...`")";
 		};
 	}
-};
+});
 
 $BasicTranslateRules = `
 	  @{ template=[System.Text.RegularExpressions.Regex]"[ `t]*`r?`n"; expression="`r`n" } `
@@ -192,7 +192,7 @@ Function Get-Readme {
 			Генерирует readme файл с md разметкой по данным модуля и комментариям к его функциям. 
 			Файл предназначен, в частности, для размещения в репозиториях github. 
 			
-			Описание может быть сгенерировано для модуля, функции, внешего сценария.
+			Описание может быть сгенерировано функцией Get-Readme для модуля, функции, внешего сценария.
 		.Role
 			Everyone
 		.Notes
@@ -281,6 +281,23 @@ Function Get-Readme {
 	process {
 		switch ( $PsCmdlet.ParameterSetName ) {
 			'ModuleInfo' {
+				$FunctionsReferenceTranslateRules = @( `
+					$ModuleInfo.ExportedFunctions.Values `
+					| % {
+						@{
+							template = New-Object `
+								-TypeName System.Text.RegularExpressions.Regex `
+								-ArgumentList `
+									"(?<!\w|[`[#`t])(?<func>$($_.Name))(?!\w)" `
+									, (
+										[System.Text.RegularExpressions.RegexOptions]::IgnoreCase `
+										-bor [System.Text.RegularExpressions.RegexOptions]::Multiline `
+									)
+							;
+							expression = "[$($_.Name)][]";
+						};
+					}
+				);
 				$ReadMeContent = & { `
 @"
 $($ModuleInfo.Name)
@@ -357,6 +374,7 @@ $($ModuleInfo.Description)
 					$ReadMeContent `
 					| Out-String `
 					| ExpandDefinitions -TranslateRules $BasicTranslateRules `
+					| ExpandDefinitions -TranslateRules $FunctionsReferenceTranslateRules `
 				;
 				if ( $OutDefaultFile ) {
 					$ReadMeContent `
