@@ -1,4 +1,77 @@
-﻿function Get-Readme {
+﻿[System.Text.RegularExpressions.Regex]$reDomain = `
+	"(?<domain>(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?\.)+(?:aero|asia|biz|cat|com|coop|edu|gov|info|int|jobs|mil|mobi|museum|name|net|org|pro|tel|travel|[a-zA-Z]{2}))";
+[System.Text.RegularExpressions.Regex]$rePort = `
+	"(?:[:](?<port>\d+))";
+[System.Text.RegularExpressions.Regex]$reSocket = `
+	"(?<socket>${reDomain}${rePort}?)";
+[System.Text.RegularExpressions.Regex]$reSchema = `
+	"(?<schema>http|https|ftp)";
+[System.Text.RegularExpressions.Regex]$reURLToken = `
+	"(?:(?:%[0-9a-fA-F]{2})|[a-zA-Z0-9`-`.]|&[a-z]+;)";
+[System.Text.RegularExpressions.Regex]$reURLPathEl = `
+	"${reURLToken}+";
+[System.Text.RegularExpressions.Regex]$reURLPath = `
+	"(?<path>${reURLPathEl}(?:/${reURLPathEl})*)";
+[System.Text.RegularExpressions.Regex]$reURLParam = `
+	"(?<paramName>${reURLToken}+)=(?<paramValue>${reURLToken}+)";
+[System.Text.RegularExpressions.Regex]$reURLParams = `
+	"(?:(?:[?])(?<params>${reURLParam}(?:&${reURLParam})*))";
+[System.Text.RegularExpressions.Regex]$reURLAnchor = `
+	"(?:(?:#)(?<anchor>${reURLToken}+))";
+[System.Text.RegularExpressions.Regex]$reURL = `
+	"(?<url>${reSchema}://${reDomain}${rePort}?(?:/${reURLPath}?${reURLParams}?${reURLAnchor}?)?)";
+[System.Text.RegularExpressions.Regex]$reURLShortHTTP = `
+	"(?<url>(?<domain>(?:www)`.${reDomain})${rePort}?(?:/${reURLPath}?${reURLParams}?${reURLAnchor}?)?)";
+[System.Text.RegularExpressions.Regex]$reURLShortFTP = `
+	"(?<url>(?<domain>(?:ftp)`.${reDomain})${rePort}?(?:/${reURLPath}?${reURLParams}?${reURLAnchor}?)?)";
+
+$BasicTranslateRules = `
+	  @{ template=[System.Text.RegularExpressions.Regex]"[ `t]*`r?`n"; expression="`r`n" } `
+	, @{ template=[System.Text.RegularExpressions.Regex]"(?<=(`r?`n){2})(`r?`n)*"; expression='' } `
+	, @{ template=[System.Text.RegularExpressions.Regex]"(?<![<]|[`]][(])${reURLShortHTTP}"; expression='<http://$0>' } `
+	, @{ template=[System.Text.RegularExpressions.Regex]"(?<![<]|[`]][(])${reURLShortFTP}"; expression='<ftp://$0>' } `
+	, @{ template=[System.Text.RegularExpressions.Regex]"(?<![<]|[`]][(])${reURL}"; expression='<$0>' } `
+;
+$LinkTranslateRules = `
+	  @{ template=[System.Text.RegularExpressions.Regex]"[ `t]*`n"; expression="`r`n" } `
+	, @{ template=[System.Text.RegularExpressions.Regex]"(?<![<]|[`]][(])${reURLShortHTTP}"; expression='<http://$0>' } `
+	, @{ template=[System.Text.RegularExpressions.Regex]"(?<![<]|[`]][(])${reURLShortFTP}"; expression='<ftp://$0>' } `
+	, @{ template=[System.Text.RegularExpressions.Regex]"^${reURL}\s+(?<description>.*)"; expression='[${description}](${url})' } `
+	, @{ template=[System.Text.RegularExpressions.Regex]"(?<![<]|[`]][(])${reURL}"; expression='<$0>' } `
+;
+
+Function ExpandDefinitions {
+	<#
+		.Synopsis
+			Данная функция выделяет определения из подготовленного readme и оформляет их в соответствии со 
+			словарём.
+	#>
+	
+	param (
+		# трансформируемый текст readme
+		[Parameter(
+			Mandatory=$true
+			, ValueFromPipeline=$true
+		)]
+		[String]
+		$InputObject
+	,
+		[Parameter(
+			Mandatory=$true
+		)]
+		[Array]
+		$TranslateRules
+	)
+
+	process {
+		foreach( $Rule in $TranslateRules ) {
+			$InputObject = $InputObject -replace $Rule.Template, $Rule.Expression;
+		};
+		return $InputObject;
+	}
+}
+
+Function Get-Readme {
 	<#
 		.Synopsis
 			Генерирует readme файл с md разметкой по данным модуля и комментариям к его функциям. 
@@ -36,7 +109,8 @@
 		.Outputs
 			String. Содержимое readme.md.
 		.Link
-			[MarkDown (md) Syntax](http://daringfireball.net/projects/markdown/syntax)
+			http://daringfireball.net/projects/markdown/syntax
+			MarkDown (md) Syntax
 		.Link
 			[about_comment_based_help](http://technet.microsoft.com/ru-ru/library/dd819489.aspx)
 		.Link
@@ -96,7 +170,7 @@
 		[switch]
 		[Alias('Short')]
 		$ShortDescription
-)
+	)
 
 	process {
 		switch ( $PsCmdlet.ParameterSetName ) {
@@ -151,6 +225,11 @@ $($ModuleInfo.Description)
 						};
 					};
 				};
+				$ReadMeContent = `
+					$ReadMeContent `
+					| Out-String `
+					| ExpandDefinitions -TranslateRules $BasicTranslateRules `
+				;
 				if ( $OutDefaultFile ) {
 					$ReadMeContent `
 					| Out-File `
@@ -169,48 +248,69 @@ $($ModuleInfo.Description)
 			'ExternalScriptInfo' {
 			}
 			'FunctionInfo' {
-				$Help = ( $FunctionInfo | Get-Help -Full );
-				if ( $Help.Syntax ) {
-					$Syntax = (
-						$Help.Syntax.SyntaxItem `
-						| % {
-							,$_.Name `
-							+ ( 
-								$_.Parameter `
-								| % {
-									#MamlCommandHelpInfo#parameter
-									$name="-$($_.Name)";
-									if ( $_.position -ne 'named' ) {
-										$name="[$name]";
-									};
-									if ( $_.parameterValue ) {
-										$param = "$name <$($_.parameterValue)>";
-									} else {
-										$param = "$name";
-									};
-									if ( $_.required -ne 'true' ) {
-										$param = "[$param]";
-									};
-									$param;
-								}
-							) `
-							+ ( & {
-								if ( $FunctionInfo.CmdletBinding ) { '<CommonParameters>' }
-							} ) `
-							-join ' '
-						}
-					);
-				} else {
-					$Syntax = $Help.Synopsis;
-				};
+				$ReadMeContent = & { `
+					$Help = ( $FunctionInfo | Get-Help -Full );
+					if ( $Help.Syntax ) {
+						$Syntax = (
+							$Help.Syntax.SyntaxItem `
+							| % {
+								,$_.Name `
+								+ ( 
+									$_.Parameter `
+									| % {
+										#MamlCommandHelpInfo#parameter
+										$name="-$($_.Name)";
+										if ( $_.position -ne 'named' ) {
+											$name="[$name]";
+										};
+										if ( $_.parameterValue ) {
+											$param = "$name <$($_.parameterValue)>";
+										} else {
+											$param = "$name";
+										};
+										if ( $_.required -ne 'true' ) {
+											$param = "[$param]";
+										};
+										$param;
+									}
+								) `
+								+ ( & {
+									if ( $FunctionInfo.CmdletBinding ) { '<CommonParameters>' }
+								} ) `
+								-join ' '
+							}
+						);
+					} else {
+						$Syntax = $Help.Synopsis;
+					};
 @"
 			
 #### $($FunctionInfo.Name)
 
 "@
-				if ( $ShortDescription ) {
-					$Help.Synopsis;
-					if ( $Help.Syntax ) {
+					if ( $ShortDescription ) {
+						$Help.Synopsis;
+						if ( $Help.Syntax ) {
+							$Syntax `
+							| % {
+@"
+	
+	$_
+"@
+							};
+						};
+					} else {
+						if ( $Help.Description ) {
+							$Help.Description `
+							| Select-Object -ExpandProperty Text `
+							;
+						} else {
+							$Help.Synopsis;
+						};
+@"
+
+##### Синтаксис
+"@
 						$Syntax `
 						| % {
 @"
@@ -218,43 +318,23 @@ $($ModuleInfo.Description)
 	$_
 "@
 						};
-					};
-				} else {
-					if ( $Help.Description ) {
-						$Help.Description `
-						| Select-Object -ExpandProperty Text `
-						;
-					} else {
-						$Help.Synopsis;
-					};
-@"
-
-##### Синтаксис
-"@
-					$Syntax `
-					| % {
-@"
-	
-	$_
-"@
-					};
-					if ( $Help.Component ) {
+						if ( $Help.Component ) {
 @"
 
 ##### Компонент
 
 $($Help.Component)
 "@
-					};
-					if ( $Help.Functionality ) {
+						};
+						if ( $Help.Functionality ) {
 @"
 
 ##### Функциональность
 
 $($Help.Functionality)
 "@
-					};
-					if ( $Help.Role ) {
+						};
+						if ( $Help.Role ) {
 @"
 
 ##### Требуемая роль пользователя
@@ -262,98 +342,100 @@ $($Help.Functionality)
 Для выполнения функции $($FunctionInfo.Name) требуется роль $($Help.Role) для учётной записи,
 от имени которой будет выполнена описываемая функция.
 "@
-					};
-
-					if ( $Help.inputTypes ) {
+						};
+						if ( $Help.inputTypes ) {
 @"
 
 ##### Принимаемые данные по конвейеру
 "@
-						$Help.inputTypes.inputType `
-						| % {
+							$Help.inputTypes.inputType `
+							| % {
 @"
 
 $($_.type.name)
 "@
+							};
 						};
-					};
-					if ( $Help.returnValues ) {
+						if ( $Help.returnValues ) {
 @"
 
 ##### Передаваемые по конвейеру данные
 "@
-						$Help.returnValues.returnValue `
-						| % {
+							$Help.returnValues.returnValue `
+							| % {
 @"
 
 $($_.type.name)
 "@
+							};
 						};
-					};
-					
-					if ( $Help.Parameters ) {
-						$ParamsDescription = `
-							( $Help.Parameters | Out-String ) `
-							-replace '<CommonParameters>', '-<CommonParameters>' `
-							-replace '(?m)^\p{Z}{4}-(.+)?\s*?$', '- `$1`' `
-						;
+						if ( $Help.Parameters ) {
+							$ParamsDescription = `
+								( $Help.Parameters | Out-String ) `
+								-replace '<CommonParameters>', '-<CommonParameters>' `
+								-replace '(?m)^\p{Z}{4}-(.+)?\s*?$', '- `$1`' `
+							;
 @"
 
 ##### Параметры	
 $ParamsDescription
 "@
-					};
-					
-					if ( $Help.Examples ) {
-						$Help.Examples.Example `
-						| % -Begin {
-							$ExNum=0;
+						};
+						if ( $Help.Examples ) {
+							$Help.Examples.Example `
+							| % -Begin {
+								$ExNum=0;
 @"
 
 ##### Примеры использования	
 "@
-						} `
-						-Process {
-							++$ExNum;
-							$Comment = (
-								(
-									$_.remarks `
-									| Select-Object -ExpandProperty Text `
-									| ? { $_ } `
-								) -join ' ' `
-							).Trim( ' ', (("`t").Normalize()) );
-							if ( $Comment ) {
+							} `
+							-Process {
+								++$ExNum;
+								$Comment = (
+									(
+										$_.remarks `
+										| Select-Object -ExpandProperty Text `
+										| ? { $_ } `
+									) -join ' ' `
+								).Trim( ' ', (("`t").Normalize()) );
+								if ( $Comment ) {
 @"
 
 $ExNum. $Comment
 "@
-							} else {
+								} else {
 @"
 
 $ExNum. Пример $ExNum.
 "@
-							};
+								};
 @"
 
 		$($_.code)
 "@
+							};
 						};
-					};
-
-					if ( $Help.relatedLinks ) {
+						if ( $Help.relatedLinks ) {
 @"
 
 ##### Связанные ссылки
 
 "@
-						$Help.relatedLinks.navigationLink `
-						| % {
+							$Help.relatedLinks.navigationLink `
+							| % {
+								$Link = `
+									$_.LinkText + $_.uri `
+									| ExpandDefinitions -TranslateRules $LinkTranslateRules `
+								;
 @"
-- $($_.LinkText)
+- $Link
 "@
+							};
 						};
 					};
 				};
+				return $ReadMeContent;
 			};
 		};
 	}
