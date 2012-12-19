@@ -288,7 +288,7 @@ Function Get-Readme {
 							template = New-Object `
 								-TypeName System.Text.RegularExpressions.Regex `
 								-ArgumentList `
-									"(?<!\w|[`[#`t])(?<func>$($_.Name))(?!\w)" `
+									"(?<!\w|[`[#]|`t+.*?)(?<func>$($_.Name))(?!\w)" `
 									, (
 										[System.Text.RegularExpressions.RegexOptions]::IgnoreCase `
 										-bor [System.Text.RegularExpressions.RegexOptions]::Multiline `
