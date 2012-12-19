@@ -51,24 +51,25 @@
 
 ##### Принимаемые данные по конвейеру
 
-System.Management.Automation.PSModuleInfo -
+System.Management.Automation.PSModuleInfo
 Описатели модулей. Именно для них и будет сгенерирован readme.md.
 Получены описатели могут быть через Get-Module.
 
-System.Management.Automation.CmdletInfo -
+System.Management.Automation.CmdletInfo
 Через конвейер функция принимает описатели командлет. Именно для них и будет сгенерирован readme.md.
 Получены описатели могут быть через Get-Command.
 
-System.Management.Automation.FunctionInfo -
+System.Management.Automation.FunctionInfo
 Через конвейер функция принимает описатели функций. Именно для них и будет сгенерирован readme.md.
 Получены описатели могут быть через Get-Command.
 
-System.Management.Automation.ExternalScriptInfo -
+System.Management.Automation.ExternalScriptInfo
 Через конвейер функция принимает описатели внешних сценариев. Именно для них и будет сгенерирован readme.md.
 
 ##### Передаваемые по конвейеру данные
 
-String. Содержимое readme.md.
+String
+Содержимое readme.md.
 
 ##### Параметры
 
@@ -119,7 +120,7 @@ String. Содержимое readme.md.
         Данный командлет поддерживает общие параметры: Verbose, Debug,
         ErrorAction, ErrorVariable, WarningAction, WarningVariable,
         OutBuffer и OutVariable. Для получения дополнительных сведений введите
-        "get-help about_commonparameters".
+        "get-help [about_CommonParameters](http://go.microsoft.com/fwlink/?LinkID=113216 "Описание параметров, которые могут использоваться с любым командлетом....")".
 
 ##### Примеры использования
 
@@ -136,6 +137,6 @@ String. Содержимое readme.md.
 ##### Связанные ссылки
 
 - [MarkDown (md) Syntax](http://daringfireball.net/projects/markdown/syntax)
-- [about_comment_based_help](http://technet.microsoft.com/ru-ru/library/dd819489.aspx)
+- [about_Comment_Based_Help](http://go.microsoft.com/fwlink/?LinkID=144309 "Описание написания разделов справки на основе комментариев для...")
 - [Написание справки для командлетов](http://go.microsoft.com/fwlink/?LinkID=123415)
 
