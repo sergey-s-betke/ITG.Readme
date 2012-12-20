@@ -143,16 +143,11 @@ $BasicTranslateRules = `
 	, @{ template=[System.Text.RegularExpressions.Regex]"(?<![<]|[`]][(])${reURL}"; expression='<$0>' } `
 	+ $PowerShellAboutTopicsTranslateRules
 ;
-$LinkTranslateRules = `
-	  @{ template=[System.Text.RegularExpressions.Regex]"[ `t]*`n"; expression="`r`n" } `
-	, @{ template=[System.Text.RegularExpressions.Regex]"(?<![<]|[`]][(])${reURLShortHTTP}"; expression='<http://$0>' } `
-	, @{ template=[System.Text.RegularExpressions.Regex]"(?<![<]|[`]][(])${reURLShortFTP}"; expression='<ftp://$0>' } `
-	, @{ template=[System.Text.RegularExpressions.Regex]"^${reURL}\s+(?<description>.*)"; expression='[${description}](${url})' } `
-	, @{ template=[System.Text.RegularExpressions.Regex]"(?<![<]|[`]][(])${reURL}"; expression='<$0>' } `
-	+ $PowerShellAboutTopicsTranslateRules
+$AdditionalLinksTranslateRules = `
+	  @{ template=[System.Text.RegularExpressions.Regex]"^${reURL}\s+(?<description>.*)"; expression='[${description}](${url})' } `
 ;
 
-Function ExpandDefinitions {
+Function Expand-Definitions {
 	<#
 		.Synopsis
 			Данная функция выделяет определения из подготовленного readme и оформляет их в соответствии со 
@@ -166,6 +161,7 @@ Function ExpandDefinitions {
 			, ValueFromPipeline=$true
 		)]
 		[String]
+		[AllowEmptyString()]
 		$InputObject
 	,
 		[Parameter(
@@ -176,10 +172,52 @@ Function ExpandDefinitions {
 	)
 
 	process {
-		foreach( $Rule in $TranslateRules ) {
-			$InputObject = $InputObject -replace $Rule.Template, $Rule.Expression;
+		if ( -not [String]::IsNullOrEmpty( $InputObject ) ) {
+			foreach( $Rule in $TranslateRules ) {
+				$InputObject = $InputObject -replace $Rule.Template, $Rule.Expression;
+			};
 		};
 		return $InputObject;
+	}
+}
+
+Function Get-FunctionsReferenceTranslateRules {
+	<#
+		.Synopsis
+			Данная функция возвращает правила формирования ссылок на функции модуля по
+			описателю модуля.
+	#>
+	
+	param (
+		# Описатель модуля
+		[Parameter(
+			Mandatory=$true
+			, ValueFromPipeline=$true
+		)]
+		[PSModuleInfo]
+		$ModuleInfo
+	,
+		# Генерировать правила для формирования ссылок как на функции внешнего модуля
+		[switch]
+		$AsExternalModule
+	)
+
+	process {
+		$ModuleInfo.ExportedFunctions.Values `
+		| % {
+			@{
+				template = New-Object `
+					-TypeName System.Text.RegularExpressions.Regex `
+					-ArgumentList `
+						"(?<!\w|[`[#]|`t+.*?)(?<func>$($_.Name))(?!\w)" `
+						, (
+							[System.Text.RegularExpressions.RegexOptions]::IgnoreCase `
+							-bor [System.Text.RegularExpressions.RegexOptions]::Multiline `
+						)
+				;
+				expression = "[$($_.Name)][]";
+			};
+		};
 	}
 }
 
@@ -229,6 +267,13 @@ Function Get-Readme {
 			Get-Module 'ITG.Yandex.DnsServer' | Get-Readme -OutDefaultFile;
 			Генерация readme.md файла для модуля `ITG.Yandex.DnsServer` 
 			в каталоге модуля.
+		.Example
+			Get-Module 'ITG.Yandex.DnsServer' | Get-Readme -OutDefaultFile -ReferencedModules @( 'ITG.Yandex', 'ITG.Utils', 'ITG.WinAPI.UrlMon', 'ITG.WinAPI.User32' | Get-Module )
+			Генерация readme.md файла для модуля `ITG.Yandex.DnsServer` 
+			в каталоге модуля `ITG.Yandex.DnsServer`, при этом все упоминания
+			функций модулей `ITG.Yandex`, `ITG.Utils`, `ITG.WinAPI.UrlMon`,
+			`ITG.WinAPI.User32`	так же будут заменены перекрёстными ссылками
+			на readme.md файлы указанных модулей.
 	#>
 	
 	[CmdletBinding(
@@ -247,6 +292,7 @@ Function Get-Readme {
 		[Alias('Module')]
 		$ModuleInfo
 	,
+		# выводить readme в файл readme.md в каталоге модуля
 		[Parameter(
 			ParameterSetName='ModuleInfo'
 		)]
@@ -273,6 +319,22 @@ Function Get-Readme {
 		[System.Management.Automation.FunctionInfo]
 		$FunctionInfo
 	,
+		# Перечень модулей, упоминания функций которых будут заменены на ссылки
+		[Parameter(
+			Mandatory=$false
+		)]
+		[PSModuleInfo[]]
+		$ReferencedModules = @()
+	,
+		# Правила для обработки readme регулярными выражениями. Задавать явно не требуется,
+		# используется параметр в реккурсивных вызовах
+		[Parameter(
+			Mandatory=$false
+		)]
+		[Hashtable[]]
+		$TranslateRules = $BasicTranslateRules
+	,
+		# Генерировать только краткое описание
 		[switch]
 		[Alias('Short')]
 		$ShortDescription
@@ -281,29 +343,17 @@ Function Get-Readme {
 	process {
 		switch ( $PsCmdlet.ParameterSetName ) {
 			'ModuleInfo' {
-				$FunctionsReferenceTranslateRules = @( `
-					$ModuleInfo.ExportedFunctions.Values `
-					| % {
-						@{
-							template = New-Object `
-								-TypeName System.Text.RegularExpressions.Regex `
-								-ArgumentList `
-									"(?<!\w|[`[#]|`t+.*?)(?<func>$($_.Name))(?!\w)" `
-									, (
-										[System.Text.RegularExpressions.RegexOptions]::IgnoreCase `
-										-bor [System.Text.RegularExpressions.RegexOptions]::Multiline `
-									)
-							;
-							expression = "[$($_.Name)][]";
-						};
-					}
+				$TranslateRules += @( Get-FunctionsReferenceTranslateRules -ModuleInfo $ModuleInfo );
+				$TranslateRules += @( `
+					$ReferencedModules `
+					| Get-FunctionsReferenceTranslateRules -AsExternalModule `
 				);
 				$ReadMeContent = & { `
 @"
 $($ModuleInfo.Name)
 $($ModuleInfo.Name -replace '.','=')
 
-$($ModuleInfo.Description)
+$( $ModuleInfo.Description | Expand-Definitions -TranslateRules $TranslateRules )
 
 Версия модуля: **$( $ModuleInfo.Version.ToString() )**
 "@
@@ -339,16 +389,20 @@ $($ModuleInfo.Description)
 						| % {
 							if ( $_.Name ) {
 @"
-			
+
 ### $($_.Name)
 "@
 							};
 							$_.Group `
 							| % {
-								$_ | Get-Readme -ShortDescription;
+								$_ `
+								| Get-Readme `
+									-ShortDescription `
+									-TranslateRules $TranslateRules `
+								;
 								if ( -not $ShortDescription ) {
 @"
-	
+
 Подробнее - [$($_.Name)][].
 "@
 								};
@@ -366,15 +420,32 @@ $($ModuleInfo.Description)
 								@{ Expression={ ( $_.Name -split '-' )[1] } } `
 								, @{ Expression={ ( $_.Name -split '-' )[0] } } `
 							| Get-Readme `
+								-TranslateRules $TranslateRules `
 							;
 						};
 					};
-				};
-				$ReadMeContent = `
-					$ReadMeContent `
-					| Out-String `
-					| ExpandDefinitions -TranslateRules $BasicTranslateRules `
-					| ExpandDefinitions -TranslateRules $FunctionsReferenceTranslateRules `
+					# генерируем ссылки на функции других модулей ($ReferencedModules)
+					if ( $ReferencedModules ) { `
+@"
+
+---------------------------------------
+"@
+						$ReferencedModules `
+						| % {
+							$ReferencedModule = $_;
+							$ReferencedModule.ExportedFunctions.Values `
+							| Sort-Object -Property `
+								@{ Expression={ ( $_.Name -split '-' )[1] } } `
+								, @{ Expression={ ( $_.Name -split '-' )[0] } } `
+							| % {
+@"
+[$($_.Name)]: <${ReferencedModule}#$($_.Name)>
+"@
+							};
+						};
+					};
+				} `
+				| Out-String `
 				;
 				if ( $OutDefaultFile ) {
 					$ReadMeContent `
@@ -431,8 +502,8 @@ $($ModuleInfo.Description)
 					};
 					if ( $ShortDescription ) {
 @"
-			
-#### Обзор $($FunctionInfo.Name)
+
+#### Обзор [$($FunctionInfo.Name)][]
 
 "@
 						$Help.Synopsis;
@@ -440,23 +511,26 @@ $($ModuleInfo.Description)
 							$Syntax `
 							| % {
 @"
-	
+
 	$_
 "@
 							};
 						};
 					} else {
 @"
-			
+
 #### $($FunctionInfo.Name)
 
 "@
 						if ( $Help.Description ) {
 							$Help.Description `
 							| Select-Object -ExpandProperty Text `
+							| Expand-Definitions -TranslateRules $TranslateRules `
 							;
 						} else {
-							$Help.Synopsis;
+							$Help.Synopsis `
+							| Expand-Definitions -TranslateRules $TranslateRules `
+							;
 						};
 @"
 
@@ -465,7 +539,7 @@ $($ModuleInfo.Description)
 						$Syntax `
 						| % {
 @"
-	
+
 	$_
 "@
 						};
@@ -478,11 +552,15 @@ $($Help.Component)
 "@
 						};
 						if ( $Help.Functionality ) {
+							$Description = `
+								$Help.Functionality `
+								| Expand-Definitions -TranslateRules $TranslateRules `
+							;
 @"
 
 ##### Функциональность
 
-$($Help.Functionality)
+$Description
 "@
 						};
 						if ( $Help.Role ) {
@@ -501,9 +579,13 @@ $($Help.Functionality)
 "@
 							$Help.inputTypes.inputType `
 							| % {
+								$Description = `
+									$_.type.name `
+									| Expand-Definitions -TranslateRules $TranslateRules `
+								;
 @"
 
-$($_.type.name)
+$Description
 "@
 							};
 						};
@@ -514,22 +596,27 @@ $($_.type.name)
 "@
 							$Help.returnValues.returnValue `
 							| % {
+								$Description = `
+									$_.type.name `
+									| Expand-Definitions -TranslateRules $TranslateRules `
+								;
 @"
 
-$($_.type.name)
+$Description
 "@
 							};
 						};
 						if ( $Help.Parameters ) {
-							$ParamsDescription = `
+							$Description = `
 								( $Help.Parameters | Out-String ) `
 								-replace '<CommonParameters>', '-<CommonParameters>' `
 								-replace '(?m)^\p{Z}{4}-(.+)?\s*?$', '- `$1`' `
+								| Expand-Definitions -TranslateRules $TranslateRules `
 							;
 @"
 
-##### Параметры	
-$ParamsDescription
+##### Параметры
+$Description
 "@
 						};
 						if ( $Help.Examples ) {
@@ -538,7 +625,7 @@ $ParamsDescription
 								$ExNum=0;
 @"
 
-##### Примеры использования	
+##### Примеры использования
 "@
 							} `
 							-Process {
@@ -549,7 +636,9 @@ $ParamsDescription
 										| Select-Object -ExpandProperty Text `
 										| ? { $_ } `
 									) -join ' ' `
-								).Trim( ' ', (("`t").Normalize()) );
+								).Trim( ' ', (("`t").Normalize()) ) `
+								| Expand-Definitions -TranslateRules $TranslateRules `
+								;
 								if ( $Comment ) {
 @"
 
@@ -577,7 +666,8 @@ $ExNum. Пример $ExNum.
 							| % {
 								$Link = `
 									$_.LinkText + $_.uri `
-									| ExpandDefinitions -TranslateRules $LinkTranslateRules `
+									| Expand-Definitions -TranslateRules $AdditionalLinksTranslateRules `
+									| Expand-Definitions -TranslateRules $TranslateRules `
 								;
 @"
 - $Link
