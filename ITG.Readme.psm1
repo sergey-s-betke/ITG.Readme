@@ -424,6 +424,13 @@ $( $ModuleInfo.Description | Expand-Definitions -TranslateRules $TranslateRules 
 							};
 						};
 					};
+					# генерируем ссылку на репозиторий данного модуля
+@"
+
+---------------------------------------
+
+Генератор: [ITG.Readme](http://github.com/IT-Service/ITG.Readme "Модуль PowerShell для генерации readme для модулей PowerShell").
+"@
 				} `
 				| Out-String `
 				;
