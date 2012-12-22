@@ -2,6 +2,16 @@
 | Import-Module `
 ;
 
+# выражение для поиска определений типа
+# [test]: <http://novgaro.ru> "заголовок такой"
+$reMDRefTitle = "(?:'(?<title>.+?)'|`"(?<title>.+?)`"|\((?<title>.+?)\))";
+$reMDRef = New-Object System.Text.RegularExpressions.Regex -ArgumentList `
+	"(?<=^\s*)\[(?<id>\w+)\]:\s+(?:<$reURL>|$reURL)(?:\s+$reMDRefTitle)?(?=\s*$)" `
+	, ( [System.Text.RegularExpressions.RegexOptions]::IgnoreCase `
+		-bor [System.Text.RegularExpressions.RegexOptions]::Multiline `
+	) `
+;
+
 $PowerShellBaseHelpUrl = 'http://go.microsoft.com/fwlink/?LinkID=';
 $PowerShellAboutTopics = @{
 	'about_Aliases' = 113207
