@@ -35,6 +35,8 @@
 Генерирует readme файл с md разметкой по данным модуля и комментариям к его функциям.
 Файл предназначен, в частности, для размещения в репозиториях github.
 
+Описание может быть сгенерировано функцией [Get-Readme][] для модуля, функции, внешего сценария.
+
 ##### Синтаксис
 
 	Get-Readme [-ModuleInfo] <PSModuleInfo> [-OutDefaultFile] [-ReferencedModules <PSModuleInfo[]>] [-TranslateRules <Hashtable[]>] [-ShortDescription] <CommonParameters>
@@ -45,10 +47,7 @@
 
 ##### Функциональность
 
-Генерирует readme файл с md разметкой по данным модуля и комментариям к его функциям.
-Файл предназначен, в частности, для размещения в репозиториях github.
-
-Описание может быть сгенерировано функцией [Get-Readme][] для модуля, функции, внешего сценария.
+Readme
 
 ##### Требуемая роль пользователя
 
@@ -176,4 +175,8 @@ String
 - [MarkDown (md) Syntax](http://daringfireball.net/projects/markdown/syntax)
 - [about_Comment_Based_Help](http://go.microsoft.com/fwlink/?LinkID=144309 "Описание написания разделов справки на основе комментариев для...")
 - [Написание справки для командлетов](http://go.microsoft.com/fwlink/?LinkID=123415)
+
+---------------------------------------
+
+Генератор: [ITG.Readme](http://github.com/IT-Service/ITG.Readme "Модуль PowerShell для генерации readme для модулей PowerShell").
 

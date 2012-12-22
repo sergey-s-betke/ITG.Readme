@@ -203,11 +203,14 @@ Function Get-Readme {
 		.Synopsis
 			Генерирует readme файл с md разметкой по данным модуля и комментариям к его функциям. 
 			Файл предназначен, в частности, для размещения в репозиториях github.
-		.Functionality
+		.Description
 			Генерирует readme файл с md разметкой по данным модуля и комментариям к его функциям. 
 			Файл предназначен, в частности, для размещения в репозиториях github. 
 			
 			Описание может быть сгенерировано функцией Get-Readme для модуля, функции, внешего сценария.
+		.Functionality
+			Readme
+		.Component
 		.Role
 			Everyone
 		.Notes
@@ -421,6 +424,13 @@ $( $ModuleInfo.Description | Expand-Definitions -TranslateRules $TranslateRules 
 							};
 						};
 					};
+					# генерируем ссылку на репозиторий данного модуля
+@"
+
+---------------------------------------
+
+Генератор: [ITG.Readme](http://github.com/IT-Service/ITG.Readme "Модуль PowerShell для генерации readme для модулей PowerShell").
+"@
 				} `
 				| Out-String `
 				;
