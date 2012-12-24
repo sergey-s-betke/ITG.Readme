@@ -98,15 +98,7 @@ $PowerShellAboutTopicsTranslateRules = @( & {
 	foreach ( $PowerShellAboutTopic in $PowerShellAboutTopics.Keys ) {
 		$h = Get-Help $PowerShellAboutTopic -Full;
 		@{
-			template = New-Object `
-				-TypeName System.Text.RegularExpressions.Regex `
-				-ArgumentList `
-					"(?<!\w|[`[])$PowerShellAboutTopic(?!\w)" `
-					, (
-						[System.Text.RegularExpressions.RegexOptions]::IgnoreCase `
-						-bor [System.Text.RegularExpressions.RegexOptions]::Multiline `
-					)
-			;
+			template = "(?<!\w|[`[])$PowerShellAboutTopic(?!\w)";
 			expression = "[$PowerShellAboutTopic](${PowerShellBaseHelpUrl}$($PowerShellAboutTopics.$PowerShellAboutTopic) `"$($h.Synopsis)...`")";
 		};
 	}
@@ -123,6 +115,113 @@ $BasicTranslateRules = `
 $AdditionalLinksTranslateRules = `
 	  @{ template=[System.Text.RegularExpressions.Regex]"^${reURL}\s+(?<description>.*)"; expression='[${description}](${url})' } `
 ;
+
+Function ConvertTo-Translator {
+	<#
+		.Synopsis
+			Преобразование массива правил трансляции к объекту транслятора, который и будет использован
+			в Expand-Definitions.
+		.Description
+			На вход подаются объекты типа
+			
+				@{
+					tag = "<исключительно сам термин, из которого будет сгенерирован template>";
+					url = "<правило формирования url для ссылки. Будет использован для генерации expression>";
+					title = "<заголовок для ссылки. Будет использован для генерации expression>";
+				} # для генерации [tag](url "title")
+				@{
+					tag = "<исключительно сам термин, из которого будет сгенерирован template>";
+				} для генерации [tag][]
+				@{
+					tag = "<исключительно сам термин, из которого будет сгенерирован template>";
+					template = "<регулярное выражение для выделения заменяемых терминов>";
+					url = "<правило формирования url для ссылки. Будет использован для генерации expression>";
+					title = "<заголовок для ссылки. Будет использован для генерации expression>";
+					expression = "<выражение, которым будет заменён найденный термин>";
+				}
+				@{
+					tag = "<исключительно сам термин, из которого будет сгенерирован template>";
+					template = "<регулярное выражение для выделения заменяемых терминов>";
+					url = "<правило формирования url для ссылки. Будет использован для генерации expression>";
+					title = "<заголовок для ссылки. Будет использован для генерации expression>";
+					expression = "<выражение, которым будет заменён найденный термин>";
+				}
+
+			На выходе данная функция генерирует объект, содержащий единое регулярное выражения
+			для выделения терминов, и хеш-таблицу выражений для генерации замещающего текста,
+			которые будут применены в зависимости от того, как группы захвата "сработают" в
+			едином регулярном выражении.
+	#>
+	
+	param (
+		# массив элементов словаря (правил словаря - в том числе)
+		[Parameter(
+			Mandatory=$true
+			, ValueFromPipeline=$true
+		)]
+		[Hashtable[]]
+		$TranslateRules
+	)
+
+	begin {
+		$Rules = @();
+	}
+	process {
+		foreach( $Rule in $TranslateRules ) {
+			if ( -not $Rule.Template ) {
+				$Rule.Template = New-Object `
+					-TypeName System.Text.RegularExpressions.Regex `
+					-ArgumentList `
+						"(?<tag>$($Rule.tag))" `
+						, (
+							[System.Text.RegularExpressions.RegexOptions]::IgnoreCase `
+							-bor [System.Text.RegularExpressions.RegexOptions]::Multiline `
+						)
+				;
+			};
+			if ( -not $Rule.Expression ) {
+				$Rule.Expression = '[${tag}][]';
+			};
+			$Rules += New-Object PSObject -Property $Rule;
+		};
+	}
+	end {
+		@{
+			Grammar = New-Object `
+				-TypeName System.Text.RegularExpressions.Regex `
+				-ArgumentList `
+					"(?<!\w|\t+.*?|(``.*?``)*?.*?``)$( ( $Rules | Select-Object -ExpandProperty Template ) -join '|' )(?!\w)" `
+					, (
+						[System.Text.RegularExpressions.RegexOptions]::IgnoreCase `
+						-bor [System.Text.RegularExpressions.RegexOptions]::Multiline `
+					)
+			;
+			Values = (
+				$Rules `
+				| % {
+					if ( ( $_.Template | Out-String ) -match '(?<=\(\?<)\w+?(?=>)' ) {
+						New-Object PSObject -Property @{
+							TemplateClass = $Matches[0];
+							Expression = $.Expression;
+						};
+					};
+				} `
+				| Group-Object `
+					-Property TemplateClass `
+				| % {
+					New-Object PSObject -Property @{
+						TemplateClass = $_.Name;
+						Expression = ( $_.Group | Select-Object -First );
+					};
+				} `
+				| Group-Object `
+					-AsHashTable `
+					-AsString `
+					-Property TemplateClass `
+			);
+		};
+	}
+}
 
 Function Expand-Definitions {
 	<#
@@ -186,7 +285,7 @@ Function Get-FunctionsReferenceTranslateRules {
 				template = New-Object `
 					-TypeName System.Text.RegularExpressions.Regex `
 					-ArgumentList `
-						"(?<!\w|[`[#]|`t+.*?)(?<func>$($_.Name))(?!\w)" `
+						"(?<!\w|[\[#/]|\t+.*?|(``.*?``)*?``)(?<func>$($_.Name))(?!\w)" `
 						, (
 							[System.Text.RegularExpressions.RegexOptions]::IgnoreCase `
 							-bor [System.Text.RegularExpressions.RegexOptions]::Multiline `
@@ -266,7 +365,7 @@ Function Get-TagReferenceTranslateRules {
 						template = New-Object `
 							-TypeName System.Text.RegularExpressions.Regex `
 							-ArgumentList `
-								"(?<!\w|[\[#])(?<tag>$($_.Groups['id']))(?!\w)" `
+								"(?<!\w|[\[#/]|\t+.*?|(``.*?``)*?``)(?<tag>$($_.Groups['id']))(?!\w)" `
 								, (
 									[System.Text.RegularExpressions.RegexOptions]::IgnoreCase `
 									-bor [System.Text.RegularExpressions.RegexOptions]::Multiline `
@@ -515,7 +614,9 @@ $( $ModuleInfo.Description | Expand-Definitions -TranslateRules $TranslateRules 
 #### Обзор [$($FunctionInfo.Name)][]
 
 "@
-						$Help.Synopsis;
+						$Help.Synopsis `
+						| Expand-Definitions -TranslateRules $TranslateRules `
+						;
 						if ( $Help.Syntax ) {
 							$Syntax `
 							| % {
