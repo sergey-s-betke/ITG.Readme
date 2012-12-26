@@ -3,60 +3,58 @@
 ;
 
 Function ConvertTo-TranslateRuleObject {
-	[CmdletBinding(
-		DefaultParametersetName='String'
-	)]
-
 	param (
 		[Parameter(
-			Mandatory=$true
+			Mandatory=$false
 			, ValueFromPipeline=$true
-			, ParameterSetName='Object'
 		)]
 		[PSObject]
 		$TranslateRuleObject
 	,
 		[Parameter(
-			Mandatory=$true
+			Mandatory=$false
 			, ValueFromPipeline=$true
-			, ParameterSetName='Hashtable'
 		)]
 		[Hashtable]
 		$TranslateRuleHashtable
 	,
 		[Parameter(
-			Mandatory=$true
+			Mandatory=$false
 			, ValueFromPipeline=$true
-			, ParameterSetName='String'
 		)]
 		[String]
 		$TranslateRuleString
 	,
 		[Parameter(
-			Mandatory=$true
+			Mandatory=$false
 			, ValueFromPipeline=$true
-			, ParameterSetName='FunctionInfo'
 		)]
 		[System.Management.Automation.FunctionInfo]
 		$FunctionInfo
 	)
 
 	process {
-		switch ( $PsCmdlet.ParameterSetName ) {
+		if ( $TranslateRuleHashtable ) {
+				return `
+					New-Object PSObject -Property $TranslateRuleHashtable `
+					| ConvertTo-TranslateRuleObject `
+				;
+			}
 			'Object' {
 				return $TranslateRuleObject;
 			}
-			'Hashtable' {
-				return New-Object PSObject -Property $TranslateRuleHashtable;
-			}
 			'FunctionInfo' {
 				return New-Object PSObject -Property @{
+					ruleCategory = 'token';
+					ruleType = 'func';
 					func = $FunctionInfo.Name;
 					module = $FunctionInfo.ModuleName;
 				};
 			};
 			'String' {
 				return New-Object PSObject -Property @{
+					ruleCategory = 'token';
+					ruleType = 'tag';
 					tag = $TranslateRuleString;
 				};
 			};
@@ -64,62 +62,22 @@ Function ConvertTo-TranslateRuleObject {
 	}
 }
 
-Function ConvertTo-Translator2 {
-	[CmdletBinding(
-	)]
-
+Filter ConvertTo-TranslateRuleFunctionInfo {
 	param (
 		[Parameter(
-			Mandatory=$true
-			, ValueFromPipelineByPropertyName=$true
-			, ParameterSetName='Tag'
+			Mandatory = $true
+			, ValueFromPipeline = $true
 		)]
-		[String]
-		$Tag
-	,
-		[Parameter(
-			Mandatory=$true
-			, ValueFromPipelineByPropertyName=$true
-			, ParameterSetName='Function'
-		)]
-		[String]
-		$Func
-	,
-		[Parameter(
-			Mandatory=$true
-			, ValueFromPipelineByPropertyName=$true
-			, ParameterSetName='Function'
-		)]
-		[String]
-		$Module
-	,
-		[Parameter(
-			Mandatory=$true
-			, ValueFromPipelineByPropertyName=$true
-			, ParameterSetName='CustomTemplate'
-		)]
-		[String]
-		$Template
-	,
-		[Parameter(
-			Mandatory=$true
-			, ValueFromPipelineByPropertyName=$true
-			, ParameterSetName='CustomTemplate'
-		)]
-		[String]
-		$Expression
+		[System.Management.Automation.FunctionInfo]
+		$FunctionInfo
 	)
 
-	process {
-		switch ( $PsCmdlet.ParameterSetName ) {
-			'tag' {
-			}
-			'Function' {
-			}
-			'CustomTemplate' {
-			};
-		};
-	}
+	return New-Object PSObject -Property @{
+		ruleCategory = 'token';
+		ruleType = 'func';
+		template = $FunctionInfo.Name;
+		module = $FunctionInfo.ModuleName;
+	};
 }
 
 Function ConvertTo-Translator {
@@ -160,72 +118,32 @@ Function ConvertTo-Translator {
 	#>
 	
 	param (
-		# массив элементов словаря (правил словаря - в том числе)
+		# элементы словаря (правил словаря - в том числе)
 		[Parameter(
 			Mandatory=$true
 			, ValueFromPipeline=$true
 		)]
-		[Hashtable[]]
-		$TranslateRules
+		[PSObject]
+		$TranslateRule
 	)
 
 	begin {
 		$Rules = @();
 	}
 	process {
-		foreach( $Rule in $TranslateRules ) {
-			if ( -not $Rule.Template ) {
-				$Rule.Template = New-Object `
-					-TypeName System.Text.RegularExpressions.Regex `
-					-ArgumentList `
-						"(?<tag>$($Rule.tag))" `
-						, (
-							[System.Text.RegularExpressions.RegexOptions]::IgnoreCase `
-							-bor [System.Text.RegularExpressions.RegexOptions]::Multiline `
-						)
-				;
-			};
-			if ( -not $Rule.Expression ) {
-				$Rule.Expression = '[${tag}][]';
-			};
-			$Rules += New-Object PSObject -Property $Rule;
-		};
+		$Rules += $TranslateRule;
 	}
 	end {
-		@{
-			Grammar = New-Object `
-				-TypeName System.Text.RegularExpressions.Regex `
-				-ArgumentList `
-					"(?<!\w|\t+.*?|(``.*?``)*?.*?``)$( ( $Rules | Select-Object -ExpandProperty Template ) -join '|' )(?!\w)" `
-					, (
-						[System.Text.RegularExpressions.RegexOptions]::IgnoreCase `
-						-bor [System.Text.RegularExpressions.RegexOptions]::Multiline `
-					)
-			;
-			Values = (
-				$Rules `
-				| % {
-					if ( ( $_.Template | Out-String ) -match '(?<=\(\?<)\w+?(?=>)' ) {
-						New-Object PSObject -Property @{
-							TemplateClass = $Matches[0];
-							Expression = $.Expression;
-						};
-					};
-				} `
-				| Group-Object `
-					-Property TemplateClass `
-				| % {
-					New-Object PSObject -Property @{
-						TemplateClass = $_.Name;
-						Expression = ( $_.Group | Select-Object -First );
-					};
-				} `
-				| Group-Object `
-					-AsHashTable `
-					-AsString `
-					-Property TemplateClass `
-			);
-		};
+		$Rules = 
+			$Rules `
+			| Group-Object `
+				-Property ruleCategory `
+				-AsHashTable `
+		;
+		$reTokens = "(?<!\w|\t+.*?|(``.*?``)*?.*?``)(?<token>$( ( $Rules.token | Select-Object -ExpandProperty template ) -join '|' ))(?!\w)";
+		$reRegexps = ( $Rules.regexps | Select-Object -ExpandProperty template ) -join '|';
+		$reTranslator = "$reRegExps|$reTokens";
+		$reTranslator;
 	}
 }
 
