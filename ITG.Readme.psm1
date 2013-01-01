@@ -87,6 +87,20 @@ Filter ConvertTo-TranslateRule {
 		)]
 		[String]
 		$expression
+	,
+		[Parameter(
+			Mandatory = $false
+			, ValueFromPipelineByPropertyName = $true
+		)]
+		[String]
+		$url
+	,
+		[Parameter(
+			Mandatory = $false
+			, ValueFromPipelineByPropertyName = $true
+		)]
+		[String]
+		$title
 	)
 	
 	if ( $TranslateRule ) {
@@ -482,7 +496,6 @@ Function MatchEvaluatorForFunc( [System.Text.RegularExpressions.Match] $Match ) 
 		-url "<$( $( $Translator.TokenRules.func.$id ).moduleName )#${id}>" `
 		-title $title `
 	;
-	# в URL необходимо дописать модуль. В общем - нужно добраться до правила
 	return "[${id}][]";
 };
 
@@ -516,6 +529,11 @@ Function Get-FunctionsReferenceTranslateRules {
 
 Function MatchEvaluatorForTag( [System.Text.RegularExpressions.Match] $Match ) {
 	$id = $Match.Value;
+	Add-EndReference `
+		-id $id `
+		-url "$( $( $Translator.TokenRules.tag.$id ).url )" `
+		-title "$( $( $Translator.TokenRules.tag.$id ).title )" `
+	;
 	return "[${id}][]";
 };
 
@@ -573,12 +591,11 @@ Function Get-TagReferenceTranslateRules {
 			'StringInfo' {
 				$reMDRef.Matches( $Text ) `
 				| % {
-					Add-EndReference `
-						-id ( $_.Groups['id'].Value ) `
-						-url ( $_.Groups['url'].Value ) `
-						-title ( $_.Groups['title'].Value ) `
-					;
-					$_.Groups['id'].Value;
+					@{
+						template = ( $_.Groups['id'].Value );
+						url = ( $_.Groups['url'].Value );
+						title = ( $_.Groups['title'].Value );
+					};
 				} `
 				| ConvertTo-TranslateRule `
 					-ruleType 'tag' `
