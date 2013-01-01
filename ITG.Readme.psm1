@@ -2,121 +2,206 @@
 | Import-Module `
 ;
 
-Function ConvertTo-TranslateRuleObject {
+$Translator = @{
+	RegExp = $null;
+	RuleType = @();
+	RegExpResults = @{};
+	RegExpIds = @();
+	Refs = @{};
+	Rules = @{};
+	TokenRules = @{};
+};
+
+$reBeforeToken = '(?<!\w|\t+.*?|(``.*?``)*?.*?``)';
+$reAfterToken = '(?!\w)';
+$reBeforeURL = '(?<!\w|\t+.*?|\(<?|<|(``.*?``)*?.*?``)';
+
+$reRegExpId = New-Object System.Text.RegularExpressions.Regex -ArgumentList `
+	'(?<=\(\?\<)(?<id>\w+)(?=\>)' `
+	, ( [System.Text.RegularExpressions.RegexOptions]::IgnoreCase `
+		-bor [System.Text.RegularExpressions.RegexOptions]::Multiline `
+	) `
+;
+
+Filter ConvertTo-TranslateRule {
+	<#
+		.Synopsis
+			Преобразует правила выделения внешних ссылок, переданных по конвейеру в различных форматах, в унифицированный формат
+			для последующей инициализации транслятора `$Translator` (через ConvertTo-Translator).
+	#>
 	param (
 		[Parameter(
-			Mandatory=$false
-			, ValueFromPipeline=$true
-		)]
-		[PSObject]
-		$TranslateRuleObject
-	,
-		[Parameter(
-			Mandatory=$false
-			, ValueFromPipeline=$true
+			Mandatory = $false
+			, ValueFromPipeline = $true
 		)]
 		[Hashtable]
-		$TranslateRuleHashtable
+		$TranslateRule
 	,
 		[Parameter(
-			Mandatory=$false
-			, ValueFromPipeline=$true
+			Mandatory = $false
+			, ValueFromPipelineByPropertyName = $true
 		)]
 		[String]
-		$TranslateRuleString
+		$ruleCategory = 'token'
 	,
 		[Parameter(
-			Mandatory=$false
-			, ValueFromPipeline=$true
+			Mandatory = $false
+			, ValueFromPipelineByPropertyName = $true
+		)]
+		[String]
+		$ruleType
+	,
+		[Parameter(
+			Mandatory = $true
+			, ValueFromPipeline = $true
+			, ValueFromPipelineByPropertyName = $true
+		)]
+		[String]
+		[Alias('Name')]
+		$template
+	,
+		[Parameter(
+			Mandatory = $false
+			, ValueFromPipeline = $true
 		)]
 		[System.Management.Automation.FunctionInfo]
 		$FunctionInfo
+	,
+		[Parameter(
+			Mandatory = $false
+			, ValueFromPipelineByPropertyName = $true
+		)]
+		[String]
+		$ModuleName
+	,
+		[Parameter(
+			Mandatory = $false
+			, ValueFromPipelineByPropertyName = $true
+		)]
+		[String]
+		$id
+	,
+		[Parameter(
+			Mandatory = $false
+			, ValueFromPipelineByPropertyName = $true
+		)]
+		[String]
+		$expression
 	)
-
-	process {
-		if ( $TranslateRuleHashtable ) {
-				return `
-					New-Object PSObject -Property $TranslateRuleHashtable `
-					| ConvertTo-TranslateRuleObject `
-				;
-			}
-			'Object' {
-				return $TranslateRuleObject;
-			}
-			'FunctionInfo' {
-				return New-Object PSObject -Property @{
-					ruleCategory = 'token';
-					ruleType = 'func';
-					func = $FunctionInfo.Name;
-					module = $FunctionInfo.ModuleName;
-				};
+	
+	if ( $TranslateRule ) {
+		$res = $PSBoundParameters.Remove( 'TranslateRule' );
+		$res = $PSBoundParameters.Remove( 'template' );
+		return `
+			New-Object PSObject -Property $TranslateRule `
+			| ConvertTo-TranslateRule @PSBoundParameters `
+		;
+	} else {
+		$PSBoundParameters.ruleCategory = $ruleCategory;
+		if ( $FunctionInfo ) {
+			$PSBoundParameters.ruleType = 'func';
+		};
+		if ( $ruleCategory -eq 'regExp' ) {
+			if ( $template -match $reRegExpId ) {
+				$PSBoundParameters.id = $Matches['id'];
 			};
-			'String' {
-				return New-Object PSObject -Property @{
-					ruleCategory = 'token';
-					ruleType = 'tag';
-					tag = $TranslateRuleString;
-				};
+		};
+		return New-Object PSObject -Property $PSBoundParameters;
+	};
+}
+
+Function Add-EndReference {
+	<#
+		.Synopsis
+			Добавляет в `$Translator` концевую ссылку, упоминание которой встречено в обрабатываемом тексте.
+	#>
+	param (
+		[Parameter(
+			Mandatory = $false
+			, ValueFromPipeline = $true
+		)]
+		[Hashtable]
+		$EndReference
+	,
+		[Parameter(
+			Mandatory = $false
+			, ValueFromPipelineByPropertyName = $true
+		)]
+		[String]
+		$id
+	,
+		[Parameter(
+			Mandatory = $false
+			, ValueFromPipelineByPropertyName = $true
+		)]
+		[String]
+		$url
+	,
+		[Parameter(
+			Mandatory = $false
+			, ValueFromPipelineByPropertyName = $true
+		)]
+		[String]
+		$title
+	,
+		[Parameter(
+			Mandatory = $false
+			, ValueFromPipelineByPropertyName = $true
+		)]
+		[String]
+		$refType
+	)
+	
+	process {
+		if ( $EndReference ) {
+			New-Object PSObject -Property $EndReference `
+			| Add-EndReference `
+			;
+		} else {
+			if ( -not $Translator.Refs.$id ) {
+				$Translator.Refs.Add(
+					$id
+					, ( New-Object PSObject `
+						-Property @{
+							id = $id;
+							refType = $refType;
+							url = $url;
+							title = $title;
+						}
+					)
+				)
 			};
 		};
 	}
 }
 
-Filter ConvertTo-TranslateRuleFunctionInfo {
-	param (
-		[Parameter(
-			Mandatory = $true
-			, ValueFromPipeline = $true
-		)]
-		[System.Management.Automation.FunctionInfo]
-		$FunctionInfo
-	)
+Function Get-EndReference {
+	<#
+		.Synopsis
+			Генерирует массив накопленных в `$Translator` концевых ссылок для включения в readme.
+	#>
+	$Translator.Refs.Values `
+	| Group-Object -Property refType `
+	| Sort-Object -Property Name `
+	| % {
+@"
 
-	return New-Object PSObject -Property @{
-		ruleCategory = 'token';
-		ruleType = 'func';
-		template = $FunctionInfo.Name;
-		module = $FunctionInfo.ModuleName;
+"@
+		$_.Group `
+		| Sort-Object -Property id `
+		| % {
+			"[$( $_.id )]: $( $_.url )" `
+			, ( & { if ( $_.title ) { "`"$( $_.title )`"" }; } ) `
+			-join ' '
+		};
 	};
-}
+};
 
 Function ConvertTo-Translator {
 	<#
 		.Synopsis
-			Преобразование массива правил трансляции к объекту транслятора, который и будет использован
-			в Expand-Definitions.
-		.Description
-			На вход подаются объекты типа
-			
-				@{
-					tag = "<исключительно сам термин, из которого будет сгенерирован template>";
-					url = "<правило формирования url для ссылки. Будет использован для генерации expression>";
-					title = "<заголовок для ссылки. Будет использован для генерации expression>";
-				} # для генерации [tag](url "title")
-				@{
-					tag = "<исключительно сам термин, из которого будет сгенерирован template>";
-				} для генерации [tag][]
-				@{
-					tag = "<исключительно сам термин, из которого будет сгенерирован template>";
-					template = "<регулярное выражение для выделения заменяемых терминов>";
-					url = "<правило формирования url для ссылки. Будет использован для генерации expression>";
-					title = "<заголовок для ссылки. Будет использован для генерации expression>";
-					expression = "<выражение, которым будет заменён найденный термин>";
-				}
-				@{
-					tag = "<исключительно сам термин, из которого будет сгенерирован template>";
-					template = "<регулярное выражение для выделения заменяемых терминов>";
-					url = "<правило формирования url для ссылки. Будет использован для генерации expression>";
-					title = "<заголовок для ссылки. Будет использован для генерации expression>";
-					expression = "<выражение, которым будет заменён найденный термин>";
-				}
-
-			На выходе данная функция генерирует объект, содержащий единое регулярное выражения
-			для выделения терминов, и хеш-таблицу выражений для генерации замещающего текста,
-			которые будут применены в зависимости от того, как группы захвата "сработают" в
-			едином регулярном выражении.
+			Инициализирует объект `$Translator` набором правил трансляции, поступившим по конвейеру.
 	#>
-	
 	param (
 		# элементы словаря (правил словаря - в том числе)
 		[Parameter(
@@ -134,24 +219,83 @@ Function ConvertTo-Translator {
 		$Rules += $TranslateRule;
 	}
 	end {
-		$Rules = 
+		$Translator.Rules = 
 			$Rules `
 			| Group-Object `
 				-Property ruleCategory `
 				-AsHashTable `
+				-AsString `
 		;
-		$reTokens = "(?<!\w|\t+.*?|(``.*?``)*?.*?``)(?<token>$( ( $Rules.token | Select-Object -ExpandProperty template ) -join '|' ))(?!\w)";
-		$reRegexps = ( $Rules.regexps | Select-Object -ExpandProperty template ) -join '|';
-		$reTranslator = "$reRegExps|$reTokens";
-		$reTranslator;
+		$TokenRules = `
+			$Translator.Rules.token `
+			| Group-Object `
+				-Property ruleType `
+				-AsHashTable `
+				-AsString `
+		;
+		foreach ( $ruleType in $TokenRules.Keys ) {
+			$Translator.TokenRules.Add(
+				$ruleType
+				, (
+					$TokenRules.$ruleType `
+					| Group-Object `
+						-Property template `
+						-AsHashTable `
+						-AsString `
+				)
+			);
+		};
+		$Translator.RegExp = New-Object `
+			-TypeName System.Text.RegularExpressions.Regex `
+			-ArgumentList `
+				(
+					(
+						@( $Translator.Rules.regexp | Select-Object -ExpandProperty template ) `
+						+ (
+							$reBeforeToken `
+							, (
+								(
+									$Translator.Rules.token `
+									| Group-Object -Property ruleType `
+									| % {
+										"(?<$( $_.Name )>$( ( $_.Group | % { $_.template } ) -join '|' ))";
+									} `
+								) -join '|' `
+							) `
+							, $reAfterToken `
+							-join '' `
+						) `
+					) -join '|' `
+				) `
+				, (
+					[System.Text.RegularExpressions.RegexOptions]::IgnoreCase `
+					-bor [System.Text.RegularExpressions.RegexOptions]::Multiline `
+				)
+		;
+		$Translator.RuleType = `
+			$Translator.Rules.token `
+			| Select-Object -ExpandProperty ruleType -Unique `
+		;
+		$Translator.RegExpIds = `
+			$Translator.Rules.regexp `
+			| Select-Object -ExpandProperty id -Unique `
+		;
+		$Translator.RegExpResults = `
+			$Translator.Rules.regexp `
+			| ? { $_.id } `
+			| Group-Object `
+				-Property id `
+				-AsHashTable `
+				-AsString `
+		;
 	}
 }
 
-Function Expand-Definitions {
+Filter Expand-Definitions {
 	<#
 		.Synopsis
 			Данная функция выделяет определения из подготовленного readme и оформляет их в соответствии со 
-			словарём.
+			словарём, использованным при подготовке транслятора.
 	#>
 	
 	param (
@@ -163,25 +307,35 @@ Function Expand-Definitions {
 		[String]
 		[AllowEmptyString()]
 		$InputObject
-	,
-		[Parameter(
-			Mandatory=$true
-		)]
-		[Array]
-		$TranslateRules
 	)
 
-	process {
-		if ( -not [String]::IsNullOrEmpty( $InputObject ) ) {
-			foreach( $Rule in $TranslateRules ) {
-				$InputObject = $InputObject -replace $Rule.Template, $Rule.Expression;
-			};
-		};
-		return $InputObject;
-	}
+	if ( -not [String]::IsNullOrEmpty( $InputObject ) ) {
+		$Translator.RegExp.Replace( 
+			$InputObject
+			, {
+				param( [System.Text.RegularExpressions.Match] $Match)
+				foreach ( $RuleType in $Translator.RegExpIds ) {
+					if ( $Match.Groups[$RuleType].Success ) {
+						if ( $($Translator.RegExpResults.$RuleType).expression -eq $null ) {
+							return ( & "MatchEvaluatorFor$RuleType" $Match );
+						} else {
+							if ( $ruleType -eq 'mdRef' ) {
+								$a=1;
+							};
+							return $Match.Result( $($Translator.RegExpResults.$RuleType).expression );
+						};
+					}
+				};
+				foreach ( $RuleType in $Translator.RuleType ) {
+					if ( $Match.Groups[$RuleType].Success ) {
+						return ( & "MatchEvaluatorFor$RuleType" $Match );
+					}
+				};
+			}
+		);
+	};
 };
 
-$PowerShellBaseHelpUrl = 'http://go.microsoft.com/fwlink/?LinkID=';
 $PowerShellAboutTopics = @{
 	'about_Aliases' = 113207
 	'about_Arithmetic_Operators' = 113208
@@ -273,27 +427,64 @@ $PowerShellAboutTopics = @{
 	'about_WMI_Cmdlets' = 145766
 	'about_WS-Management_Cmdlets' = 145774
 };
-$PowerShellAboutTopicsTranslateRules = @( & {
-	foreach ( $PowerShellAboutTopic in $PowerShellAboutTopics.Keys ) {
-		$h = Get-Help $PowerShellAboutTopic -Full;
-		@{
-			template = "(?<!\w|[`[])$PowerShellAboutTopic(?!\w)";
-			expression = "[$PowerShellAboutTopic](${PowerShellBaseHelpUrl}$($PowerShellAboutTopics.$PowerShellAboutTopic) `"$($h.Synopsis)...`")";
-		};
-	}
-});
+
+Function MatchEvaluatorForAbout( [System.Text.RegularExpressions.Match] $Match ) {
+	$id = `
+		$PowerShellAboutTopics.Keys `
+		| ? { $_ -ieq ($Match.Groups['about'].Value) } `
+	;
+	$aboutTopic = Get-Help $id -Full;
+	$title = $aboutTopic.Synopsis;
+	if ( $title -notmatch '\.\s*$' ) {
+		$title += '...';
+	};
+	Add-EndReference `
+		-id $id `
+		-url "http://go.microsoft.com/fwlink/?LinkID=$( $PowerShellAboutTopics[ $id ] )" `
+		-title $title `
+	;
+	return "[${id}][]";
+};
+
+$PowerShellAboutTopicsTranslateRules = @(
+	'about_[a-zA-Z_.]+?' `
+	| ConvertTo-TranslateRule -ruleType 'about' `
+);
+
+# [test]: <http://novgaro.ru> "заголовок такой"
+$reMDRefTitle = "(?:'(?<title>.+?)'|`"(?<title>.+?)`"|\((?<title>.+?)\))";
+$reMDRef = New-Object System.Text.RegularExpressions.Regex -ArgumentList `
+	"(?<=^\s*)(?<mdRef>\[(?<id>\w+)\]:\s+(?:<$reURL>|$reURL)(?:\s+$reMDRefTitle)?)(?=\s*$)" `
+	, ( [System.Text.RegularExpressions.RegexOptions]::IgnoreCase `
+		-bor [System.Text.RegularExpressions.RegexOptions]::Multiline `
+	) `
+;
 
 $BasicTranslateRules = `
-	  @{ template=[System.Text.RegularExpressions.Regex]"[ `t]*`r?`n"; expression="`r`n" } `
-	, @{ template=[System.Text.RegularExpressions.Regex]"(?<=(`r?`n){2})(`r?`n)*"; expression='' } `
-	, @{ template=[System.Text.RegularExpressions.Regex]"(?<![<]|[`]][(])${reURLShortHTTP}"; expression='<http://$0>' } `
-	, @{ template=[System.Text.RegularExpressions.Regex]"(?<![<]|[`]][(])${reURLShortFTP}"; expression='<ftp://$0>' } `
-	, @{ template=[System.Text.RegularExpressions.Regex]"(?<![<]|[`]][(])${reURL}"; expression='<$0>' } `
-	+ $PowerShellAboutTopicsTranslateRules
+	(
+		  @{ template='(?<ts>\s+)(?=$)'; expression='' } `
+		, @{ template='(?<=(\r?\n){2})(?<eol>(?:\r?\n)*)'; expression='' } `
+		, @{ template='(?<!\r)(?<crlf>\n)'; expression="`r`n" } `
+		, @{ template="${reMDRef}"; expression='[${id}][]' } `
+		, @{ template="${reBeforeURL}${reURL}"; expression='<${url}>' } `
+		, @{ template="${reBeforeURL}?(<wwwUrl>${reURLShortHTTP})"; expression='<http://${wwwUrl}>' } `
+		, @{ template="${reBeforeURL}?(<ftpUrl>${reURLShortFTP})"; expression='<ftp://${ftpUrl}>' } `
+		| ConvertTo-TranslateRule -ruleCategory regExp `
+	) `
+	+ $PowerShellAboutTopicsTranslateRules `
 ;
-$AdditionalLinksTranslateRules = `
-	  @{ template=[System.Text.RegularExpressions.Regex]"^${reURL}\s+(?<description>.*)"; expression='[${description}](${url})' } `
-;
+
+Function MatchEvaluatorForFunc( [System.Text.RegularExpressions.Match] $Match ) {
+	$id = $Match.Groups['func'].Value;
+	$title = ( ( Get-Help $id ).Synopsis -split '\s*\r?\n' ) -join ' ';
+	Add-EndReference `
+		-id $id `
+		-url "<$( $( $Translator.TokenRules.func.$id ).moduleName )#${id}>" `
+		-title $title `
+	;
+	# в URL необходимо дописать модуль. В общем - нужно добраться до правила
+	return "[${id}][]";
+};
 
 Function Get-FunctionsReferenceTranslateRules {
 	<#
@@ -318,32 +509,15 @@ Function Get-FunctionsReferenceTranslateRules {
 
 	process {
 		$ModuleInfo.ExportedFunctions.Values `
-		| % {
-			@{
-				template = New-Object `
-					-TypeName System.Text.RegularExpressions.Regex `
-					-ArgumentList `
-						"(?<!\w|[\[#/]|\t+.*?|(``.*?``)*?``)(?<func>$($_.Name))(?!\w)" `
-						, (
-							[System.Text.RegularExpressions.RegexOptions]::IgnoreCase `
-							-bor [System.Text.RegularExpressions.RegexOptions]::Multiline `
-						)
-				;
-				expression = '[${func}][]';
-			};
-		};
+		| ConvertTo-TranslateRule `
+		;
 	}
 }
 
-# выражение для поиска определений типа
-# [test]: <http://novgaro.ru> "заголовок такой"
-$reMDRefTitle = "(?:'(?<title>.+?)'|`"(?<title>.+?)`"|\((?<title>.+?)\))";
-$reMDRef = New-Object System.Text.RegularExpressions.Regex -ArgumentList `
-	"(?<=^\s*)\[(?<id>\w+)\]:\s+(?:<$reURL>|$reURL)(?:\s+$reMDRefTitle)?(?=\s*$)" `
-	, ( [System.Text.RegularExpressions.RegexOptions]::IgnoreCase `
-		-bor [System.Text.RegularExpressions.RegexOptions]::Multiline `
-	) `
-;
+Function MatchEvaluatorForTag( [System.Text.RegularExpressions.Match] $Match ) {
+	$id = $Match.Value;
+	return "[${id}][]";
+};
 
 Function Get-TagReferenceTranslateRules {
 	<#
@@ -399,19 +573,16 @@ Function Get-TagReferenceTranslateRules {
 			'StringInfo' {
 				$reMDRef.Matches( $Text ) `
 				| % {
-					@{
-						template = New-Object `
-							-TypeName System.Text.RegularExpressions.Regex `
-							-ArgumentList `
-								"(?<!\w|[\[#/]|\t+.*?|(``.*?``)*?``)(?<tag>$($_.Groups['id']))(?!\w)" `
-								, (
-									[System.Text.RegularExpressions.RegexOptions]::IgnoreCase `
-									-bor [System.Text.RegularExpressions.RegexOptions]::Multiline `
-								)
-						;
-						expression = '[${tag}][]';
-					};
-				};
+					Add-EndReference `
+						-id ( $_.Groups['id'].Value ) `
+						-url ( $_.Groups['url'].Value ) `
+						-title ( $_.Groups['title'].Value ) `
+					;
+					$_.Groups['id'].Value;
+				} `
+				| ConvertTo-TranslateRule `
+					-ruleType 'tag' `
+				;
 			}
 			'ModuleInfo' {
 				$ModuleInfo.Description `
@@ -495,7 +666,7 @@ Function Get-InternalReadme {
 		[Parameter(
 			Mandatory=$false
 		)]
-		[Hashtable[]]
+		[Array]
 		$TranslateRules = @()
 	,
 		# Генерировать только краткое описание
@@ -512,7 +683,7 @@ Function Get-InternalReadme {
 $($ModuleInfo.Name)
 $($ModuleInfo.Name -replace '.','=')
 
-$( $ModuleInfo.Description | Expand-Definitions -TranslateRules $TranslateRules )
+$( $ModuleInfo.Description | Expand-Definitions )
 
 Версия модуля: **$( $ModuleInfo.Version.ToString() )**
 "@
@@ -653,7 +824,7 @@ $( $ModuleInfo.Description | Expand-Definitions -TranslateRules $TranslateRules 
 
 "@
 						$Help.Synopsis `
-						| Expand-Definitions -TranslateRules $TranslateRules `
+						| Expand-Definitions `
 						;
 						if ( $Help.Syntax ) {
 							$Syntax `
@@ -673,11 +844,11 @@ $( $ModuleInfo.Description | Expand-Definitions -TranslateRules $TranslateRules 
 						if ( $Help.Description ) {
 							$Help.Description `
 							| Select-Object -ExpandProperty Text `
-							| Expand-Definitions -TranslateRules $TranslateRules `
+							| Expand-Definitions `
 							;
 						} else {
 							$Help.Synopsis `
-							| Expand-Definitions -TranslateRules $TranslateRules `
+							| Expand-Definitions `
 							;
 						};
 @"
@@ -728,7 +899,7 @@ $Description
 							| % {
 								$Description = `
 									$_.type.name `
-									| Expand-Definitions -TranslateRules $TranslateRules `
+									| Expand-Definitions `
 								;
 @"
 
@@ -745,7 +916,7 @@ $Description
 							| % {
 								$Description = `
 									$_.type.name `
-									| Expand-Definitions -TranslateRules $TranslateRules `
+									| Expand-Definitions `
 								;
 @"
 
@@ -758,7 +929,7 @@ $Description
 								( $Help.Parameters | Out-String ) `
 								-replace '<CommonParameters>', '-<CommonParameters>' `
 								-replace '(?m)^\p{Z}{4}-(.+)?\s*?$', '- `$1`' `
-								| Expand-Definitions -TranslateRules $TranslateRules `
+								| Expand-Definitions `
 							;
 @"
 
@@ -784,7 +955,7 @@ $Description
 										| ? { $_ } `
 									) -join ' ' `
 								).Trim( ' ', (("`t").Normalize()) ) `
-								| Expand-Definitions -TranslateRules $TranslateRules `
+								| Expand-Definitions `
 								;
 								if ( $Comment ) {
 @"
@@ -813,8 +984,7 @@ $ExNum. Пример $ExNum.
 							| % {
 								$Link = `
 									$_.LinkText + $_.uri `
-									| Expand-Definitions -TranslateRules $AdditionalLinksTranslateRules `
-									| Expand-Definitions -TranslateRules $TranslateRules `
+									| Expand-Definitions `
 								;
 @"
 - $Link
@@ -862,9 +1032,6 @@ Function Get-Readme {
 		.Outputs
 			String
 			Содержимое readme.md.
-		.Link
-			http://daringfireball.net/projects/markdown/syntax
-			MarkDown (md) Syntax
 		.Link
 			[MarkDown]: <http://daringfireball.net/projects/markdown/syntax> "MarkDown (md) Syntax"
 		.Link
@@ -942,7 +1109,7 @@ Function Get-Readme {
 		[Parameter(
 			Mandatory=$false
 		)]
-		[Hashtable[]]
+		[Array]
 		$TranslateRules = @()
 	,
 		# Генерировать только краткое описание
@@ -953,13 +1120,11 @@ Function Get-Readme {
 
 	process {
 		$TranslateRules += & {
-			$BasicTranslateRules;
 			$ReferencedModules `
 			| % {
 				$_ | Get-FunctionsReferenceTranslateRules -AsExternalModule;
 				$_ | Get-TagReferenceTranslateRules;
 			};
-
 			switch ( $PsCmdlet.ParameterSetName ) {
 				'ModuleInfo' {
 					$ModuleInfo `
@@ -974,12 +1139,26 @@ Function Get-Readme {
 				};
 			};
 		};
+		$TranslateRules = `
+			@(
+				$TranslateRules `
+				| ConvertTo-TranslateRule `
+			) `
+			+ $BasicTranslateRules `
+		;
+
+		$TranslateRules `
+		| ConvertTo-Translator `
+		;
+		
 		$res = $PSBoundParameters.Remove( 'TranslateRules' );
 		$res = $PSBoundParameters.Remove( 'OutDefaultFile' );
 		$ReadMeContent = `
 			( # генерируем собственно readme с подготовленными правилами трансляции терминов
 				Get-InternalReadme @PSBoundParameters `
-					-TranslateRules $TranslateRules `
+			) `
+			, (
+				Get-EndReference
 			) `
 			, ( # генерируем ссылку на репозиторий данного модуля
 @"

@@ -4,6 +4,8 @@
 Набор функций для PowerShell для генерации readme файла для модулей и функций.
 Файл Readme.md для этого модуля сгенерирован функциями этого же модуля.
 Весь функционал модуля предоставлен командлетом [Get-Readme][].
+Формат генерируемого Readme.MD файла - текстовый файл в кодировке UTF-8 с
+разметкой [MarkDown][].
 
 Версия модуля: **1.5.1**
 
@@ -16,14 +18,14 @@
 
 #### Обзор [Get-Readme][]
 
-Генерирует readme файл с md разметкой по данным модуля и комментариям к его функциям. 
+Генерирует readme файл с [MarkDown][] разметкой по данным модуля и комментариям к его функциям.
 Файл предназначен, в частности, для размещения в репозиториях github.
 
-	Get-Readme [-ModuleInfo] <PSModuleInfo> [-OutDefaultFile] [-ReferencedModules <PSModuleInfo[]>] [-TranslateRules <Hashtable[]>] [-ShortDescription] <CommonParameters>
+	Get-Readme [-ModuleInfo] <PSModuleInfo> [-OutDefaultFile] [-ReferencedModules <PSModuleInfo[]>] [-TranslateRules <Array>] [-ShortDescription] <CommonParameters>
 
-	Get-Readme [-ExternalScriptInfo] <ExternalScriptInfo> [-ReferencedModules <PSModuleInfo[]>] [-TranslateRules <Hashtable[]>] [-ShortDescription] <CommonParameters>
+	Get-Readme [-ExternalScriptInfo] <ExternalScriptInfo> [-ReferencedModules <PSModuleInfo[]>] [-TranslateRules <Array>] [-ShortDescription] <CommonParameters>
 
-	Get-Readme [-FunctionInfo] <FunctionInfo> [-ReferencedModules <PSModuleInfo[]>] [-TranslateRules <Hashtable[]>] [-ShortDescription] <CommonParameters>
+	Get-Readme [-FunctionInfo] <FunctionInfo> [-ReferencedModules <PSModuleInfo[]>] [-TranslateRules <Array>] [-ShortDescription] <CommonParameters>
 
 Подробнее - [Get-Readme][].
 
@@ -32,18 +34,17 @@
 
 #### Get-Readme
 
-Генерирует readme файл с md разметкой по данным модуля и комментариям к его функциям.
+Генерирует readme файл с [MarkDown][] разметкой по данным модуля и комментариям к его функциям.
 Файл предназначен, в частности, для размещения в репозиториях github.
-
 Описание может быть сгенерировано функцией [Get-Readme][] для модуля, функции, внешего сценария.
 
 ##### Синтаксис
 
-	Get-Readme [-ModuleInfo] <PSModuleInfo> [-OutDefaultFile] [-ReferencedModules <PSModuleInfo[]>] [-TranslateRules <Hashtable[]>] [-ShortDescription] <CommonParameters>
+	Get-Readme [-ModuleInfo] <PSModuleInfo> [-OutDefaultFile] [-ReferencedModules <PSModuleInfo[]>] [-TranslateRules <Array>] [-ShortDescription] <CommonParameters>
 
-	Get-Readme [-ExternalScriptInfo] <ExternalScriptInfo> [-ReferencedModules <PSModuleInfo[]>] [-TranslateRules <Hashtable[]>] [-ShortDescription] <CommonParameters>
+	Get-Readme [-ExternalScriptInfo] <ExternalScriptInfo> [-ReferencedModules <PSModuleInfo[]>] [-TranslateRules <Array>] [-ShortDescription] <CommonParameters>
 
-	Get-Readme [-FunctionInfo] <FunctionInfo> [-ReferencedModules <PSModuleInfo[]>] [-TranslateRules <Hashtable[]>] [-ShortDescription] <CommonParameters>
+	Get-Readme [-FunctionInfo] <FunctionInfo> [-ReferencedModules <PSModuleInfo[]>] [-TranslateRules <Array>] [-ShortDescription] <CommonParameters>
 
 ##### Функциональность
 
@@ -80,75 +81,58 @@ String
 
 - `ModuleInfo <PSModuleInfo>`
         Описатель модуля
-
         Требуется?                    true
         Позиция?                    1
         Значение по умолчанию
         Принимать входные данные конвейера?true (ByValue)
         Принимать подстановочные знаки?
-
 - `OutDefaultFile [<SwitchParameter>]`
         выводить readme в файл readme.md в каталоге модуля
-
         Требуется?                    false
         Позиция?                    named
         Значение по умолчанию
         Принимать входные данные конвейера?false
         Принимать подстановочные знаки?
-
 - `ExternalScriptInfo <ExternalScriptInfo>`
         Описатель внешнего сценария
-
         Требуется?                    true
         Позиция?                    1
         Значение по умолчанию
         Принимать входные данные конвейера?true (ByValue)
         Принимать подстановочные знаки?
-
 - `FunctionInfo <FunctionInfo>`
-        Описатель внешнего сценария
-
+        Описатель функции
         Требуется?                    true
         Позиция?                    1
         Значение по умолчанию
         Принимать входные данные конвейера?true (ByValue)
         Принимать подстановочные знаки?
-
 - `ReferencedModules <PSModuleInfo[]>`
         Перечень модулей, упоминания функций которых будут заменены на ссылки
-
         Требуется?                    false
         Позиция?                    named
         Значение по умолчанию
         Принимать входные данные конвейера?false
         Принимать подстановочные знаки?
-
-- `TranslateRules <Hashtable[]>`
-        Правила для обработки readme регулярными выражениями. Задавать явно не требуется,
-        используется параметр в реккурсивных вызовах
-
+- `TranslateRules <Array>`
+        Правила для обработки readme регулярными выражениями
         Требуется?                    false
         Позиция?                    named
         Значение по умолчанию
         Принимать входные данные конвейера?false
         Принимать подстановочные знаки?
-
 - `ShortDescription [<SwitchParameter>]`
         Генерировать только краткое описание
-
         Требуется?                    false
         Позиция?                    named
         Значение по умолчанию
         Принимать входные данные конвейера?false
         Принимать подстановочные знаки?
-
 - `<CommonParameters>`
         Данный командлет поддерживает общие параметры: Verbose, Debug,
         ErrorAction, ErrorVariable, WarningAction, WarningVariable,
         OutBuffer и OutVariable. Для получения дополнительных сведений введите
-        "get-help [about_CommonParameters](http://go.microsoft.com/fwlink/?LinkID=113216 "Описание параметров, которые могут использоваться с любым командлетом....")".
-
-
+        "get-help [about_CommonParameters][]".
 
 ##### Примеры использования
 
@@ -172,9 +156,15 @@ String
 
 ##### Связанные ссылки
 
-- [MarkDown (md) Syntax](http://daringfireball.net/projects/markdown/syntax)
-- [about_Comment_Based_Help](http://go.microsoft.com/fwlink/?LinkID=144309 "Описание написания разделов справки на основе комментариев для...")
+- [MarkDown][]
+- [about_Comment_Based_Help][]
 - [Написание справки для командлетов](http://go.microsoft.com/fwlink/?LinkID=123415)
+
+
+[about_Comment_Based_Help]: http://go.microsoft.com/fwlink/?LinkID=144309 "Описание написания разделов справки на основе комментариев для..."
+[about_CommonParameters]: http://go.microsoft.com/fwlink/?LinkID=113216 "Описание параметров, которые могут использоваться с любым командлетом."
+[Get-Readme]: <ITG.Readme#Get-Readme> "Генерирует readme файл с MarkDown разметкой по данным модуля и комментариям к его функциям. Файл предназначен, в частности, для размещения в репозиториях github."
+[MarkDown]: http://daringfireball.net/projects/markdown/syntax "MarkDown (md) Syntax"
 
 ---------------------------------------
 
