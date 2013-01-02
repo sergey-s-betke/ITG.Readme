@@ -923,6 +923,7 @@ $Description
 								( $Help.Parameters | Out-String ) `
 								-replace '<CommonParameters>', '-<CommonParameters>' `
 								-replace '(?m)(?<=^)\p{Z}{4}-([^\r\n]+)?(?=\s*$)', '- `$1`' `
+								-replace '(?<=\S)[ \t]{2,}(?=\S)', ' ' `
 								| Expand-Definitions `
 							;
 @"
