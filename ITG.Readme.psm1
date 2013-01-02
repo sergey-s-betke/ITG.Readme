@@ -13,15 +13,20 @@ $Translator = @{
 };
 
 $reTokenChar = '[-a-zA-Z0-9_]';
-$reBeforeToken = "(?<!${reTokenChar}|\t+.*?|(?:``.*?``)*?.*?``)";
+$reBeforeToken = "(?<!${reTokenChar}|^\t+.*?|(?:``.*?``)*?.*?``)";
 $reAfterToken = "(?!${reTokenChar})";
-$reBeforeURL = "(?<!${reTokenChar}|\t+.*?|\(<?|<|(``.*?``)*?.*?``)";
+$reBeforeURL = "(?<!${reTokenChar}|^\t+.*?|\(<?|<|(``.*?``)*?.*?``)";
 
 $reRegExpId = New-Object System.Text.RegularExpressions.Regex -ArgumentList `
 	'(?<=\(\?\<)(?<id>\w+)(?=\>)' `
 	, ( [System.Text.RegularExpressions.RegexOptions]::IgnoreCase `
 		-bor [System.Text.RegularExpressions.RegexOptions]::Multiline `
 	) `
+;
+
+$reEOLCheck = New-Object System.Text.RegularExpressions.Regex -ArgumentList `
+	'(?<crlf>\r?\n)' `
+	, ( [System.Text.RegularExpressions.RegexOptions]::Singleline ) `
 ;
 
 Filter ConvertTo-TranslateRule {
@@ -295,6 +300,7 @@ Function ConvertTo-Translator {
 				, (
 					[System.Text.RegularExpressions.RegexOptions]::IgnoreCase `
 					-bor [System.Text.RegularExpressions.RegexOptions]::Multiline `
+					-bor [System.Text.RegularExpressions.RegexOptions]::ExplicitCapture `
 				)
 		;
 		$Translator.RuleType = `
@@ -335,8 +341,8 @@ Filter Expand-Definitions {
 	)
 
 	if ( -not [String]::IsNullOrEmpty( $InputObject ) ) {
-		$Translator.RegExp.Replace( 
-			$InputObject
+		$Translator.RegExp.Replace(
+			( $reEOLCheck.Replace( $InputObject, "`r`n" ) ) `
 			, {
 				param( [System.Text.RegularExpressions.Match] $Match)
 				foreach ( $RuleType in $Translator.RegExpIds ) {
@@ -493,9 +499,8 @@ $reMDLink = New-Object System.Text.RegularExpressions.Regex -ArgumentList `
 
 $BasicTranslateRules = `
 	(
-		  @{ template='(?<ts>\s+)(?=$)'; expression='' } `
-		, @{ template='(?<=(\r?\n){2})(?<eol>(?:\r?\n)*)'; expression='' } `
-		, @{ template='(?<!\r)(?<crlf>\n)'; expression="`r`n" } `
+		  @{ template='(?<ts>[ \t]+)(?=\r?$)'; expression='' } `
+		, @{ template='(?<=(\r?\n))(?<eol>(?:[ \t]*\r?\n)+)'; expression="`r`n" } `
 		, @{ template="${reMDRef}"; expression='[${id}][]' } `
 		, @{ template="${reMDLink}"; expression='[${id}](${url})' } `
 		, @{ template="${reBeforeURL}${reURL}"; expression='<${url}>' } `
@@ -917,7 +922,7 @@ $Description
 							$Description = `
 								( $Help.Parameters | Out-String ) `
 								-replace '<CommonParameters>', '-<CommonParameters>' `
-								-replace '(?m)^\p{Z}{4}-(.+)?\s*?$', '- `$1`' `
+								-replace '(?m)(?<=^)\p{Z}{4}-([^\r\n]+)?(?=\s*$)', '- `$1`' `
 								| Expand-Definitions `
 							;
 @"
