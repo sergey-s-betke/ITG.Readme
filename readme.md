@@ -4,6 +4,7 @@
 Набор функций для PowerShell для генерации readme файла для модулей и функций.
 Файл Readme.md для этого модуля сгенерирован функциями этого же модуля.
 Весь функционал модуля предоставлен командлетом [Get-Readme][].
+
 Формат генерируемого Readme.MD файла - текстовый файл в кодировке UTF-8 с
 разметкой [MarkDown][].
 
@@ -77,60 +78,76 @@ String
 
 ##### Параметры
 
-- `ModuleInfo <PSModuleInfo>`
+- `ModuleInfo <PSModuleInfo>`
         Описатель модуля
+
         Требуется?                    true
         Позиция?                    1
         Значение по умолчанию
         Принимать входные данные конвейера?true (ByValue)
         Принимать подстановочные знаки?
-- `OutDefaultFile [<SwitchParameter>]`
+
+- `OutDefaultFile [<SwitchParameter>]`
         выводить readme в файл readme.md в каталоге модуля
+
         Требуется?                    false
         Позиция?                    named
         Значение по умолчанию
         Принимать входные данные конвейера?false
         Принимать подстановочные знаки?
-- `ExternalScriptInfo <ExternalScriptInfo>`
+
+- `ExternalScriptInfo <ExternalScriptInfo>`
         Описатель внешнего сценария
+
         Требуется?                    true
         Позиция?                    1
         Значение по умолчанию
         Принимать входные данные конвейера?true (ByValue)
         Принимать подстановочные знаки?
-- `FunctionInfo <FunctionInfo>`
+
+- `FunctionInfo <FunctionInfo>`
         Описатель функции
+
         Требуется?                    true
         Позиция?                    1
         Значение по умолчанию
         Принимать входные данные конвейера?true (ByValue)
         Принимать подстановочные знаки?
-- `ReferencedModules <PSModuleInfo[]>`
+
+- `ReferencedModules <PSModuleInfo[]>`
         Перечень модулей, упоминания функций которых будут заменены на ссылки
+
         Требуется?                    false
         Позиция?                    named
         Значение по умолчанию
         Принимать входные данные конвейера?false
         Принимать подстановочные знаки?
-- `TranslateRules <Array>`
+
+- `TranslateRules <Array>`
         Правила для обработки readme регулярными выражениями
+
         Требуется?                    false
         Позиция?                    named
         Значение по умолчанию
         Принимать входные данные конвейера?false
         Принимать подстановочные знаки?
-- `ShortDescription [<SwitchParameter>]`
+
+- `ShortDescription [<SwitchParameter>]`
         Генерировать только краткое описание
+
         Требуется?                    false
         Позиция?                    named
         Значение по умолчанию
         Принимать входные данные конвейера?false
         Принимать подстановочные знаки?
-- `<CommonParameters>`
+
+- `<CommonParameters>`
         Данный командлет поддерживает общие параметры: Verbose, Debug,
         ErrorAction, ErrorVariable, WarningAction, WarningVariable,
         OutBuffer и OutVariable. Для получения дополнительных сведений введите
         "get-help [about_CommonParameters][]".
+
+
 
 ##### Примеры использования
 
