@@ -12,9 +12,10 @@ $Translator = @{
 	TokenRules = @{};
 };
 
-$reBeforeToken = '(?<!\w|\t+.*?|(``.*?``)*?.*?``)';
-$reAfterToken = '(?!\w)';
-$reBeforeURL = '(?<!\w|\t+.*?|\(<?|<|(``.*?``)*?.*?``)';
+$reTokenChar = '[-a-zA-Z0-9_]';
+$reBeforeToken = "(?<!${reTokenChar}|\t+.*?|(?:``.*?``)*?.*?``)";
+$reAfterToken = "(?!${reTokenChar})";
+$reBeforeURL = "(?<!${reTokenChar}|\t+.*?|\(<?|<|(``.*?``)*?.*?``)";
 
 $reRegExpId = New-Object System.Text.RegularExpressions.Regex -ArgumentList `
 	'(?<=\(\?\<)(?<id>\w+)(?=\>)' `
@@ -227,6 +228,14 @@ Function ConvertTo-Translator {
 	)
 
 	begin {
+		$Translator.RegExp = $null;
+		$Translator.RuleType = @();
+		$Translator.RegExpResults = @{};
+		$Translator.RegExpIds = @();
+		$Translator.Refs = @{};
+		$Translator.Rules = @{};
+		$Translator.TokenRules = @{};
+
 		$Rules = @();
 	}
 	process {
@@ -267,6 +276,7 @@ Function ConvertTo-Translator {
 						@( $Translator.Rules.regexp | Select-Object -ExpandProperty template ) `
 						+ (
 							$reBeforeToken `
+							, '(?<token>' `
 							, (
 								(
 									$Translator.Rules.token `
@@ -276,6 +286,7 @@ Function ConvertTo-Translator {
 									} `
 								) -join '|' `
 							) `
+							, ')' `
 							, $reAfterToken `
 							-join '' `
 						) `
@@ -473,6 +484,12 @@ $reMDRef = New-Object System.Text.RegularExpressions.Regex -ArgumentList `
 		-bor [System.Text.RegularExpressions.RegexOptions]::Multiline `
 	) `
 ;
+$reMDLink = New-Object System.Text.RegularExpressions.Regex -ArgumentList `
+	"(?<mdLink>\[(?<id>.+?)\]\((?:<$reURL>|$reURL)\))" `
+	, ( [System.Text.RegularExpressions.RegexOptions]::IgnoreCase `
+		-bor [System.Text.RegularExpressions.RegexOptions]::Multiline `
+	) `
+;
 
 $BasicTranslateRules = `
 	(
@@ -480,6 +497,7 @@ $BasicTranslateRules = `
 		, @{ template='(?<=(\r?\n){2})(?<eol>(?:\r?\n)*)'; expression='' } `
 		, @{ template='(?<!\r)(?<crlf>\n)'; expression="`r`n" } `
 		, @{ template="${reMDRef}"; expression='[${id}][]' } `
+		, @{ template="${reMDLink}"; expression='[${id}](${url})' } `
 		, @{ template="${reBeforeURL}${reURL}"; expression='<${url}>' } `
 		, @{ template="${reBeforeURL}?(<wwwUrl>${reURLShortHTTP})"; expression='<http://${wwwUrl}>' } `
 		, @{ template="${reBeforeURL}?(<ftpUrl>${reURLShortFTP})"; expression='<ftp://${ftpUrl}>' } `
@@ -678,14 +696,6 @@ Function Get-InternalReadme {
 		[PSModuleInfo[]]
 		$ReferencedModules = @()
 	,
-		# Правила для обработки readme регулярными выражениями. Задавать явно не требуется,
-		# используется параметр в реккурсивных вызовах
-		[Parameter(
-			Mandatory=$false
-		)]
-		[Array]
-		$TranslateRules = @()
-	,
 		# Генерировать только краткое описание
 		[switch]
 		[Alias('Short')]
@@ -709,23 +719,7 @@ $( $ModuleInfo.Description | Expand-Definitions )
 
 Функции модуля
 --------------
-
 "@
-						# генерация перечня функций
-						$ModuleInfo.ExportedFunctions.Values `
-						| Sort-Object -Property `
-							@{ Expression={ ( $_.Name -split '-' )[1] } } `
-							, @{ Expression={ ( $_.Name -split '-' )[0] } } `
-						| Group-Object -Property `
-							@{ Expression={ ( $_.Name -split '-' )[1] } } `
-						| % {
-							$_.Group `
-							| % {
-@"
-[$($_.Name)]: <#$($_.Name)>
-"@
-							};
-						};
 						# генерация краткого описания функций
 						$ModuleInfo.ExportedFunctions.Values `
 						| Sort-Object -Property `
@@ -745,12 +739,11 @@ $( $ModuleInfo.Description | Expand-Definitions )
 								$_ `
 								| Get-InternalReadme `
 									-ShortDescription `
-									-TranslateRules $TranslateRules `
 								;
 								if ( -not $ShortDescription ) {
 @"
 
-Подробнее - [$($_.Name)][].
+Подробнее - $( $_.Name | Expand-Definitions ).
 "@
 								};
 							};
@@ -767,28 +760,7 @@ $( $ModuleInfo.Description | Expand-Definitions )
 								@{ Expression={ ( $_.Name -split '-' )[1] } } `
 								, @{ Expression={ ( $_.Name -split '-' )[0] } } `
 							| Get-InternalReadme `
-								-TranslateRules $TranslateRules `
 							;
-						};
-					};
-					# генерируем ссылки на функции других модулей ($ReferencedModules)
-					if ( $ReferencedModules ) { `
-@"
-
----------------------------------------
-"@
-						$ReferencedModules `
-						| % {
-							$ReferencedModule = $_;
-							$ReferencedModule.ExportedFunctions.Values `
-							| Sort-Object -Property `
-								@{ Expression={ ( $_.Name -split '-' )[1] } } `
-								, @{ Expression={ ( $_.Name -split '-' )[0] } } `
-							| % {
-@"
-[$($_.Name)]: <${ReferencedModule}#$($_.Name)>
-"@
-							};
 						};
 					};
 				} `
@@ -837,7 +809,7 @@ $( $ModuleInfo.Description | Expand-Definitions )
 					if ( $ShortDescription ) {
 @"
 
-#### Обзор [$($FunctionInfo.Name)][]
+#### Обзор $( $FunctionInfo.Name | Expand-Definitions )
 
 "@
 						$Help.Synopsis `
