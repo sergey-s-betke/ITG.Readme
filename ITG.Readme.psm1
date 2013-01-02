@@ -503,9 +503,9 @@ $BasicTranslateRules = `
 		, @{ template='(?<=(\r?\n))(?<eol>(?:[ \t]*\r?\n)+)'; expression="`r`n" } `
 		, @{ template="${reMDRef}"; expression='[${id}][]' } `
 		, @{ template="${reMDLink}"; expression='[${id}](${url})' } `
-		, @{ template="${reBeforeURL}${reURL}"; expression='<${url}>' } `
-		, @{ template="${reBeforeURL}?(<wwwUrl>${reURLShortHTTP})"; expression='<http://${wwwUrl}>' } `
-		, @{ template="${reBeforeURL}?(<ftpUrl>${reURLShortFTP})"; expression='<ftp://${ftpUrl}>' } `
+		, @{ template="${reBeforeURL}(?<fullUrl>${reURL})"; expression='<${fullUrl}>' } `
+		, @{ template="${reBeforeURL}(?<wwwUrl>${reURLShortHTTP})"; expression='<http://${wwwUrl}>' } `
+		, @{ template="${reBeforeURL}(?<ftpUrl>${reURLShortFTP})"; expression='<ftp://${ftpUrl}>' } `
 		| ConvertTo-TranslateRule -ruleCategory regExp `
 	) `
 	+ $PowerShellAboutTopicsTranslateRules `
@@ -923,6 +923,7 @@ $Description
 								( $Help.Parameters | Out-String ) `
 								-replace '<CommonParameters>', '-<CommonParameters>' `
 								-replace '(?m)(?<=^)\p{Z}{4}-([^\r\n]+)?(?=\s*$)', '- `$1`' `
+								-replace '(?<=\S)[ \t]{2,}(?=\S)', ' ' `
 								| Expand-Definitions `
 							;
 @"
