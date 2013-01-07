@@ -56,24 +56,21 @@ Readme
 
 ##### Принимаемые данные по конвейеру
 
-System.Management.Automation.PSModuleInfo
+- System.Management.Automation.PSModuleInfo
 Описатели модулей. Именно для них и будет сгенерирован readme.md.
 Получены описатели могут быть через Get-Module.
-
-System.Management.Automation.CmdletInfo
+- System.Management.Automation.CmdletInfo
 Через конвейер функция принимает описатели командлет. Именно для них и будет сгенерирован readme.md.
 Получены описатели могут быть через Get-Command.
-
-System.Management.Automation.FunctionInfo
+- System.Management.Automation.FunctionInfo
 Через конвейер функция принимает описатели функций. Именно для них и будет сгенерирован readme.md.
 Получены описатели могут быть через Get-Command.
-
-System.Management.Automation.ExternalScriptInfo
+- System.Management.Automation.ExternalScriptInfo
 Через конвейер функция принимает описатели внешних сценариев. Именно для них и будет сгенерирован readme.md.
 
 ##### Передаваемые по конвейеру данные
 
-String
+- String
 Содержимое readme.md.
 
 ##### Параметры

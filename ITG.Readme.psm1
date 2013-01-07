@@ -898,6 +898,7 @@ $Description
 @"
 
 ##### Принимаемые данные по конвейеру
+
 "@
 							$Help.inputTypes.inputType `
 							| % {
@@ -906,8 +907,7 @@ $Description
 									| Expand-Definitions `
 								;
 @"
-
-$Description
+- $Description
 "@
 							};
 						};
@@ -915,6 +915,7 @@ $Description
 @"
 
 ##### Передаваемые по конвейеру данные
+
 "@
 							$Help.returnValues.returnValue `
 							| % {
@@ -923,8 +924,7 @@ $Description
 									| Expand-Definitions `
 								;
 @"
-
-$Description
+- $Description
 "@
 							};
 						};
