@@ -464,6 +464,11 @@ Function MatchEvaluatorForAbout( [System.Text.RegularExpressions.Match] $Match )
 		$PowerShellAboutTopics.Keys `
 		| ? { $_ -ieq ($Match.Groups['about'].Value) } `
 	;
+	Add-EndReferenceForAbout( $id );
+	return "[${id}][]";
+};
+
+Function Add-EndReferenceForAbout( [String] $Id ) {
 	$aboutTopic = Get-Help $id -Full;
 	$title = $aboutTopic.Synopsis;
 	if ( $title -notmatch '\.\s*$' ) {
@@ -474,7 +479,11 @@ Function MatchEvaluatorForAbout( [System.Text.RegularExpressions.Match] $Match )
 		-url "http://go.microsoft.com/fwlink/?LinkID=$( $PowerShellAboutTopics[ $id ] )" `
 		-title $title `
 	;
-	return "[${id}][]";
+};
+
+Function MatchEvaluatorForAboutCP( [System.Text.RegularExpressions.Match] $Match ) {
+	Add-EndReferenceForAbout( 'about_CommonParameters' );
+	return '[`get-help about_CommonParameters`][about_CommonParameters]';
 };
 
 $PowerShellAboutTopicsTranslateRules = @(
@@ -501,6 +510,7 @@ $BasicTranslateRules = `
 	(
 		  @{ template='(?<ts>[ \t]+)(?=\r?$)'; expression='' } `
 		, @{ template='(?<=(\r?\n))(?<eol>(?:[ \t]*\r?\n)+)'; expression="`r`n" } `
+		, @{ template='(?<aboutCP>"get-help about_CommonParameters")' } `
 		, @{ template="${reMDRef}"; expression='[${id}][]' } `
 		, @{ template="${reMDLink}"; expression='[${id}](${url})' } `
 		, @{ template="${reBeforeURL}(?<fullUrl>${reURL})"; expression='<${fullUrl}>' } `
