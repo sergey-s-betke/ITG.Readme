@@ -1,2 +1,4 @@
-*.psd1 text eol=crlf diff merge=text
-*.md text eol=crlf diff
+*.ps1 text eol=crlf diff merge delta
+*.psd1 text eol=crlf diff merge delta
+*.psm1 text eol=crlf diff merge delta
+*.md text eol=crlf diff -delta

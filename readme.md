@@ -145,7 +145,7 @@ String
         Данный командлет поддерживает общие параметры: Verbose, Debug,
         ErrorAction, ErrorVariable, WarningAction, WarningVariable,
         OutBuffer и OutVariable. Для получения дополнительных сведений введите
-        "get-help [about_CommonParameters][]".
+        [`get-help about_CommonParameters`][about_CommonParameters].
 
 
 
