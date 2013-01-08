@@ -494,7 +494,7 @@ $PowerShellAboutTopicsTranslateRules = @(
 # [test]: <http://novgaro.ru> "заголовок такой"
 $reMDRefTitle = "(?:'(?<title>.+?)'|`"(?<title>.+?)`"|\((?<title>.+?)\))";
 $reMDRef = New-Object System.Text.RegularExpressions.Regex -ArgumentList `
-	"(?<=^\s*)(?<mdRef>\[(?<id>\w+)\]:\s+(?:<$reURL>|$reURL)(?:\s+$reMDRefTitle)?)(?=\s*$)" `
+	"(?<=^\s*)(?<mdRef>\[(?<id>.+?)\]:\s+(?:<$reURL>|$reURL)(?:\s+$reMDRefTitle)?)(?=\s*$)" `
 	, ( [System.Text.RegularExpressions.RegexOptions]::IgnoreCase `
 		-bor [System.Text.RegularExpressions.RegexOptions]::Multiline `
 	) `
