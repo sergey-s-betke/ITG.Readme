@@ -268,8 +268,16 @@ Function ConvertTo-Translator {
 					$TokenRules.$ruleType `
 					| Group-Object `
 						-Property template `
-						-AsHashTable `
-						-AsString `
+					| ForEach-Object `
+						-Begin {
+							$res = @{};
+						} `
+						-Process {
+							$res.Add( $_.Name, $_.Group[0] );
+						} `
+						-End {
+							$res;
+						} `
 				)
 			);
 		};
@@ -316,8 +324,16 @@ Function ConvertTo-Translator {
 			| ? { $_.id } `
 			| Group-Object `
 				-Property id `
-				-AsHashTable `
-				-AsString `
+			| ForEach-Object `
+				-Begin {
+					$res = @{};
+				} `
+				-Process {
+					$res.Add( $_.Name, $_.Group[0] );
+				} `
+				-End {
+					$res;
+				} `
 		;
 	}
 }
@@ -347,13 +363,13 @@ Filter Expand-Definitions {
 				param( [System.Text.RegularExpressions.Match] $Match)
 				foreach ( $RuleType in $Translator.RegExpIds ) {
 					if ( $Match.Groups[$RuleType].Success ) {
-						if ( $($Translator.RegExpResults.$RuleType).expression -eq $null ) {
+						if ( $Translator.RegExpResults.$RuleType.expression -eq $null ) {
 							return ( & "MatchEvaluatorFor$RuleType" $Match );
 						} else {
 							if ( $ruleType -eq 'mdRef' ) {
 								$a=1;
 							};
-							return $Match.Result( $($Translator.RegExpResults.$RuleType).expression );
+							return $Match.Result( $Translator.RegExpResults.$RuleType.expression );
 						};
 					}
 				};
@@ -526,7 +542,7 @@ Function MatchEvaluatorForFunc( [System.Text.RegularExpressions.Match] $Match ) 
 	$title = ( ( Get-Help $id ).Synopsis -split '\s*\r?\n' ) -join ' ';
 	Add-EndReference `
 		-id $id `
-		-url "<$( $( $Translator.TokenRules.func.$id ).moduleName )#${id}>" `
+		-url "<$( $Translator.TokenRules.func.$id.moduleName )#${id}>" `
 		-title $title `
 	;
 	return "[${id}][]";
@@ -564,8 +580,8 @@ Function MatchEvaluatorForTag( [System.Text.RegularExpressions.Match] $Match ) {
 	$id = $Match.Value;
 	Add-EndReference `
 		-id $id `
-		-url "$( $( $Translator.TokenRules.tag.$id ).url )" `
-		-title "$( $( $Translator.TokenRules.tag.$id ).title )" `
+		-url "$( $Translator.TokenRules.tag.$id.url )" `
+		-title "$( $Translator.TokenRules.tag.$id.title )" `
 	;
 	return "[${id}][]";
 };
