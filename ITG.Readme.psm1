@@ -29,6 +29,11 @@ $reEOLCheck = New-Object System.Text.RegularExpressions.Regex -ArgumentList `
 	, ( [System.Text.RegularExpressions.RegexOptions]::Singleline ) `
 ;
 
+$reOnlineHelpLinkCheck = New-Object System.Text.RegularExpressions.Regex -ArgumentList `
+	"^${reURL}`$" `
+	, ( [System.Text.RegularExpressions.RegexOptions]::Singleline ) `
+;
+
 Filter ConvertTo-TranslateRule {
 	<#
 		.Synopsis
@@ -998,13 +1003,40 @@ $ExNum. Пример $ExNum.
 						if ( $Help.relatedLinks ) {
 @"
 
-##### Связанные ссылки
+##### См. также
 
 "@
 							$Help.relatedLinks.navigationLink `
+							| ? { $_.uri } `
+							| % { $_.uri } `
 							| % {
+								# обрабатываем ссылки на online версию справки
+								if ( $_ -match $reOnlineHelpLinkCheck ) {
+@"
+- [Online версия справки](<$( $_ )> `"$( $FunctionInfo.Name )`")
+"@
+								} else {
+									Write-Warning `
+										-Message @"
+Обнаружена ошибка при оформлении раздела .Link в справке к функции $( $FunctionInfo.Name ).
+Если содержание указанного раздела начинается с URL, то оно трактуется как ссылка на online 
+версию справки. И не может содержать ничего, кроме URL.
+
+Раздел с ошибочным содержанием:
+
+	$( $_ )
+	
+"@ `
+									;
+								};
+							};
+							$Help.relatedLinks.navigationLink `
+							| ? { $_.LinkText } `
+							| % { $_.LinkText } `
+							| % {
+								# обрабатываем прочие ссылки
 								$Link = `
-									$_.LinkText + $_.uri `
+									$_ `
 									| Expand-Definitions `
 								;
 @"
@@ -1036,22 +1068,12 @@ Function Get-Readme {
 			Everyone
 		.Notes
 		.Inputs
-			System.Management.Automation.PSModuleInfo
+			System.Management.Automation.PSModuleInfo, System.Management.Automation.CmdletInfo,
+			System.Management.Automation.FunctionInfo, System.Management.Automation.ExternalScriptInfo.
 			Описатели модулей. Именно для них и будет сгенерирован readme.md. 
-			Получены описатели могут быть через Get-Module.
-		.Inputs
-			System.Management.Automation.CmdletInfo
-			Через конвейер функция принимает описатели командлет. Именно для них и будет сгенерирован readme.md. 
-			Получены описатели могут быть через Get-Command.
-		.Inputs
-			System.Management.Automation.FunctionInfo
-			Через конвейер функция принимает описатели функций. Именно для них и будет сгенерирован readme.md. 
-			Получены описатели могут быть через Get-Command.
-		.Inputs
-			System.Management.Automation.ExternalScriptInfo
-			Через конвейер функция принимает описатели внешних сценариев. Именно для них и будет сгенерирован readme.md. 
+			Получены описатели могут быть через Get-Module, Get-Command.
 		.Outputs
-			String
+			String.
 			Содержимое readme.md.
 		.Link
 			[MarkDown]: <http://daringfireball.net/projects/markdown/syntax> "MarkDown (md) Syntax"
@@ -1059,6 +1081,10 @@ Function Get-Readme {
 			about_comment_based_help
 		.Link
 			[Написание справки для командлетов](http://go.microsoft.com/fwlink/?LinkID=123415)
+		.Link
+			http://github.com/IT-Service/ITG.Readme#Get-Readme
+		.Link
+			http://github.com/IT-Service/ITG.Readme#Get-Readme error такой вот
 		.Example
 			Get-Module 'ITG.Yandex.DnsServer' | Get-Readme | Out-File -Path 'readme.md' -Encoding 'UTF8' -Width 1024;
 			Генерация readme.md файла для модуля `ITG.Yandex.DnsServer` 
