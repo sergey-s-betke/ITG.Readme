@@ -1013,12 +1013,11 @@ $ExNum. Пример $ExNum.
 "@
 							$Help.relatedLinks.navigationLink `
 							| ? { $_.uri } `
-							| % { $_.uri } `
 							| % {
 								# обрабатываем ссылки на online версию справки
-								if ( $_ -match $reOnlineHelpLinkCheck ) {
+								if ( $_.uri -match $reOnlineHelpLinkCheck ) {
 @"
-- [Online версия справки](<$( $_ )> `"$( $FunctionInfo.Name )`")
+- [$( & { if ( $_.LinkText ) { $_.LinkText } else { 'Online версия справки' } } )]($( $_.uri ))
 "@
 								} else {
 									Write-Warning `
@@ -1029,14 +1028,14 @@ $ExNum. Пример $ExNum.
 
 Раздел с ошибочным содержанием:
 
-	$( $_ )
+	$( $_.uri )
 	
 "@ `
 									;
 								};
 							};
 							$Help.relatedLinks.navigationLink `
-							| ? { $_.LinkText } `
+							| ? { -not $_.uri } `
 							| % { $_.LinkText } `
 							| % {
 								# обрабатываем прочие ссылки
