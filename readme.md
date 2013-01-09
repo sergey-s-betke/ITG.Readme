@@ -8,7 +8,7 @@
 Формат генерируемого Readme.MD файла - текстовый файл в кодировке UTF-8 с
 разметкой [MarkDown][].
 
-Версия модуля: **1.6.2**
+Версия модуля: **1.6.3**
 
 Функции модуля
 --------------
@@ -75,16 +75,16 @@ System.Management.Automation.FunctionInfo, System.Management.Automation.External
         Позиция? 1
         Значение по умолчанию
         Принимать входные данные конвейера?true (ByValue)
-        Принимать подстановочные знаки?
+        Принимать подстановочные знаки?false
 
 - `OutDefaultFile [<SwitchParameter>]`
         выводить readme в файл readme.md в каталоге модуля
 
         Требуется? false
         Позиция? named
-        Значение по умолчанию
+        Значение по умолчанию False
         Принимать входные данные конвейера?false
-        Принимать подстановочные знаки?
+        Принимать подстановочные знаки?false
 
 - `ExternalScriptInfo <ExternalScriptInfo>`
         Описатель внешнего сценария
@@ -93,7 +93,7 @@ System.Management.Automation.FunctionInfo, System.Management.Automation.External
         Позиция? 1
         Значение по умолчанию
         Принимать входные данные конвейера?true (ByValue)
-        Принимать подстановочные знаки?
+        Принимать подстановочные знаки?false
 
 - `FunctionInfo <FunctionInfo>`
         Описатель функции
@@ -102,40 +102,40 @@ System.Management.Automation.FunctionInfo, System.Management.Automation.External
         Позиция? 1
         Значение по умолчанию
         Принимать входные данные конвейера?true (ByValue)
-        Принимать подстановочные знаки?
+        Принимать подстановочные знаки?false
 
 - `ReferencedModules <PSModuleInfo[]>`
         Перечень модулей, упоминания функций которых будут заменены на ссылки
 
         Требуется? false
         Позиция? named
-        Значение по умолчанию
+        Значение по умолчанию @()
         Принимать входные данные конвейера?false
-        Принимать подстановочные знаки?
+        Принимать подстановочные знаки?false
 
 - `TranslateRules <Array>`
         Правила для обработки readme регулярными выражениями
 
         Требуется? false
         Позиция? named
-        Значение по умолчанию
+        Значение по умолчанию @()
         Принимать входные данные конвейера?false
-        Принимать подстановочные знаки?
+        Принимать подстановочные знаки?false
 
 - `ShortDescription [<SwitchParameter>]`
         Генерировать только краткое описание
 
         Требуется? false
         Позиция? named
-        Значение по умолчанию
+        Значение по умолчанию False
         Принимать входные данные конвейера?false
-        Принимать подстановочные знаки?
+        Принимать подстановочные знаки?false
 
 - `<CommonParameters>`
-        Данный командлет поддерживает общие параметры: Verbose, Debug,
+        Этот командлет поддерживает общие параметры: Verbose, Debug,
         ErrorAction, ErrorVariable, WarningAction, WarningVariable,
-        OutBuffer и OutVariable. Для получения дополнительных сведений введите
-        [`get-help about_CommonParameters`][about_CommonParameters].
+        OutBuffer и OutVariable. Для получения дополнительных сведений см. раздел
+        [about_CommonParameters][] (http://go.microsoft.com/fwlink/?LinkID=113216).
 
 
 
@@ -167,8 +167,8 @@ System.Management.Automation.FunctionInfo, System.Management.Automation.External
 - [Написание справки для командлетов](http://go.microsoft.com/fwlink/?LinkID=123415)
 
 
-[about_Comment_Based_Help]: http://go.microsoft.com/fwlink/?LinkID=144309 "Описание написания разделов справки на основе комментариев для..."
-[about_CommonParameters]: http://go.microsoft.com/fwlink/?LinkID=113216 "Описание параметров, которые могут использоваться с любым командлетом."
+[about_Comment_Based_Help]: http://go.microsoft.com/fwlink/?LinkID=144309 "Describes how to write comment-based help topics for functions and scripts."
+[about_CommonParameters]: http://go.microsoft.com/fwlink/?LinkID=113216 "Describes the parameters that can be used with any cmdlet."
 [Get-Readme]: <ITG.Readme#Get-Readme> "Генерирует readme файл с MarkDown разметкой по данным модуля и комментариям к его функциям. Файл предназначен, в частности, для размещения в репозиториях github."
 [MarkDown]: http://daringfireball.net/projects/markdown/syntax "MarkDown (md) Syntax"
 
