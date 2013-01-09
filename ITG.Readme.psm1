@@ -38,7 +38,7 @@ Filter ConvertTo-TranslateRule {
 	<#
 		.Synopsis
 			Преобразует правила выделения внешних ссылок, переданных по конвейеру в различных форматах, в унифицированный формат
-			для последующей инициализации транслятора `$Translator` (через ConvertTo-Translator).
+			для последующей инициализации транслятора `$Translator` (через Use-TranslateRule).
 	#>
 	param (
 		[Parameter(
@@ -222,7 +222,7 @@ Function Get-EndReference {
 	};
 };
 
-Function ConvertTo-Translator {
+Function Use-TranslateRule {
 	<#
 		.Synopsis
 			Инициализирует объект `$Translator` набором правил трансляции, поступившим по конвейеру.
@@ -1198,7 +1198,7 @@ Function Get-Readme {
 		;
 
 		$TranslateRules `
-		| ConvertTo-Translator `
+		| Use-TranslateRule `
 		;
 		
 		$res = $PSBoundParameters.Remove( 'TranslateRules' );
