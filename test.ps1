@@ -1,13 +1,12 @@
 ﻿[CmdletBinding()]
 param()
 
-$Module = Import-Module `
+Import-Module `
 	(Join-Path `
 		-Path ( Split-Path -Path ( $MyInvocation.MyCommand.Path ) -Parent ) `
-		-ChildPath 'ITG.Readme' `
+		-ChildPath 'ITG.Readme.psd1' `
 	) `
 	-Force `
 	-Verbose `
-	-PassThru `
 ;
-Get-Readme -Module $Module -OutDefaultFile;
+Get-Readme -Module ( Get-Module 'ITG.Readme' ) -OutDefaultFile;
