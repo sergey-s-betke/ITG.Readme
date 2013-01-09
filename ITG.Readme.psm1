@@ -490,9 +490,14 @@ Function MatchEvaluatorForAbout( [System.Text.RegularExpressions.Match] $Match )
 };
 
 Function Add-EndReferenceForAbout( [String] $Id ) {
-	$aboutTopic = Get-Help $id -Full;
+	$aboutTopic = Get-Help `
+		-Category HelpFile `
+		-Name $id `
+		-Full `
+		-ErrorAction SilentlyContinue `
+	;
 	$title = $aboutTopic.Synopsis;
-	if ( $title -notmatch '\.\s*$' ) {
+	if ( $title -match '[^.]\s*$' ) {
 		$title += '...';
 	};
 	Add-EndReference `
@@ -1083,8 +1088,6 @@ Function Get-Readme {
 			[Написание справки для командлетов](http://go.microsoft.com/fwlink/?LinkID=123415)
 		.Link
 			http://github.com/IT-Service/ITG.Readme#Get-Readme
-		.Link
-			http://github.com/IT-Service/ITG.Readme#Get-Readme error такой вот
 		.Example
 			Get-Module 'ITG.Yandex.DnsServer' | Get-Readme | Out-File -Path 'readme.md' -Encoding 'UTF8' -Width 1024;
 			Генерация readme.md файла для модуля `ITG.Yandex.DnsServer` 
