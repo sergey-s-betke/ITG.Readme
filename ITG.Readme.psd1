@@ -14,7 +14,7 @@
 ModuleToProcess = 'ITG.Readme.psm1'
 
 # Номер версии данного модуля.
-ModuleVersion = '1.6.2'
+ModuleVersion = '1.6.3'
 
 # Уникальный идентификатор данного модуля
 GUID = '826e836c-d10c-4d4d-b86b-8b4a41829b00'
