@@ -161,7 +161,7 @@ System.Management.Automation.FunctionInfo, System.Management.Automation.External
 
 ##### См. также
 
-- [Online версия справки](<http://github.com/IT-Service/ITG.Readme#Get-Readme> "Get-Readme")
+- [Online версия справки](http://github.com/IT-Service/ITG.Readme#Get-Readme)
 - [MarkDown][]
 - [about_Comment_Based_Help][]
 - [Написание справки для командлетов](http://go.microsoft.com/fwlink/?LinkID=123415)
