@@ -56,21 +56,14 @@ Readme
 
 ##### Принимаемые данные по конвейеру
 
-- System.Management.Automation.PSModuleInfo
+- System.Management.Automation.PSModuleInfo, System.Management.Automation.CmdletInfo,
+System.Management.Automation.FunctionInfo, System.Management.Automation.ExternalScriptInfo.
 Описатели модулей. Именно для них и будет сгенерирован readme.md.
-Получены описатели могут быть через Get-Module.
-- System.Management.Automation.CmdletInfo
-Через конвейер функция принимает описатели командлет. Именно для них и будет сгенерирован readme.md.
-Получены описатели могут быть через Get-Command.
-- System.Management.Automation.FunctionInfo
-Через конвейер функция принимает описатели функций. Именно для них и будет сгенерирован readme.md.
-Получены описатели могут быть через Get-Command.
-- System.Management.Automation.ExternalScriptInfo
-Через конвейер функция принимает описатели внешних сценариев. Именно для них и будет сгенерирован readme.md.
+Получены описатели могут быть через Get-Module, Get-Command.
 
 ##### Передаваемые по конвейеру данные
 
-- String
+- String.
 Содержимое readme.md.
 
 ##### Параметры
@@ -166,8 +159,9 @@ Readme
 
 		Get-Module 'ITG.Yandex.DnsServer' | Get-Readme -OutDefaultFile -ReferencedModules @( 'ITG.Yandex', 'ITG.Utils', 'ITG.WinAPI.UrlMon', 'ITG.WinAPI.User32' | Get-Module )
 
-##### Связанные ссылки
+##### См. также
 
+- [Online версия справки](<http://github.com/IT-Service/ITG.Readme#Get-Readme> "Get-Readme")
 - [MarkDown][]
 - [about_Comment_Based_Help][]
 - [Написание справки для командлетов](http://go.microsoft.com/fwlink/?LinkID=123415)
