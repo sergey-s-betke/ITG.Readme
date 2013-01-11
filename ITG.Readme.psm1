@@ -34,31 +34,6 @@ $reOnlineHelpLinkCheck = New-Object System.Text.RegularExpressions.Regex -Argume
 	, ( [System.Text.RegularExpressions.RegexOptions]::Singleline ) `
 ;
 
-Filter Split-Para {
-	<#
-		.Synopsis
-			Делит переданный текст на абзацы по правилам MarkDown. В качестве границы
-			абзацев - пустая строка. Текст в пределах абзаца объединяет в одну строку.
-	#>
-	param (
-		[Parameter(
-			Mandatory = $true
-			, ValueFromPipeline = $true
-		)]
-		[String]
-		[AllowEmptyString()]
-		[Alias('Text')]
-		$InputObject
-	)
-	
-	$InputObject -split '(?:[ \t]*\r?\n[ \t]*){2,}' `
-	| % {
-		$_ -replace '(?:[ \t]*\r?\n[ \t]*)', ' ' `
-		 	-replace '[ \t]+$', '' `
-		;
-	};
-}
-
 Filter ConvertTo-TranslateRule {
 	<#
 		.Synopsis
@@ -1280,12 +1255,115 @@ Function Get-Readme {
 	}
 }
 
+Filter Split-Para {
+	<#
+		.Synopsis
+			Делит переданный текст на абзацы по правилам MarkDown. В качестве границы
+			абзацев - пустая строка. Текст в пределах абзаца объединяет в одну строку.
+	#>
+	param (
+		[Parameter(
+			Mandatory = $true
+			, ValueFromPipeline = $true
+		)]
+		[String]
+		[AllowEmptyString()]
+		[Alias('Text')]
+		$InputObject
+	)
+	
+	$InputObject -split '(?:[ \t]*\r?\n[ \t]*){2,}' `
+	| % {
+		$_ -replace '(?:[ \t]*\r?\n[ \t]*)', ' ' `
+		 	-replace '[ \t]+$', '' `
+		;
+	};
+}
+
 $HelpXMLNS = @{
 	msh='http://msh';
 	maml='http://schemas.microsoft.com/maml/2004/10';
 	command='http://schemas.microsoft.com/maml/dev/command/2004/10';
 	dev='http://schemas.microsoft.com/maml/dev/2004/10';
 	MSHelp='http://msdn.microsoft.com/mshelp'
+};
+
+Function DoTextElement( $HelpContent, $Root, $Prefix, $El, $NS, $Txt ) {
+	if ( $Txt ) {
+		$null = $Root.AppendChild(
+			$HelpContent.CreateElement( $Prefix, $El, $NS )
+		).AppendChild(
+			$HelpContent.CreateTextNode( $Txt )
+		);
+	};
+};
+
+Function DoNameElement( $HelpContent, $Root, $Txt ) {
+	DoTextElement $HelpContent $Root 'maml' 'name' ( $HelpXMLNS.maml ) $Txt;
+};
+
+Function DoParaElement( $HelpContent, $Root, $El, $Description ) {
+	if ( $Description ) {
+		$DescriptionEl = $Root.AppendChild(
+			$HelpContent.CreateElement( 'maml', $El, ( $HelpXMLNS.maml ) )
+		);
+		$Description `
+		| Split-Para `
+		| % {
+			DoTextElement $HelpContent $DescriptionEl 'maml' 'para' ( $HelpXMLNS.maml ) $_;
+		};
+	};
+};
+
+Function DoDescription( $HelpContent, $Root, $Description ) {
+	DoParaElement $HelpContent $Root 'description' $Description;
+};
+
+Function DoValuesList( $HelpContent, $Root, $Help, $ListId, $ListItemId ) {
+	if ( $Help.$ListId ) {
+		$List = $Root.AppendChild(
+			$HelpContent.CreateElement( '', $ListId, ( $HelpXMLNS.command ) )
+		);
+		$Help.$ListId.$ListItemId `
+		| % {
+			$Txt = @( $_.type.name -split '\r?\n' );
+			$TypeName = $Txt[0];
+
+			$ItemEl = $List.AppendChild(
+				$HelpContent.CreateElement( '', $ListItemId, ( $HelpXMLNS.command ) )
+			).AppendChild(
+				( $DevType = $HelpContent.CreateElement( 'dev', 'type', ( $HelpXMLNS.dev ) ) )
+			);
+			DoTextElement $HelpContent $DevType 'maml' 'name' ( $HelpXMLNS.maml ) $TypeName;
+			DoTextElement $HelpContent $DevType 'maml' 'uri' ( $HelpXMLNS.maml ) ( $_.type.uri );
+
+			if ( $_.type.description ) {
+				$TypeDescription = $_.type.description | Select-Object -ExpandProperty Text;
+			} elseif ( $Txt.Count -gt 1 ) {
+				$TypeDescription = $Txt[1..( $Txt.Count-1 )] | Out-String;
+			} else {
+				$TypeDescription = '';
+			};
+			DoDescription $HelpContent $DevType $TypeDescription;
+
+			if ( $_.Description ) {
+				$TypeDescription = $_.Description | Select-Object -ExpandProperty Text;
+			};
+			DoDescription $HelpContent $ItemEl $TypeDescription;
+		};
+	};
+};
+
+Function DoParaList( $HelpContent, $Root, $Help, $ListId, $ListItemId ) {
+	if ( $Help.$ListId ) {
+		$List = $Root.AppendChild(
+			$HelpContent.CreateElement( 'maml', $ListId, ( $HelpXMLNS.maml ) )
+		);
+		$Help.$ListId.$ListItemId `
+		| % {
+			DoParaElement $HelpContent $List $ListItemId ( $_.Text );
+		};
+	};
 };
 
 Function Get-InternalHelpXML {
@@ -1339,8 +1417,7 @@ Function Get-InternalHelpXML {
 	xmlns:dev="$( $HelpXMLNS.dev )"
 	xmlns:MSHelp="$( $HelpXMLNS.MSHelp )"
 	schema="maml"
->
-</helpItems>
+/>
 "@
 				if ( $ModuleInfo.ExportedFunctions ) {
 					$ModuleInfo.ExportedFunctions.Values `
@@ -1381,106 +1458,44 @@ Function Get-InternalHelpXML {
 "@
 				$Command = $HelpContent.DocumentElement;
 				
-				$null = $Command.AppendChild(
-					( $Details = $HelpContent.CreateElement( '', 'details', ( $HelpXMLNS.command ) ) )
-				).AppendChild(
-					$HelpContent.CreateElement( '', 'name', ( $HelpXMLNS.command ) )
-				).AppendChild(
-					$HelpContent.CreateTextNode( $FunctionInfo.Name )
+				$Details = $Command.AppendChild(
+					$HelpContent.CreateElement( '', 'details', ( $HelpXMLNS.command ) )
 				);
+				DoTextElement $HelpContent $Details '' 'name' ( $HelpXMLNS.command ) ( $FunctionInfo.Name );
 
 				$NameParts = @( $FunctionInfo.Name -split '-' );
 				if ( $NameParts.Count -eq 2 ) {
-					$null = $Details.AppendChild(
-						$HelpContent.CreateElement( '', 'verb', ( $HelpXMLNS.command ) )
-					).AppendChild(
-						$HelpContent.CreateTextNode( $NameParts[0] )
-					);
-					$null = $Details.AppendChild(
-						$HelpContent.CreateElement( '', 'noun', ( $HelpXMLNS.command ) )
-					).AppendChild(
-						$HelpContent.CreateTextNode( $NameParts[1] )
-					);
+					DoTextElement $HelpContent $Details '' 'verb' ( $HelpXMLNS.command ) ( $NameParts[0] );
+					DoTextElement $HelpContent $Details '' 'noun' ( $HelpXMLNS.command ) ( $NameParts[1] );
 				};
 
 				$Help = $( $FunctionInfo | Get-Help -Full );
-				
-				$null = $Details.AppendChild(
-					( $Synopsis = $HelpContent.CreateElement( 'maml', 'description', ( $HelpXMLNS.maml ) ) )
-				);
-				$Help.Synopsis `
-				| Split-Para `
-				| % {
-					$null = $Synopsis.AppendChild(
-						$HelpContent.CreateElement( 'maml', 'para', ( $HelpXMLNS.maml ) )
-					).AppendChild(
-						$HelpContent.CreateTextNode( $_ )
-					);
-				};
-				
-				if ( $Module.Copyright ) {
-					$null = $Details.AppendChild(
-						( $Copyright = $HelpContent.CreateElement( 'maml', 'copyright', ( $HelpXMLNS.maml ) ) )
-					);
-					$Module.Copyright `
-					| Split-Para `
-					| % {
-						$null = $Copyright.AppendChild(
-							$HelpContent.CreateElement( 'maml', 'para', ( $HelpXMLNS.maml ) )
-						).AppendChild(
-							$HelpContent.CreateTextNode( $_ )
-						);
-					};
-				};
-				
-				if ( $Module.ModuleVersion ) {
-					$null = $Details.AppendChild(
-						$HelpContent.CreateElement( 'dev', 'version', ( $HelpXMLNS.dev ) )
-					).AppendChild(
-						$HelpContent.CreateTextNode( $Module.ModuleVersion )
-					);
-				};
-				
-				if ( $Help.Description ) {
-					$null = $Command.AppendChild(
-						( $Description = $HelpContent.CreateElement( 'maml', 'description', ( $HelpXMLNS.maml ) ) )
-					);
-					$Help.Description `
-					| Select-Object -ExpandProperty Text `
-					| Split-Para `
-					| % {
-						$null = $Description.AppendChild(
-							$HelpContent.CreateElement( 'maml', 'para', ( $HelpXMLNS.maml ) )
-						).AppendChild(
-							$HelpContent.CreateTextNode( $_ )
-						);
-					};
-				};
-				
+
+				DoDescription $HelpContent $Details ( $Help.Synopsis );
+				DoParaElement $HelpContent $Details 'copyright' ( $Module.Copyright );
+				DoTextElement $HelpContent $Details 'dev' 'version' ( $HelpXMLNS.dev ) ( $Module.ModuleVersion );
+				DoTextElement $HelpContent $Details '' 'component' ( $HelpXMLNS.command ) ( $Help.Component );
+				DoTextElement $HelpContent $Details '' 'functionality' ( $HelpXMLNS.command ) ( $Help.Functionality );
+				DoTextElement $HelpContent $Details '' 'role' ( $HelpXMLNS.command ) ( $Help.Role );
+				DoDescription $HelpContent $Command ( $Help.Description | Select-Object -ExpandProperty Text );
+
 				if ( $Help.Syntax ) {
 					$null = $Command.AppendChild(
 						( $Syntax = $HelpContent.CreateElement( '', 'syntax', ( $HelpXMLNS.command ) ) )
 					);
 					$Help.Syntax.SyntaxItem `
 					| % {
-						$null = $Syntax.AppendChild(
-							( $SyntaxItem = $HelpContent.CreateElement( '', 'syntaxItem', ( $HelpXMLNS.command ) ) )
-						).AppendChild(
-							$HelpContent.CreateElement( 'maml', 'name', ( $HelpXMLNS.maml ) )
-						).AppendChild(
-							$HelpContent.CreateTextNode( $FunctionInfo.Name )
+						$SyntaxItem = $Syntax.AppendChild(
+							$HelpContent.CreateElement( '', 'syntaxItem', ( $HelpXMLNS.command ) )
 						);
+						DoNameElement $HelpContent $SyntaxItem ( $FunctionInfo.Name );
 						
 						$_.Parameter `
 						| % {
-							$null = $SyntaxItem.AppendChild(
-								( $Parameter = $HelpContent.CreateElement( '', 'parameter', ( $HelpXMLNS.command ) ) )
-							).AppendChild(
-								$HelpContent.CreateElement( 'maml', 'name', ( $HelpXMLNS.maml ) )
-							).AppendChild(
-								$HelpContent.CreateTextNode( ( $_.Name ) )
+							$Parameter = $SyntaxItem.AppendChild(
+								$HelpContent.CreateElement( '', 'parameter', ( $HelpXMLNS.command ) )
 							);
-
+							DoNameElement $HelpContent $Parameter ( $_.Name );
 							$Parameter.SetAttribute( 'required', ( $_.Required ) );
 							$Parameter.SetAttribute( 'position', ( $_.Position ) );
 							$Parameter.SetAttribute( 'pipelineInput', ( $_.PipelineInput ) );
@@ -1512,13 +1527,10 @@ Function Get-InternalHelpXML {
 					);
 					$Help.Parameters.Parameter `
 					| % {
-						$null = $Parameters.AppendChild(
-							( $Parameter = $HelpContent.CreateElement( '', 'parameter', ( $HelpXMLNS.command ) ) )
-						).AppendChild(
-							$HelpContent.CreateElement( 'maml', 'name', ( $HelpXMLNS.maml ) )
-						).AppendChild(
-							$HelpContent.CreateTextNode( ( $_.Name ) )
+						$Parameter = $Parameters.AppendChild(
+							$HelpContent.CreateElement( '', 'parameter', ( $HelpXMLNS.command ) )
 						);
+						DoNameElement $HelpContent $Parameter ( $_.Name );
 
 						$Parameter.SetAttribute( 'required', ( $_.Required ) );
 						$Parameter.SetAttribute( 'position', ( $_.Position ) );
@@ -1530,21 +1542,7 @@ Function Get-InternalHelpXML {
 							$Parameter.SetAttribute( 'globbing', ( $_.globbing ) );
 						};
 
-						if ( $_.Description ) {
-							$null = $Parameter.AppendChild(
-								( $Description = $HelpContent.CreateElement( 'maml', 'description', ( $HelpXMLNS.maml ) ) )
-							);
-							$_.Description `
-							| Select-Object -ExpandProperty Text `
-							| Split-Para `
-							| % {
-								$null = $Description.AppendChild(
-									$HelpContent.CreateElement( 'maml', 'para', ( $HelpXMLNS.maml ) )
-								).AppendChild(
-									$HelpContent.CreateTextNode( $_ )
-								);
-							};
-						};
+						DoDescription $HelpContent $Parameter ( $_.Description | Select-Object -ExpandProperty Text );
 						
 						if ( $_.parameterValue ) {
 							$null = $Parameter.AppendChild(
@@ -1558,13 +1556,7 @@ Function Get-InternalHelpXML {
 							};
 						};
 						
-						if ( $_.defaultValue ) {
-							$null = $Parameter.AppendChild(
-								$HelpContent.CreateElement( '', 'defaultValue', ( $HelpXMLNS.command ) )
-							).AppendChild(
-								$HelpContent.CreateTextNode( ( $_.defaultValue ) )
-							);
-						};
+						DoTextElement $HelpContent $Parameter '' 'defaultValue' ( $HelpXMLNS.command ) ( $_.defaultValue );
 						
 #					    <dev:possibleValues>
 #					      <dev:possibleValue>
@@ -1573,179 +1565,45 @@ Function Get-InternalHelpXML {
 #					          <maml:para> Description 1 </maml:para>
 #					        </maml:description>
 #					      <dev:possibleValue>
-#					      <dev:possibleValue>
-#					        <dev:value> Value 2 </dev:value>
-#					        <maml:description>
-#					          <maml:para> Description 2 </maml:para>
-#					        </maml:description>
-#					      <dev:possibleValue>
 #					    </dev:possibleValues>
 #						http://msdn.microsoft.com/en-us/library/bb736339.aspx
 					};
 				};
 
-				if ( $Help.inputTypes ) {
-					$null = $Command.AppendChild(
-						( $InputTypes = $HelpContent.CreateElement( '', 'inputTypes', ( $HelpXMLNS.command ) ) )
-					);
-					$Help.inputTypes.inputType `
-					| % {
-						$Txt = @( $_.type.name -split '\r?\n' );
-						$TypeName = $Txt[0];
-
-						$null = $InputTypes.AppendChild(
-							( $InputType = $HelpContent.CreateElement( '', 'inputType', ( $HelpXMLNS.command ) ) )
-						).AppendChild(
-							( $DevType = $HelpContent.CreateElement( 'dev', 'type', ( $HelpXMLNS.dev ) ) )
-						).AppendChild(
-							$HelpContent.CreateElement( 'maml', 'name', ( $HelpXMLNS.maml ) )
-						).AppendChild(
-							$HelpContent.CreateTextNode( ( $TypeName ) )
-						);
-						
-						if ( $_.type.uri ) {
-							$null = $DevType.AppendChild(
-							).AppendChild(
-								$HelpContent.CreateElement( 'maml', 'uri', ( $HelpXMLNS.maml ) )
-							).AppendChild(
-								$HelpContent.CreateTextNode( ( $_.type.uri ) )
-							);
-						};
-
-						if ( $_.type.description ) {
-							$TypeDescription = $_.type.description | Select-Object -ExpandProperty Text;
-						} elseif ( $Txt.Count -gt 1 ) {
-							$TypeDescription = $Txt[1..( $Txt.Count-1 )] | Out-String;
-						} else {
-							$TypeDescription = '';
-						};
-						
-						if ( $TypeDescription ) {
-							$null = $DevType.AppendChild(
-								( $Description = $HelpContent.CreateElement( 'maml', 'description', ( $HelpXMLNS.maml ) ) )
-							);
-							$TypeDescription `
-							| Split-Para `
-							| % {
-								$null = $Description.AppendChild(
-									$HelpContent.CreateElement( 'maml', 'para', ( $HelpXMLNS.maml ) )
-								).AppendChild(
-									$HelpContent.CreateTextNode( $_ )
-								);
-							};
-						};
-
-						if ( $_.Description ) {
-							$null = $InputType.AppendChild(
-								( $Description = $HelpContent.CreateElement( 'maml', 'description', ( $HelpXMLNS.maml ) ) )
-							);
-							$_.Description `
-							| Select-Object -ExpandProperty Text `
-							| Split-Para `
-							| % {
-								$null = $Description.AppendChild(
-									$HelpContent.CreateElement( 'maml', 'para', ( $HelpXMLNS.maml ) )
-								).AppendChild(
-									$HelpContent.CreateTextNode( $_ )
-								);
-							};
-						};
-					};
-				};
+				DoValuesList $HelpContent $Command $Help 'inputTypes' 'inputType';
+				DoValuesList $HelpContent $Command $Help 'returnValues' 'returnValue';
+				DoParaList $HelpContent $Command $Help 'alertSet' 'alert';
 				
-				if ( $Help.returnValues ) {
-					$null = $Command.AppendChild(
-						( $ReturnValues = $HelpContent.CreateElement( '', 'returnValues', ( $HelpXMLNS.command ) ) )
+				if ( $Help.relatedLinks ) {
+					$ListEl = $Command.AppendChild(
+						$HelpContent.CreateElement( 'maml', 'relatedLinks', ( $HelpXMLNS.maml ) )
 					);
-					$Help.returnValues.returnValue `
+					$Help.relatedLinks.navigationLink `
 					| % {
-						$null = $ReturnValues.AppendChild(
-							( $ReturnValue = $HelpContent.CreateElement( '', 'returnValue', ( $HelpXMLNS.command ) ) )
-						).AppendChild(
-							( $DevType = $HelpContent.CreateElement( 'dev', 'type', ( $HelpXMLNS.dev ) ) )
-						).AppendChild(
-							$HelpContent.CreateElement( 'maml', 'name', ( $HelpXMLNS.maml ) )
-						).AppendChild(
-							$HelpContent.CreateTextNode( ( $_.type.name ) )
+						$ListItemEl = $ListEl.AppendChild(
+							$HelpContent.CreateElement( 'maml', 'navigationLink', ( $HelpXMLNS.maml ) )
 						);
-						
-						if ( $_.type.uri ) {
-							$null = $DevType.AppendChild(
-							).AppendChild(
-								$HelpContent.CreateElement( 'maml', 'uri', ( $HelpXMLNS.maml ) )
-							).AppendChild(
-								$HelpContent.CreateTextNode( ( $_.type.uri ) )
-							);
-						};
-
-						if ( $_.type.description ) {
-							$null = $DevType.AppendChild(
-								( $Description = $HelpContent.CreateElement( 'maml', 'description', ( $HelpXMLNS.maml ) ) )
-							);
-							$_.type.description `
-							| Select-Object -ExpandProperty Text `
-							| Split-Para `
-							| % {
-								$null = $Description.AppendChild(
-									$HelpContent.CreateElement( 'maml', 'para', ( $HelpXMLNS.maml ) )
-								).AppendChild(
-									$HelpContent.CreateTextNode( $_ )
-								);
-							};
-						};
-
-						if ( $_.Description ) {
-							$null = $InputType.AppendChild(
-								( $Description = $HelpContent.CreateElement( 'maml', 'description', ( $HelpXMLNS.maml ) ) )
-							);
-							$_.Description `
-							| Select-Object -ExpandProperty Text `
-							| Split-Para `
-							| % {
-								$null = $Description.AppendChild(
-									$HelpContent.CreateElement( 'maml', 'para', ( $HelpXMLNS.maml ) )
-								).AppendChild(
-									$HelpContent.CreateTextNode( $_ )
-								);
-							};
-						};
+						DoTextElement $HelpContent $ListItemEl 'maml' 'uri' ( $HelpXMLNS.maml ) ( $_.uri );
+						DoTextElement $HelpContent $ListItemEl 'maml' 'linkText' ( $HelpXMLNS.maml ) ( $_.linkText );
 					};
 				};
-					
+
+#				if ( $Help.Examples ) {
+#					$List = $Command.AppendChild(
+#						$HelpContent.CreateElement( 'maml', 'relatedLinks', ( $HelpXMLNS.maml ) )
+#					);
+#					$Help.Examples.Example `
+#					| % {
+#						DoTextElement $HelpContent $List 'maml' 'uri' ( $HelpXMLNS.maml ) ( $_.uri );
+#						DoTextElement $HelpContent $List 'maml' 'linkText' ( $HelpXMLNS.maml ) ( $_.linkText );
+#					};
+#				};
+
 				return $HelpContent;
 				
 				$ReadMeContent = & { `
 					$Help = ( $FunctionInfo | Get-Help -Full );
 					if ( $ShortDescription ) {
-					} else {
-						if ( $Help.Component ) {
-@"
-
-##### Компонент
-
-$($Help.Component)
-"@
-						};
-						if ( $Help.Functionality ) {
-							$Description = `
-								$Help.Functionality `
-							;
-@"
-
-##### Функциональность
-
-$Description
-"@
-						};
-						if ( $Help.Role ) {
-@"
-
-##### Требуемая роль пользователя
-
-Для выполнения функции $($FunctionInfo.Name) требуется роль $($Help.Role) для учётной записи,
-от имени которой будет выполнена описываемая функция.
-"@
-						};
 						if ( $Help.Examples ) {
 							$Help.Examples.Example `
 							| % -Begin {
@@ -1779,50 +1637,7 @@ $ExNum. Пример $ExNum.
 								};
 @"
 
-		$($_.code)
-"@
-							};
-						};
-						if ( $Help.relatedLinks ) {
-@"
-
-##### См. также
-
-"@
-							$Help.relatedLinks.navigationLink `
-							| ? { $_.uri } `
-							| % {
-								# обрабатываем ссылки на online версию справки
-								if ( $_.uri -match $reOnlineHelpLinkCheck ) {
-@"
-- [$( & { if ( $_.LinkText ) { $_.LinkText } else { 'Online версия справки' } } )]($( $_.uri ))
-"@
-								} else {
-									Write-Warning `
-										-Message @"
-Обнаружена ошибка при оформлении раздела .Link в справке к функции $( $FunctionInfo.Name ).
-Если содержание указанного раздела начинается с URL, то оно трактуется как ссылка на online 
-версию справки. И не может содержать ничего, кроме URL.
-
-Раздел с ошибочным содержанием:
-
-	$( $_.uri )
-	
-"@ `
-									;
-								};
-							};
-							$Help.relatedLinks.navigationLink `
-							| ? { -not $_.uri } `
-							| % { $_.LinkText } `
-							| % {
-								# обрабатываем прочие ссылки
-								$Link = `
-									$_ `
-									| Expand-Definitions `
-								;
-@"
-- $Link
+	$($_.code)
 "@
 							};
 						};
@@ -1831,7 +1646,7 @@ $ExNum. Пример $ExNum.
 				return $ReadMeContent;
 			};
 		};
-	}
+	};
 }
 
 Function Get-HelpXML {
@@ -1845,6 +1660,8 @@ Function Get-HelpXML {
 			функция создаст XML файл справки в каталоге модуля (точнее - в
 			подкаталоге культуры, как того и требуют командлеты PowerShell, в
 			частности - `Get-Help`).
+		.Notes
+			Необходимо дополнительное тестирование на PowerShell 3.
 		.Role
 			Everyone
 		.Inputs
@@ -1859,8 +1676,6 @@ Function Get-HelpXML {
 			System.Management.Automation.CmdletInfo
 			Описатели командлет. Именно для них и будет сгенерирована XML справка. 
 			Получены описатели могут быть через `Get-Command`.
-		.Inputs
-			test   
 		.Outputs
 			System.Xml.XmlDocument
 			Содержимое XML справки.
