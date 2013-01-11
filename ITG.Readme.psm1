@@ -1329,8 +1329,8 @@ Function DoValuesList( $HelpContent, $Root, $Help, $ListId, $ListItemId ) {
 			$Txt = @( $_.type.name -split '\r?\n' );
 			$TypeName = $Txt[0];
 
-			$ItemEl = $List.AppendChild(
-				$HelpContent.CreateElement( '', $ListItemId, ( $HelpXMLNS.command ) )
+			$null = $List.AppendChild(
+				( $ItemEl = $HelpContent.CreateElement( '', $ListItemId, ( $HelpXMLNS.command ) ) )
 			).AppendChild(
 				( $DevType = $HelpContent.CreateElement( 'dev', 'type', ( $HelpXMLNS.dev ) ) )
 			);
@@ -1474,9 +1474,10 @@ Function Get-InternalHelpXML {
 				DoDescription $HelpContent $Details ( $Help.Synopsis );
 				DoParaElement $HelpContent $Details 'copyright' ( $Module.Copyright );
 				DoTextElement $HelpContent $Details 'dev' 'version' ( $HelpXMLNS.dev ) ( $Module.ModuleVersion );
-				DoTextElement $HelpContent $Details '' 'component' ( $HelpXMLNS.command ) ( $Help.Component );
-				DoTextElement $HelpContent $Details '' 'functionality' ( $HelpXMLNS.command ) ( $Help.Functionality );
-				DoTextElement $HelpContent $Details '' 'role' ( $HelpXMLNS.command ) ( $Help.Role );
+				# ToDo: 3 следующих элемента не знаю куда выводить
+				DoTextElement $HelpContent $Command '' 'component' ( $HelpXMLNS.command ) ( $Help.Component );
+				DoTextElement $HelpContent $Command '' 'functionality' ( $HelpXMLNS.command ) ( $Help.Functionality );
+				DoTextElement $HelpContent $Command '' 'role' ( $HelpXMLNS.command ) ( $Help.Role );
 				DoDescription $HelpContent $Command ( $Help.Description | Select-Object -ExpandProperty Text );
 
 				if ( $Help.Syntax ) {
@@ -1588,16 +1589,21 @@ Function Get-InternalHelpXML {
 					};
 				};
 
-#				if ( $Help.Examples ) {
-#					$List = $Command.AppendChild(
-#						$HelpContent.CreateElement( 'maml', 'relatedLinks', ( $HelpXMLNS.maml ) )
-#					);
-#					$Help.Examples.Example `
-#					| % {
-#						DoTextElement $HelpContent $List 'maml' 'uri' ( $HelpXMLNS.maml ) ( $_.uri );
-#						DoTextElement $HelpContent $List 'maml' 'linkText' ( $HelpXMLNS.maml ) ( $_.linkText );
-#					};
-#				};
+#<command:examples>
+#  <command:example>
+#    <maml:title>----------  EXAMPLE 1  ----------</maml:title>
+#    <maml:Introduction>
+#      <maml:paragraph>C:PS&gt;</maml:paragraph>
+#    </maml:Introduction>
+#    <dev:code> command </dev:code>
+#    <dev:remarks>
+#      <maml:para> command description </maml:para>
+#      <maml:para></maml:para>
+#      <maml:para></maml:para>
+#      <maml:para> command output </maml:para>
+#</dev:remarks>
+#</command:example>
+#</command:examples>
 
 				return $HelpContent;
 				
@@ -1649,8 +1655,14 @@ $ExNum. Пример $ExNum.
 	};
 }
 
+
 Function Get-HelpXML {
 	<#
+		.ExternalHelp ITG.Readme.psm1-help.xml
+		.component
+			Component
+		.functionality
+			Functionality
 		.Synopsis
 			Генерирует XML справку для переданного модуля, функции, командлеты.
 		.Description
