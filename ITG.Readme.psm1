@@ -53,7 +53,9 @@ Filter Split-Para {
 	
 	$InputObject -split '(?:[ \t]*\r?\n[ \t]*){2,}' `
 	| % {
-		$_ -replace '(?:[ \t]*\r?\n[ \t]*)', ' ';
+		$_ -replace '(?:[ \t]*\r?\n[ \t]*)', ' ' `
+		 	-replace '[ \t]+$', '' `
+		;
 	};
 }
 
@@ -1482,8 +1484,12 @@ Function Get-InternalHelpXML {
 							$Parameter.SetAttribute( 'required', ( $_.Required ) );
 							$Parameter.SetAttribute( 'position', ( $_.Position ) );
 							$Parameter.SetAttribute( 'pipelineInput', ( $_.PipelineInput ) );
-#							$Parameter.SetAttribute( 'variableLength', ( $_.VariableLength ) );
-#							$Parameter.SetAttribute( 'globbing', ( $_.Globbing ) );
+							if ( $_.variableLength ) {
+								$Parameter.SetAttribute( 'variableLength', ( $_.variableLength ) );
+							};
+							if ( $_.globbing ) {
+								$Parameter.SetAttribute( 'globbing', ( $_.globbing ) );
+							};
 
 							if ( $_.parameterValue ) {
 								$null = $Parameter.AppendChild(
@@ -1491,8 +1497,10 @@ Function Get-InternalHelpXML {
 								).AppendChild(
 									$HelpContent.CreateTextNode( ( $_.parameterValue ) )
 								);
-								$ParameterValue.SetAttribute( 'required', $true );
-#								$ParameterValue.SetAttribute( 'variableLength', ( $true ) );
+								$ParameterValue.SetAttribute( 'required', ( $_.Required ) );
+								if ( $_.variableLength ) {
+									$ParameterValue.SetAttribute( 'variableLength', ( $_.variableLength ) );
+								};
 							};
 						};
 					};
@@ -1515,8 +1523,12 @@ Function Get-InternalHelpXML {
 						$Parameter.SetAttribute( 'required', ( $_.Required ) );
 						$Parameter.SetAttribute( 'position', ( $_.Position ) );
 						$Parameter.SetAttribute( 'pipelineInput', ( $_.PipelineInput ) );
-#						$Parameter.SetAttribute( 'variableLength', ( $_.VariableLength ) );
-#						$Parameter.SetAttribute( 'globbing', ( $_.Globbing ) );
+						if ( $_.variableLength ) {
+							$Parameter.SetAttribute( 'variableLength', ( $_.variableLength ) );
+						};
+						if ( $_.globbing ) {
+							$Parameter.SetAttribute( 'globbing', ( $_.globbing ) );
+						};
 
 						if ( $_.Description ) {
 							$null = $Parameter.AppendChild(
@@ -1541,15 +1553,165 @@ Function Get-InternalHelpXML {
 								$HelpContent.CreateTextNode( ( $_.parameterValue ) )
 							);
 							$ParameterValue.SetAttribute( 'required', $true );
-#							$ParameterValue.SetAttribute( 'variableLength', ( $true ) );
+							if ( $_.variableLength ) {
+								$ParameterValue.SetAttribute( 'variableLength', ( $_.variableLength ) );
+							};
 						};
 						
-#						<dev:defaultValue>
-#						<dev:possibleValues>
+						if ( $_.defaultValue ) {
+							$null = $Parameter.AppendChild(
+								$HelpContent.CreateElement( '', 'defaultValue', ( $HelpXMLNS.command ) )
+							).AppendChild(
+								$HelpContent.CreateTextNode( ( $_.defaultValue ) )
+							);
+						};
+						
+#					    <dev:possibleValues>
+#					      <dev:possibleValue>
+#					        <dev:value> Value 1 </dev:value>
+#					        <maml:description>
+#					          <maml:para> Description 1 </maml:para>
+#					        </maml:description>
+#					      <dev:possibleValue>
+#					      <dev:possibleValue>
+#					        <dev:value> Value 2 </dev:value>
+#					        <maml:description>
+#					          <maml:para> Description 2 </maml:para>
+#					        </maml:description>
+#					      <dev:possibleValue>
+#					    </dev:possibleValues>
 #						http://msdn.microsoft.com/en-us/library/bb736339.aspx
 					};
 				};
 
+				if ( $Help.inputTypes ) {
+					$null = $Command.AppendChild(
+						( $InputTypes = $HelpContent.CreateElement( '', 'inputTypes', ( $HelpXMLNS.command ) ) )
+					);
+					$Help.inputTypes.inputType `
+					| % {
+						$Txt = @( $_.type.name -split '\r?\n' );
+						$TypeName = $Txt[0];
+
+						$null = $InputTypes.AppendChild(
+							( $InputType = $HelpContent.CreateElement( '', 'inputType', ( $HelpXMLNS.command ) ) )
+						).AppendChild(
+							( $DevType = $HelpContent.CreateElement( 'dev', 'type', ( $HelpXMLNS.dev ) ) )
+						).AppendChild(
+							$HelpContent.CreateElement( 'maml', 'name', ( $HelpXMLNS.maml ) )
+						).AppendChild(
+							$HelpContent.CreateTextNode( ( $TypeName ) )
+						);
+						
+						if ( $_.type.uri ) {
+							$null = $DevType.AppendChild(
+							).AppendChild(
+								$HelpContent.CreateElement( 'maml', 'uri', ( $HelpXMLNS.maml ) )
+							).AppendChild(
+								$HelpContent.CreateTextNode( ( $_.type.uri ) )
+							);
+						};
+
+						if ( $_.type.description ) {
+							$TypeDescription = $_.type.description | Select-Object -ExpandProperty Text;
+						} elseif ( $Txt.Count -gt 1 ) {
+							$TypeDescription = $Txt[1..( $Txt.Count-1 )] | Out-String;
+						} else {
+							$TypeDescription = '';
+						};
+						
+						if ( $TypeDescription ) {
+							$null = $DevType.AppendChild(
+								( $Description = $HelpContent.CreateElement( 'maml', 'description', ( $HelpXMLNS.maml ) ) )
+							);
+							$TypeDescription `
+							| Split-Para `
+							| % {
+								$null = $Description.AppendChild(
+									$HelpContent.CreateElement( 'maml', 'para', ( $HelpXMLNS.maml ) )
+								).AppendChild(
+									$HelpContent.CreateTextNode( $_ )
+								);
+							};
+						};
+
+						if ( $_.Description ) {
+							$null = $InputType.AppendChild(
+								( $Description = $HelpContent.CreateElement( 'maml', 'description', ( $HelpXMLNS.maml ) ) )
+							);
+							$_.Description `
+							| Select-Object -ExpandProperty Text `
+							| Split-Para `
+							| % {
+								$null = $Description.AppendChild(
+									$HelpContent.CreateElement( 'maml', 'para', ( $HelpXMLNS.maml ) )
+								).AppendChild(
+									$HelpContent.CreateTextNode( $_ )
+								);
+							};
+						};
+					};
+				};
+				
+				if ( $Help.returnValues ) {
+					$null = $Command.AppendChild(
+						( $ReturnValues = $HelpContent.CreateElement( '', 'returnValues', ( $HelpXMLNS.command ) ) )
+					);
+					$Help.returnValues.returnValue `
+					| % {
+						$null = $ReturnValues.AppendChild(
+							( $ReturnValue = $HelpContent.CreateElement( '', 'returnValue', ( $HelpXMLNS.command ) ) )
+						).AppendChild(
+							( $DevType = $HelpContent.CreateElement( 'dev', 'type', ( $HelpXMLNS.dev ) ) )
+						).AppendChild(
+							$HelpContent.CreateElement( 'maml', 'name', ( $HelpXMLNS.maml ) )
+						).AppendChild(
+							$HelpContent.CreateTextNode( ( $_.type.name ) )
+						);
+						
+						if ( $_.type.uri ) {
+							$null = $DevType.AppendChild(
+							).AppendChild(
+								$HelpContent.CreateElement( 'maml', 'uri', ( $HelpXMLNS.maml ) )
+							).AppendChild(
+								$HelpContent.CreateTextNode( ( $_.type.uri ) )
+							);
+						};
+
+						if ( $_.type.description ) {
+							$null = $DevType.AppendChild(
+								( $Description = $HelpContent.CreateElement( 'maml', 'description', ( $HelpXMLNS.maml ) ) )
+							);
+							$_.type.description `
+							| Select-Object -ExpandProperty Text `
+							| Split-Para `
+							| % {
+								$null = $Description.AppendChild(
+									$HelpContent.CreateElement( 'maml', 'para', ( $HelpXMLNS.maml ) )
+								).AppendChild(
+									$HelpContent.CreateTextNode( $_ )
+								);
+							};
+						};
+
+						if ( $_.Description ) {
+							$null = $InputType.AppendChild(
+								( $Description = $HelpContent.CreateElement( 'maml', 'description', ( $HelpXMLNS.maml ) ) )
+							);
+							$_.Description `
+							| Select-Object -ExpandProperty Text `
+							| Split-Para `
+							| % {
+								$null = $Description.AppendChild(
+									$HelpContent.CreateElement( 'maml', 'para', ( $HelpXMLNS.maml ) )
+								).AppendChild(
+									$HelpContent.CreateTextNode( $_ )
+								);
+							};
+						};
+					};
+				};
+					
 				return $HelpContent;
 				
 				$ReadMeContent = & { `
@@ -1582,54 +1744,6 @@ $Description
 
 Для выполнения функции $($FunctionInfo.Name) требуется роль $($Help.Role) для учётной записи,
 от имени которой будет выполнена описываемая функция.
-"@
-						};
-						if ( $Help.inputTypes ) {
-@"
-
-##### Принимаемые данные по конвейеру
-
-"@
-							$Help.inputTypes.inputType `
-							| % {
-								$Description = `
-									$_.type.name `
-									| Expand-Definitions `
-								;
-@"
-- $Description
-"@
-							};
-						};
-						if ( $Help.returnValues ) {
-@"
-
-##### Передаваемые по конвейеру данные
-
-"@
-							$Help.returnValues.returnValue `
-							| % {
-								$Description = `
-									$_.type.name `
-									| Expand-Definitions `
-								;
-@"
-- $Description
-"@
-							};
-						};
-						if ( $Help.Parameters ) {
-							$Description = `
-								( $Help.Parameters | Out-String ) `
-								-replace '<CommonParameters>', '-<CommonParameters>' `
-								-replace '(?m)(?<=^)\p{Z}{4}-([^\r\n]+)?(?=\s*$)', '- `$1`' `
-								-replace '(?<=\S)[ \t]{2,}(?=\S)', ' ' `
-								| Expand-Definitions `
-							;
-@"
-
-##### Параметры
-$Description
 "@
 						};
 						if ( $Help.Examples ) {
@@ -1734,19 +1848,21 @@ Function Get-HelpXML {
 		.Role
 			Everyone
 		.Inputs
-			System.Management.Automation.PSModuleInfo.
+			System.Management.Automation.PSModuleInfo
 			Описатели модулей. Именно для них и будет сгенерирована XML справка. 
 			Получены описатели могут быть через `Get-Module`.
 		.Inputs
-			System.Management.Automation.FunctionInfo.
+			System.Management.Automation.FunctionInfo
 			Описатели функций. Именно для них и будет сгенерирована XML справка. 
 			Получены описатели могут быть через `Get-Command`.
 		.Inputs
-			System.Management.Automation.CmdletInfo.
+			System.Management.Automation.CmdletInfo
 			Описатели командлет. Именно для них и будет сгенерирована XML справка. 
 			Получены описатели могут быть через `Get-Command`.
+		.Inputs
+			test   
 		.Outputs
-			System.Xml.XmlDocument.
+			System.Xml.XmlDocument
 			Содержимое XML справки.
 		.Link
 			about_Comment_Based_Help
