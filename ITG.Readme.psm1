@@ -1474,10 +1474,9 @@ Function Get-InternalHelpXML {
 				DoDescription $HelpContent $Details ( $Help.Synopsis );
 				DoParaElement $HelpContent $Details 'copyright' ( $Module.Copyright );
 				DoTextElement $HelpContent $Details 'dev' 'version' ( $HelpXMLNS.dev ) ( $Module.ModuleVersion );
-				# ToDo: 3 следующих элемента не знаю куда выводить
-				DoTextElement $HelpContent $Command '' 'component' ( $HelpXMLNS.command ) ( $Help.Component );
-				DoTextElement $HelpContent $Command '' 'functionality' ( $HelpXMLNS.command ) ( $Help.Functionality );
-				DoTextElement $HelpContent $Command '' 'role' ( $HelpXMLNS.command ) ( $Help.Role );
+				DoTextElement $HelpContent $Command 'maml' 'component' ( $HelpXMLNS.maml ) ( $Help.Component );
+				DoTextElement $HelpContent $Command 'maml' 'functionality' ( $HelpXMLNS.maml ) ( $Help.Functionality );
+				DoTextElement $HelpContent $Command 'maml' 'role' ( $HelpXMLNS.maml ) ( $Help.Role );
 				DoDescription $HelpContent $Command ( $Help.Description | Select-Object -ExpandProperty Text );
 
 				if ( $Help.Syntax ) {
@@ -1659,10 +1658,6 @@ $ExNum. Пример $ExNum.
 Function Get-HelpXML {
 	<#
 		.ExternalHelp ITG.Readme.psm1-help.xml
-		.component
-			Component
-		.functionality
-			Functionality
 		.Synopsis
 			Генерирует XML справку для переданного модуля, функции, командлеты.
 		.Description
