@@ -1634,7 +1634,6 @@ Function Get-InternalHelpXML {
 
 Function Get-HelpXML {
 	<#
-		ExternalHelp ITG.Readme.psm1-help.xml
 		.Synopsis
 			Генерирует XML справку для переданного модуля, функции, командлеты.
 		.Description

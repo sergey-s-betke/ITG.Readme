@@ -7,13 +7,139 @@
 			<verb>Get</verb>
 			<noun>HelpXML</noun>
 			<maml:description>
-				<maml:para>Get-HelpXML [-ModuleInfo] &lt;PSModuleInfo&gt; [-OutDefaultFile] [-Verbose] [-Debug] [-ErrorAction &lt;ActionPreference&gt;] [-WarningAction &lt;ActionPreference&gt;] [-ErrorVariable &lt;String&gt;] [-WarningVariable &lt;String&gt;] [-OutVariable &lt;String&gt;] [-OutBuffer &lt;Int32&gt;] Get-HelpXML [-FunctionInfo] &lt;FunctionInfo&gt; [-Verbose] [-Debug] [-ErrorAction &lt;ActionPreference&gt;] [-WarningAction &lt;ActionPreference&gt;] [-ErrorVariable &lt;String&gt;] [-WarningVariable &lt;String&gt;] [-OutVariable &lt;String&gt;] [-OutBuffer &lt;Int32&gt;]</maml:para>
+				<maml:para>Генерирует XML справку для переданного модуля, функции, командлеты.</maml:para>
 			</maml:description>
 			<maml:copyright>
 				<maml:para>(c) 2012 Sergey S. Betke. All rights reserved.</maml:para>
 			</maml:copyright>
 			<dev:version>1.6.3</dev:version>
 		</details>
+		<maml:role>Everyone</maml:role>
+		<maml:description>
+			<maml:para>Генерирует XML справку для переданного модуля, функции, командлеты.</maml:para>
+			<maml:para>Кроме того, для модуля при указании ключа `-OutDefaultFile` данная функция создаст XML файл справки в каталоге модуля (точнее - в подкаталоге культуры, как того и требуют командлеты PowerShell, в частности - `Get-Help`).</maml:para>
+		</maml:description>
+		<syntax>
+			<syntaxItem>
+				<maml:name>Get-HelpXML</maml:name>
+				<parameter required="true" position="1" pipelineInput="true (ByValue)">
+					<maml:name>ModuleInfo</maml:name>
+					<parameterValue required="true">PSModuleInfo</parameterValue>
+				</parameter>
+				<parameter required="false" position="named" pipelineInput="false">
+					<maml:name>OutDefaultFile</maml:name>
+				</parameter>
+			</syntaxItem>
+			<syntaxItem>
+				<maml:name>Get-HelpXML</maml:name>
+				<parameter required="true" position="1" pipelineInput="true (ByValue)">
+					<maml:name>FunctionInfo</maml:name>
+					<parameterValue required="true">FunctionInfo</parameterValue>
+				</parameter>
+			</syntaxItem>
+		</syntax>
+		<parameters>
+			<parameter required="true" position="1" pipelineInput="true (ByValue)">
+				<maml:name>ModuleInfo</maml:name>
+				<maml:description>
+					<maml:para>Описатель модуля</maml:para>
+				</maml:description>
+				<parameterValue required="True">PSModuleInfo</parameterValue>
+			</parameter>
+			<parameter required="false" position="named" pipelineInput="false">
+				<maml:name>OutDefaultFile</maml:name>
+				<maml:description>
+					<maml:para>выводить help в файл `&lt;ModuleName&gt;-Help.xml` в каталоге модуля</maml:para>
+				</maml:description>
+				<parameterValue required="True">SwitchParameter</parameterValue>
+			</parameter>
+			<parameter required="true" position="1" pipelineInput="true (ByValue)">
+				<maml:name>FunctionInfo</maml:name>
+				<maml:description>
+					<maml:para>Описатель функции</maml:para>
+				</maml:description>
+				<parameterValue required="True">FunctionInfo</parameterValue>
+			</parameter>
+		</parameters>
+		<inputTypes>
+			<inputType>
+				<dev:type>
+					<maml:name>System.Management.Automation.PSModuleInfo</maml:name>
+					<maml:description>
+						<maml:para>Описатели модулей. Именно для них и будет сгенерирована XML справка. Получены описатели могут быть через `Get-Module`.</maml:para>
+					</maml:description>
+				</dev:type>
+				<maml:description>
+					<maml:para>Описатели модулей. Именно для них и будет сгенерирована XML справка. Получены описатели могут быть через `Get-Module`.</maml:para>
+				</maml:description>
+			</inputType>
+			<inputType>
+				<dev:type>
+					<maml:name>System.Management.Automation.FunctionInfo</maml:name>
+					<maml:description>
+						<maml:para>Описатели функций. Именно для них и будет сгенерирована XML справка. Получены описатели могут быть через `Get-Command`.</maml:para>
+					</maml:description>
+				</dev:type>
+				<maml:description>
+					<maml:para>Описатели функций. Именно для них и будет сгенерирована XML справка. Получены описатели могут быть через `Get-Command`.</maml:para>
+				</maml:description>
+			</inputType>
+			<inputType>
+				<dev:type>
+					<maml:name>System.Management.Automation.CmdletInfo</maml:name>
+					<maml:description>
+						<maml:para>Описатели командлет. Именно для них и будет сгенерирована XML справка. Получены описатели могут быть через `Get-Command`.</maml:para>
+					</maml:description>
+				</dev:type>
+				<maml:description>
+					<maml:para>Описатели командлет. Именно для них и будет сгенерирована XML справка. Получены описатели могут быть через `Get-Command`.</maml:para>
+				</maml:description>
+			</inputType>
+		</inputTypes>
+		<returnValues>
+			<returnValue>
+				<dev:type>
+					<maml:name>System.Xml.XmlDocument</maml:name>
+					<maml:description>
+						<maml:para>Содержимое XML справки.</maml:para>
+					</maml:description>
+				</dev:type>
+				<maml:description>
+					<maml:para>Содержимое XML справки.</maml:para>
+				</maml:description>
+			</returnValue>
+		</returnValues>
+		<maml:alertSet>
+			<maml:alert>
+				<maml:para>Необходимо дополнительное тестирование на PowerShell 3.</maml:para>
+			</maml:alert>
+		</maml:alertSet>
+		<examples>
+			<example>
+				<maml:title>-------------------------- ПРИМЕР 1 --------------------------</maml:title>
+				<maml:introduction>
+					<maml:paragraph>C:\PS&gt;</maml:paragraph>
+				</maml:introduction>
+				<dev:code>Get-Module 'ITG.Yandex.DnsServer' | Get-HelpXML -OutDefaultFile;</dev:code>
+				<maml:remarks>
+					<maml:para>Генерация xml файла справки для модуля `ITG.Yandex.DnsServer` в каталоге модуля.</maml:para>
+				</maml:remarks>
+			</example>
+		</examples>
+		<maml:relatedLinks>
+			<maml:navigationLink>
+				<maml:linkText>about_Comment_Based_Help</maml:linkText>
+			</maml:navigationLink>
+			<maml:navigationLink>
+				<maml:linkText>about_Updatable_Help</maml:linkText>
+			</maml:navigationLink>
+			<maml:navigationLink>
+				<maml:linkText>[Creating the Cmdlet Help File](http://msdn.microsoft.com/en-us/library/bb525433.aspx)</maml:linkText>
+			</maml:navigationLink>
+			<maml:navigationLink>
+				<maml:uri>http://github.com/IT-Service/ITG.Readme#Get-HelpXML</maml:uri>
+			</maml:navigationLink>
+		</maml:relatedLinks>
 	</command>
 	<command xmlns:msh="http://msh" xmlns="http://schemas.microsoft.com/maml/dev/command/2004/10">
 		<details>
