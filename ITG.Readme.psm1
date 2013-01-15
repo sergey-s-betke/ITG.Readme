@@ -1110,7 +1110,7 @@ Function Get-Readme {
 			Генерация readme.md файла для модуля `ITG.Yandex.DnsServer` 
 			в каталоге модуля `ITG.Yandex.DnsServer`, при этом все упоминания
 			функций модулей `ITG.Yandex`, `ITG.Utils`, `ITG.WinAPI.UrlMon`,
-			`ITG.WinAPI.User32`	так же будут заменены перекрёстными ссылками
+			`ITG.WinAPI.User32` так же будут заменены перекрёстными ссылками
 			на readme.md файлы указанных модулей.
 	#>
 	
@@ -1302,7 +1302,7 @@ Function DoNameElement( $HelpContent, $Root, $Txt ) {
 	DoTextElement $HelpContent $Root 'maml' 'name' ( $HelpXMLNS.maml ) $Txt;
 };
 
-Function DoParaElement( $HelpContent, $Root, $El, $Description ) {
+Function DoCustomParaElement( $HelpContent, $Root, $El, $ParaEl, $Description ) {
 	if ( $Description ) {
 		$DescriptionEl = $Root.AppendChild(
 			$HelpContent.CreateElement( 'maml', $El, ( $HelpXMLNS.maml ) )
@@ -1310,9 +1310,13 @@ Function DoParaElement( $HelpContent, $Root, $El, $Description ) {
 		$Description `
 		| Split-Para `
 		| % {
-			DoTextElement $HelpContent $DescriptionEl 'maml' 'para' ( $HelpXMLNS.maml ) $_;
+			DoTextElement $HelpContent $DescriptionEl 'maml' $ParaEl ( $HelpXMLNS.maml ) $_;
 		};
 	};
+};
+
+Function DoParaElement( $HelpContent, $Root, $El, $Description ) {
+	DoCustomParaElement $HelpContent $Root $El 'para' $Description;
 };
 
 Function DoDescription( $HelpContent, $Root, $Description ) {
@@ -1522,8 +1526,8 @@ Function Get-InternalHelpXML {
 				};
 
 				if ( $Help.Parameters ) {
-					$null = $Command.AppendChild(
-						( $Parameters = $HelpContent.CreateElement( '', 'parameters', ( $HelpXMLNS.command ) ) )
+					$Parameters = $Command.AppendChild(
+						$HelpContent.CreateElement( '', 'parameters', ( $HelpXMLNS.command ) )
 					);
 					$Help.Parameters.Parameter `
 					| % {
@@ -1558,22 +1562,55 @@ Function Get-InternalHelpXML {
 						
 						DoTextElement $HelpContent $Parameter '' 'defaultValue' ( $HelpXMLNS.command ) ( $_.defaultValue );
 						
-#					    <dev:possibleValues>
-#					      <dev:possibleValue>
-#					        <dev:value> Value 1 </dev:value>
-#					        <maml:description>
-#					          <maml:para> Description 1 </maml:para>
-#					        </maml:description>
-#					      <dev:possibleValue>
-#					    </dev:possibleValues>
-#						http://msdn.microsoft.com/en-us/library/bb736339.aspx
+						if ( $_.possibleValues ) {
+							$PossibleValues = $Command.AppendChild(
+								$HelpContent.CreateElement( 'dev', 'possibleValues', ( $HelpXMLNS.dev ) )
+							);
+							$_.possibleValues.possibleValue `
+							| % {
+								$PossibleValue = $PossibleValues.AppendChild(
+									$HelpContent.CreateElement( 'dev', 'possibleValue', ( $HelpXMLNS.dev ) )
+								);
+								DoTextElement $HelpContent $PossibleValue 'dev' 'value' ( $HelpXMLNS.dev ) ( $_.value );
+								DoDescription $HelpContent $PossibleValue ( $_.Description | Select-Object -ExpandProperty Text );
+							};
+						};
 					};
 				};
 
 				DoValuesList $HelpContent $Command $Help 'inputTypes' 'inputType';
 				DoValuesList $HelpContent $Command $Help 'returnValues' 'returnValue';
 				DoParaList $HelpContent $Command $Help 'alertSet' 'alert';
-				
+
+				if ( $Help.Examples ) {
+					$Examples = $Command.AppendChild(
+						$HelpContent.CreateElement( '', 'examples', ( $HelpXMLNS.command ) )
+					);
+					$Help.Examples.Example `
+					| % {
+						$Example = $Examples.AppendChild(
+							$HelpContent.CreateElement( '', 'example', ( $HelpXMLNS.command ) )
+						);
+						DoTextElement $HelpContent $Example 'maml' 'title' ( $HelpXMLNS.maml ) ( $_.title );
+						$Prompt = $Example.AppendChild(
+							$HelpContent.CreateElement( 'maml', 'introduction', ( $HelpXMLNS.maml ) )
+						);
+						$_.introduction `
+						| % { $_.Text -replace '^\s+|\s+$', '' } `
+						| Out-String `
+						| Split-Para `
+						| % {
+							DoTextElement $HelpContent $Prompt 'maml' 'paragraph' ( $HelpXMLNS.maml ) $_;
+						};
+						DoTextElement $HelpContent $Example 'dev' 'code' ( $HelpXMLNS.dev ) ( $_.code );
+						DoParaElement $HelpContent $Example 'remarks' (
+							$_.remarks `
+							| % { $_.Text -replace '(?m)^\s+|\s+$', '' } `
+							| Out-String `
+						);
+					};
+				};
+
 				if ( $Help.relatedLinks ) {
 					$ListEl = $Command.AppendChild(
 						$HelpContent.CreateElement( 'maml', 'relatedLinks', ( $HelpXMLNS.maml ) )
@@ -1588,67 +1625,7 @@ Function Get-InternalHelpXML {
 					};
 				};
 
-#<command:examples>
-#  <command:example>
-#    <maml:title>----------  EXAMPLE 1  ----------</maml:title>
-#    <maml:Introduction>
-#      <maml:paragraph>C:PS&gt;</maml:paragraph>
-#    </maml:Introduction>
-#    <dev:code> command </dev:code>
-#    <dev:remarks>
-#      <maml:para> command description </maml:para>
-#      <maml:para></maml:para>
-#      <maml:para></maml:para>
-#      <maml:para> command output </maml:para>
-#</dev:remarks>
-#</command:example>
-#</command:examples>
-
 				return $HelpContent;
-				
-				$ReadMeContent = & { `
-					$Help = ( $FunctionInfo | Get-Help -Full );
-					if ( $ShortDescription ) {
-						if ( $Help.Examples ) {
-							$Help.Examples.Example `
-							| % -Begin {
-								$ExNum=0;
-@"
-
-##### Примеры использования
-"@
-							} `
-							-Process {
-								++$ExNum;
-								$Comment = (
-									(
-										$_.remarks `
-										| Select-Object -ExpandProperty Text `
-										| ? { $_ } `
-									) -join ' ' `
-								).Trim( ' ', (("`t").Normalize()) ) `
-								| Expand-Definitions `
-								;
-								if ( $Comment ) {
-@"
-
-$ExNum. $Comment
-"@
-								} else {
-@"
-
-$ExNum. Пример $ExNum.
-"@
-								};
-@"
-
-	$($_.code)
-"@
-							};
-						};
-					};
-				};
-				return $ReadMeContent;
 			};
 		};
 	};
@@ -1657,7 +1634,7 @@ $ExNum. Пример $ExNum.
 
 Function Get-HelpXML {
 	<#
-		.ExternalHelp ITG.Readme.psm1-help.xml
+		ExternalHelp ITG.Readme.psm1-help.xml
 		.Synopsis
 			Генерирует XML справку для переданного модуля, функции, командлеты.
 		.Description
