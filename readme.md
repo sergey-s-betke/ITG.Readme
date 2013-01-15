@@ -128,7 +128,7 @@
 
 - [Online версия справки](http://github.com/IT-Service/ITG.Readme#Get-HelpXML)
 - [about_Comment_Based_Help][]
-- [][]
+- about_Updatable_Help
 - [Creating the Cmdlet Help File](http://msdn.microsoft.com/en-us/library/bb525433.aspx)
 
 #### Get-Readme
@@ -274,7 +274,6 @@ Readme
 - [Написание справки для командлетов](http://go.microsoft.com/fwlink/?LinkID=123415)
 
 
-[]: http://go.microsoft.com/fwlink/?LinkID= 
 [about_Comment_Based_Help]: http://go.microsoft.com/fwlink/?LinkID=144309 "Описание написания разделов справки на основе комментариев для..."
 [about_CommonParameters]: http://go.microsoft.com/fwlink/?LinkID=113216 "Описание параметров, которые могут использоваться с любым командлетом."
 [Get-HelpXML]: <ITG.Readme#Get-HelpXML> "Генерирует XML справку для переданного модуля, функции, командлеты."
