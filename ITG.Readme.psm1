@@ -485,8 +485,21 @@ Function MatchEvaluatorForAbout( [System.Text.RegularExpressions.Match] $Match )
 		$PowerShellAboutTopics.Keys `
 		| ? { $_ -ieq ($Match.Groups['about'].Value) } `
 	;
-	Add-EndReferenceForAbout( $id );
-	return "[${id}][]";
+	if ( $id ) {
+		Add-EndReferenceForAbout( $id );
+		return "[${id}][]";
+	} else {
+		Write-Warning `
+			-Message @"
+Обнаружен термин about_*, для которого не найдено определение.
+Проверьте правильность написания термина:
+
+	$( $Match.Groups['about'].Value )
+	
+"@ `
+		;
+		return ( $Match.Groups['about'].Value );
+	};
 };
 
 Function Add-EndReferenceForAbout( [String] $Id ) {
