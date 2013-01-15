@@ -1072,10 +1072,20 @@ Function Get-Readme {
 			Everyone
 		.Notes
 		.Inputs
-			System.Management.Automation.PSModuleInfo, System.Management.Automation.CmdletInfo,
-			System.Management.Automation.FunctionInfo, System.Management.Automation.ExternalScriptInfo.
-			Описатели модулей. Именно для них и будет сгенерирован readme.md. 
-			Получены описатели могут быть через Get-Module, Get-Command.
+			System.Management.Automation.PSModuleInfo.
+			Описатели модулей, для которых будет сгенерирован readme.md. 
+			Получены описатели могут быть через Get-Module.
+		.Inputs
+			System.Management.Automation.ExternalScriptInfo.
+			Описатели сценариев, для которых будет сгенерирован readme.md. 
+		.Inputs
+			System.Management.Automation.CmdletInfo.
+			Описатели командлет, для которых будет сгенерирован readme.md. 
+			Получены описатели могут быть через Get-Command.
+		.Inputs
+			System.Management.Automation.FunctionInfo.
+			Описатели функций, для которых будет сгенерирован readme.md. 
+			Получены описатели могут быть через Get-Command.
 		.Outputs
 			String.
 			Содержимое readme.md.
@@ -1100,7 +1110,7 @@ Function Get-Readme {
 			Генерация readme.md файла для модуля `ITG.Yandex.DnsServer` 
 			в каталоге модуля `ITG.Yandex.DnsServer`, при этом все упоминания
 			функций модулей `ITG.Yandex`, `ITG.Utils`, `ITG.WinAPI.UrlMon`,
-			`ITG.WinAPI.User32`	так же будут заменены перекрёстными ссылками
+			`ITG.WinAPI.User32` так же будут заменены перекрёстными ссылками
 			на readme.md файлы указанных модулей.
 	#>
 	
@@ -1245,6 +1255,519 @@ Function Get-Readme {
 	}
 }
 
+Filter Split-Para {
+	<#
+		.Synopsis
+			Делит переданный текст на абзацы по правилам MarkDown. В качестве границы
+			абзацев - пустая строка. Текст в пределах абзаца объединяет в одну строку.
+	#>
+	param (
+		[Parameter(
+			Mandatory = $true
+			, ValueFromPipeline = $true
+		)]
+		[String]
+		[AllowEmptyString()]
+		[Alias('Text')]
+		$InputObject
+	)
+	
+	$InputObject -split '(?:[ \t]*\r?\n[ \t]*){2,}' `
+	| % {
+		$_ -replace '(?:[ \t]*\r?\n[ \t]*)', ' ' `
+		 	-replace '[ \t]+$', '' `
+		;
+	};
+}
+
+$HelpXMLNS = @{
+	msh='http://msh';
+	maml='http://schemas.microsoft.com/maml/2004/10';
+	command='http://schemas.microsoft.com/maml/dev/command/2004/10';
+	dev='http://schemas.microsoft.com/maml/dev/2004/10';
+	MSHelp='http://msdn.microsoft.com/mshelp'
+};
+
+Function DoTextElement( $HelpContent, $Root, $Prefix, $El, $NS, $Txt ) {
+	if ( $Txt ) {
+		$null = $Root.AppendChild(
+			$HelpContent.CreateElement( $Prefix, $El, $NS )
+		).AppendChild(
+			$HelpContent.CreateTextNode( $Txt )
+		);
+	};
+};
+
+Function DoNameElement( $HelpContent, $Root, $Txt ) {
+	DoTextElement $HelpContent $Root 'maml' 'name' ( $HelpXMLNS.maml ) $Txt;
+};
+
+Function DoCustomParaElement( $HelpContent, $Root, $El, $ParaEl, $Description ) {
+	if ( $Description ) {
+		$DescriptionEl = $Root.AppendChild(
+			$HelpContent.CreateElement( 'maml', $El, ( $HelpXMLNS.maml ) )
+		);
+		$Description `
+		| Split-Para `
+		| % {
+			DoTextElement $HelpContent $DescriptionEl 'maml' $ParaEl ( $HelpXMLNS.maml ) $_;
+		};
+	};
+};
+
+Function DoParaElement( $HelpContent, $Root, $El, $Description ) {
+	DoCustomParaElement $HelpContent $Root $El 'para' $Description;
+};
+
+Function DoDescription( $HelpContent, $Root, $Description ) {
+	DoParaElement $HelpContent $Root 'description' $Description;
+};
+
+Function DoValuesList( $HelpContent, $Root, $Help, $ListId, $ListItemId ) {
+	if ( $Help.$ListId ) {
+		$List = $Root.AppendChild(
+			$HelpContent.CreateElement( '', $ListId, ( $HelpXMLNS.command ) )
+		);
+		$Help.$ListId.$ListItemId `
+		| % {
+			$Txt = @( $_.type.name -split '\r?\n' );
+			$TypeName = $Txt[0];
+
+			$null = $List.AppendChild(
+				( $ItemEl = $HelpContent.CreateElement( '', $ListItemId, ( $HelpXMLNS.command ) ) )
+			).AppendChild(
+				( $DevType = $HelpContent.CreateElement( 'dev', 'type', ( $HelpXMLNS.dev ) ) )
+			);
+			DoTextElement $HelpContent $DevType 'maml' 'name' ( $HelpXMLNS.maml ) $TypeName;
+			DoTextElement $HelpContent $DevType 'maml' 'uri' ( $HelpXMLNS.maml ) ( $_.type.uri );
+
+			if ( $_.type.description ) {
+				$TypeDescription = $_.type.description | Select-Object -ExpandProperty Text;
+			} elseif ( $Txt.Count -gt 1 ) {
+				$TypeDescription = $Txt[1..( $Txt.Count-1 )] | Out-String;
+			} else {
+				$TypeDescription = '';
+			};
+			DoDescription $HelpContent $DevType $TypeDescription;
+
+			if ( $_.Description ) {
+				$TypeDescription = $_.Description | Select-Object -ExpandProperty Text;
+			};
+			DoDescription $HelpContent $ItemEl $TypeDescription;
+		};
+	};
+};
+
+Function DoParaList( $HelpContent, $Root, $Help, $ListId, $ListItemId ) {
+	if ( $Help.$ListId ) {
+		$List = $Root.AppendChild(
+			$HelpContent.CreateElement( 'maml', $ListId, ( $HelpXMLNS.maml ) )
+		);
+		$Help.$ListId.$ListItemId `
+		| % {
+			DoParaElement $HelpContent $List $ListItemId ( $_.Text );
+		};
+	};
+};
+
+Function Get-InternalHelpXML {
+	<#
+		.Synopsis
+			Get-HelpXML является лишь обёрткой (proxy функцией) к данной функции, 
+			непосредственно подготовка help.xml выполняется данной функцией.
+		.ForwardHelpTargetName
+			Get-HelpXML
+	#>
+	
+	[CmdletBinding(
+		DefaultParametersetName='ModuleInfo'
+	)]
+
+	param (
+		# Описатель модуля
+		[Parameter(
+			Mandatory=$true
+			, Position=0
+			, ValueFromPipeline=$true
+			, ParameterSetName='ModuleInfo'
+		)]
+		[PSModuleInfo]
+		[Alias('Module')]
+		$ModuleInfo
+	,
+		# Описатель функции
+		[Parameter(
+			Mandatory=$true
+			, Position=0
+			, ValueFromPipeline=$true
+			, ParameterSetName='FunctionInfo'
+		)]
+		[System.Management.Automation.FunctionInfo]
+		$FunctionInfo
+	)
+
+	process {
+		trap {
+			break;
+		};
+		switch ( $PsCmdlet.ParameterSetName ) {
+			'ModuleInfo' {
+				[System.Xml.XmlDocument]$HelpContent = @"
+<!-- Генератор: ITG.Readme (http://github.com/IT-Service/ITG.Readme). -->
+<helpItems
+	xmlns="$( $HelpXMLNS.msh )"
+	xmlns:maml="$( $HelpXMLNS.maml )"
+	xmlns:command="$( $HelpXMLNS.command )" 
+	xmlns:dev="$( $HelpXMLNS.dev )"
+	xmlns:MSHelp="$( $HelpXMLNS.MSHelp )"
+	schema="maml"
+/>
+"@
+				if ( $ModuleInfo.ExportedFunctions ) {
+					$ModuleInfo.ExportedFunctions.Values `
+					| Get-InternalHelpXML `
+					| % {
+						$null = $HelpContent.DocumentElement.AppendChild( $HelpContent.ImportNode( $_.DocumentElement, $true ) );
+					};
+				};
+				return $HelpContent;
+			}
+			'FunctionInfo' {
+				$ModuleManifestPath = Join-Path `
+					-Path ( Split-Path ( $FunctionInfo.Module.Path ) -Parent ) `
+					-ChildPath "$( $FunctionInfo.Module.Name ).psd1" `
+				;
+				if ( -not ( Test-Path -LiteralPath $ModuleManifestPath ) ) {
+					Write-Error `
+						-Message "Не обнаружен манифест ($ModuleManifestPath) модуля. XML справка может быть получена только при наличии манифеста." `
+						-Category ResourceUnavailable `
+						-CategoryActivity 'Загрузка манифеста модуля' `
+						-CategoryReason 'Не обнаружен манифест модуля.' `
+						-CategoryTargetName ( $FunctionInfo.Module.Name ) `
+						-TargetObject ( $FunctionInfo.Module ) `
+						-RecommendedAction 'Создайте .psd1 манифест к модулю и разместите его в каталоге модуля.' `
+					;
+					return;
+				};
+				$Module = Invoke-Expression ( ( Get-Content -LiteralPath $ModuleManifestPath -ReadCount 0 ) -join "`r`n" ) ;
+				
+				[xml]$HelpContent = @"
+<command
+	xmlns:msh="$( $HelpXMLNS.msh )"
+	xmlns:maml="$( $HelpXMLNS.maml )"
+	xmlns="$( $HelpXMLNS.command )" 
+	xmlns:dev="$( $HelpXMLNS.dev )"
+	xmlns:MSHelp="$( $HelpXMLNS.MSHelp )"
+/>
+"@
+				$Command = $HelpContent.DocumentElement;
+				
+				$Details = $Command.AppendChild(
+					$HelpContent.CreateElement( '', 'details', ( $HelpXMLNS.command ) )
+				);
+				DoTextElement $HelpContent $Details '' 'name' ( $HelpXMLNS.command ) ( $FunctionInfo.Name );
+
+				$NameParts = @( $FunctionInfo.Name -split '-' );
+				if ( $NameParts.Count -eq 2 ) {
+					DoTextElement $HelpContent $Details '' 'verb' ( $HelpXMLNS.command ) ( $NameParts[0] );
+					DoTextElement $HelpContent $Details '' 'noun' ( $HelpXMLNS.command ) ( $NameParts[1] );
+				};
+
+				$Help = $( $FunctionInfo | Get-Help -Full );
+
+				DoDescription $HelpContent $Details ( $Help.Synopsis );
+				DoParaElement $HelpContent $Details 'copyright' ( $Module.Copyright );
+				DoTextElement $HelpContent $Details 'dev' 'version' ( $HelpXMLNS.dev ) ( $Module.ModuleVersion );
+				DoTextElement $HelpContent $Command 'maml' 'component' ( $HelpXMLNS.maml ) ( $Help.Component );
+				DoTextElement $HelpContent $Command 'maml' 'functionality' ( $HelpXMLNS.maml ) ( $Help.Functionality );
+				DoTextElement $HelpContent $Command 'maml' 'role' ( $HelpXMLNS.maml ) ( $Help.Role );
+				DoDescription $HelpContent $Command ( $Help.Description | Select-Object -ExpandProperty Text );
+
+				if ( $Help.Syntax ) {
+					$null = $Command.AppendChild(
+						( $Syntax = $HelpContent.CreateElement( '', 'syntax', ( $HelpXMLNS.command ) ) )
+					);
+					$Help.Syntax.SyntaxItem `
+					| % {
+						$SyntaxItem = $Syntax.AppendChild(
+							$HelpContent.CreateElement( '', 'syntaxItem', ( $HelpXMLNS.command ) )
+						);
+						DoNameElement $HelpContent $SyntaxItem ( $FunctionInfo.Name );
+						
+						$_.Parameter `
+						| % {
+							$Parameter = $SyntaxItem.AppendChild(
+								$HelpContent.CreateElement( '', 'parameter', ( $HelpXMLNS.command ) )
+							);
+							DoNameElement $HelpContent $Parameter ( $_.Name );
+							$Parameter.SetAttribute( 'required', ( $_.Required ) );
+							$Parameter.SetAttribute( 'position', ( $_.Position ) );
+							$Parameter.SetAttribute( 'pipelineInput', ( $_.PipelineInput ) );
+							if ( $_.variableLength ) {
+								$Parameter.SetAttribute( 'variableLength', ( $_.variableLength ) );
+							};
+							if ( $_.globbing ) {
+								$Parameter.SetAttribute( 'globbing', ( $_.globbing ) );
+							};
+
+							if ( $_.parameterValue ) {
+								$null = $Parameter.AppendChild(
+									( $ParameterValue = $HelpContent.CreateElement( '', 'parameterValue', ( $HelpXMLNS.command ) ) )
+								).AppendChild(
+									$HelpContent.CreateTextNode( ( $_.parameterValue ) )
+								);
+								$ParameterValue.SetAttribute( 'required', ( $_.Required ) );
+								if ( $_.variableLength ) {
+									$ParameterValue.SetAttribute( 'variableLength', ( $_.variableLength ) );
+								};
+							};
+						};
+					};
+				};
+
+				if ( $Help.Parameters ) {
+					$Parameters = $Command.AppendChild(
+						$HelpContent.CreateElement( '', 'parameters', ( $HelpXMLNS.command ) )
+					);
+					$Help.Parameters.Parameter `
+					| % {
+						$Parameter = $Parameters.AppendChild(
+							$HelpContent.CreateElement( '', 'parameter', ( $HelpXMLNS.command ) )
+						);
+						DoNameElement $HelpContent $Parameter ( $_.Name );
+
+						$Parameter.SetAttribute( 'required', ( $_.Required ) );
+						$Parameter.SetAttribute( 'position', ( $_.Position ) );
+						$Parameter.SetAttribute( 'pipelineInput', ( $_.PipelineInput ) );
+						if ( $_.variableLength ) {
+							$Parameter.SetAttribute( 'variableLength', ( $_.variableLength ) );
+						};
+						if ( $_.globbing ) {
+							$Parameter.SetAttribute( 'globbing', ( $_.globbing ) );
+						};
+
+						DoDescription $HelpContent $Parameter ( $_.Description | Select-Object -ExpandProperty Text );
+						
+						if ( $_.parameterValue ) {
+							$null = $Parameter.AppendChild(
+								( $ParameterValue = $HelpContent.CreateElement( '', 'parameterValue', ( $HelpXMLNS.command ) ) )
+							).AppendChild(
+								$HelpContent.CreateTextNode( ( $_.parameterValue ) )
+							);
+							$ParameterValue.SetAttribute( 'required', $true );
+							if ( $_.variableLength ) {
+								$ParameterValue.SetAttribute( 'variableLength', ( $_.variableLength ) );
+							};
+						};
+						
+						DoTextElement $HelpContent $Parameter '' 'defaultValue' ( $HelpXMLNS.command ) ( $_.defaultValue );
+						
+						if ( $_.possibleValues ) {
+							$PossibleValues = $Command.AppendChild(
+								$HelpContent.CreateElement( 'dev', 'possibleValues', ( $HelpXMLNS.dev ) )
+							);
+							$_.possibleValues.possibleValue `
+							| % {
+								$PossibleValue = $PossibleValues.AppendChild(
+									$HelpContent.CreateElement( 'dev', 'possibleValue', ( $HelpXMLNS.dev ) )
+								);
+								DoTextElement $HelpContent $PossibleValue 'dev' 'value' ( $HelpXMLNS.dev ) ( $_.value );
+								DoDescription $HelpContent $PossibleValue ( $_.Description | Select-Object -ExpandProperty Text );
+							};
+						};
+					};
+				};
+
+				DoValuesList $HelpContent $Command $Help 'inputTypes' 'inputType';
+				DoValuesList $HelpContent $Command $Help 'returnValues' 'returnValue';
+				DoParaList $HelpContent $Command $Help 'alertSet' 'alert';
+
+				if ( $Help.Examples ) {
+					$Examples = $Command.AppendChild(
+						$HelpContent.CreateElement( '', 'examples', ( $HelpXMLNS.command ) )
+					);
+					$Help.Examples.Example `
+					| % {
+						$Example = $Examples.AppendChild(
+							$HelpContent.CreateElement( '', 'example', ( $HelpXMLNS.command ) )
+						);
+						DoTextElement $HelpContent $Example 'maml' 'title' ( $HelpXMLNS.maml ) ( $_.title );
+						$Prompt = $Example.AppendChild(
+							$HelpContent.CreateElement( 'maml', 'introduction', ( $HelpXMLNS.maml ) )
+						);
+						$_.introduction `
+						| % { $_.Text -replace '^\s+|\s+$', '' } `
+						| Out-String `
+						| Split-Para `
+						| % {
+							DoTextElement $HelpContent $Prompt 'maml' 'paragraph' ( $HelpXMLNS.maml ) $_;
+						};
+						DoTextElement $HelpContent $Example 'dev' 'code' ( $HelpXMLNS.dev ) ( $_.code );
+						DoParaElement $HelpContent $Example 'remarks' (
+							$_.remarks `
+							| % { $_.Text -replace '(?m)^\s+|\s+$', '' } `
+							| Out-String `
+						);
+					};
+				};
+
+				if ( $Help.relatedLinks ) {
+					$ListEl = $Command.AppendChild(
+						$HelpContent.CreateElement( 'maml', 'relatedLinks', ( $HelpXMLNS.maml ) )
+					);
+					$Help.relatedLinks.navigationLink `
+					| % {
+						$ListItemEl = $ListEl.AppendChild(
+							$HelpContent.CreateElement( 'maml', 'navigationLink', ( $HelpXMLNS.maml ) )
+						);
+						DoTextElement $HelpContent $ListItemEl 'maml' 'uri' ( $HelpXMLNS.maml ) ( $_.uri );
+						DoTextElement $HelpContent $ListItemEl 'maml' 'linkText' ( $HelpXMLNS.maml ) ( $_.linkText );
+					};
+				};
+
+				return $HelpContent;
+			};
+		};
+	};
+}
+
+
+Function Get-HelpXML {
+	<#
+		.Synopsis
+			Генерирует XML справку для переданного модуля, функции, командлеты.
+		.Description
+			Генерирует XML справку для переданного модуля, функции, командлеты.
+			
+			Кроме того, для модуля при указании ключа `-OutDefaultFile` данная
+			функция создаст XML файл справки в каталоге модуля (точнее - в
+			подкаталоге культуры, как того и требуют командлеты PowerShell, в
+			частности - `Get-Help`).
+		.Notes
+			Необходимо дополнительное тестирование на PowerShell 3.
+		.Role
+			Everyone
+		.Inputs
+			System.Management.Automation.PSModuleInfo
+			Описатели модулей. Именно для них и будет сгенерирована XML справка. 
+			Получены описатели могут быть через `Get-Module`.
+		.Inputs
+			System.Management.Automation.FunctionInfo
+			Описатели функций. Именно для них и будет сгенерирована XML справка. 
+			Получены описатели могут быть через `Get-Command`.
+		.Inputs
+			System.Management.Automation.CmdletInfo
+			Описатели командлет. Именно для них и будет сгенерирована XML справка. 
+			Получены описатели могут быть через `Get-Command`.
+		.Outputs
+			System.Xml.XmlDocument
+			Содержимое XML справки.
+		.Link
+			about_Comment_Based_Help
+		.Link
+			about_Updatable_Help
+		.Link
+			[Creating the Cmdlet Help File](http://msdn.microsoft.com/en-us/library/bb525433.aspx)
+		.Link
+			http://github.com/IT-Service/ITG.Readme#Get-HelpXML
+		.Example
+			Get-Module 'ITG.Yandex.DnsServer' | Get-HelpXML -OutDefaultFile;
+			Генерация xml файла справки для модуля `ITG.Yandex.DnsServer` 
+			в каталоге модуля.
+	#>
+	
+	[CmdletBinding(
+		DefaultParametersetName='ModuleInfo'
+	)]
+
+	param (
+		# Описатель модуля
+		[Parameter(
+			Mandatory=$true
+			, Position=0
+			, ValueFromPipeline=$true
+			, ParameterSetName='ModuleInfo'
+		)]
+		[PSModuleInfo]
+		[Alias('Module')]
+		$ModuleInfo
+	,
+		# выводить help в файл `<ModuleName>-Help.xml` в каталоге модуля
+		[Parameter(
+			ParameterSetName='ModuleInfo'
+		)]
+		[switch]
+		$OutDefaultFile
+	,
+		# Описатель функции
+		[Parameter(
+			Mandatory=$true
+			, Position=0
+			, ValueFromPipeline=$true
+			, ParameterSetName='FunctionInfo'
+		)]
+		[System.Management.Automation.FunctionInfo]
+		$FunctionInfo
+	)
+
+	process {
+		trap {
+			break;
+		};
+		$res = $PSBoundParameters.Remove( 'OutDefaultFile' );
+		[System.Xml.XmlDocument]$HelpContent = Get-InternalHelpXML @PSBoundParameters;
+		switch ( $PsCmdlet.ParameterSetName ) {
+			'ModuleInfo' {
+				if ( $OutDefaultFile ) {
+					$RootHelpDir = Split-Path `
+						-Path ( $ModuleInfo.Path ) `
+						-Parent `
+					;
+					$CultureHelpDir = Join-Path `
+						-Path $RootHelpDir `
+						-ChildPath ( ( Get-Culture ).Name ) `
+					;
+					$HelpFileName = "$( Split-Path -Path ($ModuleInfo.Path) -Leaf )-help.xml";
+					if ( -not ( Test-Path $CultureHelpDir ) ) {
+						$res = New-Item `
+							-Path $CultureHelpDir `
+							-ItemType Directory `
+						;
+					};
+					
+					$Writer = [System.Xml.XmlWriter]::Create(
+						( Join-Path `
+							-Path $CultureHelpDir `
+							-ChildPath $HelpFileName `
+						) `
+						, ( New-Object `
+							-TypeName System.Xml.XmlWriterSettings `
+							-Property @{
+								Indent = $true;
+								OmitXmlDeclaration = $false;
+								NamespaceHandling = [System.Xml.NamespaceHandling]::OmitDuplicates;
+								NewLineOnAttributes = $false;
+								CloseOutput = $true;
+								IndentChars = "`t";
+							} `
+						) `
+					);
+					$HelpContent.WriteTo( $Writer );
+					$Writer.Close();
+
+#					-ChildPath "$( ( Get-Culture ).Name )\$( $ModuleInfo.Name )_$( $ModuleInfo.GUID )_HelpInfo.xml" `
+				} else {
+					return $HelpContent;
+				};
+			}
+			default {
+				return $HelpContent;
+			};
+		};
+	}
+}
+
 Export-ModuleMember `
-	Get-Readme `
+	  Get-Readme `
+	, Get-HelpXML `
 ;

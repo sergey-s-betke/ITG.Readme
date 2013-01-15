@@ -13,6 +13,18 @@
 Функции модуля
 --------------
 
+### HelpXML
+
+#### Обзор [Get-HelpXML][]
+
+Генерирует XML справку для переданного модуля, функции, командлеты.
+
+	Get-HelpXML [-ModuleInfo] <PSModuleInfo> [-OutDefaultFile] <CommonParameters>
+
+	Get-HelpXML [-FunctionInfo] <FunctionInfo> <CommonParameters>
+
+Подробнее - [Get-HelpXML][].
+
 ### Readme
 
 #### Обзор [Get-Readme][]
@@ -30,6 +42,94 @@
 
 Подробное описание функций модуля
 ---------------------------------
+
+#### Get-HelpXML
+
+Генерирует XML справку для переданного модуля, функции, командлеты.
+
+Кроме того, для модуля при указании ключа `-OutDefaultFile` данная
+функция создаст XML файл справки в каталоге модуля (точнее - в
+подкаталоге культуры, как того и требуют командлеты PowerShell, в
+частности - `Get-Help`).
+
+##### Синтаксис
+
+	Get-HelpXML [-ModuleInfo] <PSModuleInfo> [-OutDefaultFile] <CommonParameters>
+
+	Get-HelpXML [-FunctionInfo] <FunctionInfo> <CommonParameters>
+
+##### Требуемая роль пользователя
+
+Для выполнения функции Get-HelpXML требуется роль Everyone для учётной записи,
+от имени которой будет выполнена описываемая функция.
+
+##### Принимаемые данные по конвейеру
+
+- System.Management.Automation.PSModuleInfo
+Описатели модулей. Именно для них и будет сгенерирована XML справка.
+Получены описатели могут быть через `Get-Module`.
+- System.Management.Automation.FunctionInfo
+Описатели функций. Именно для них и будет сгенерирована XML справка.
+Получены описатели могут быть через `Get-Command`.
+- System.Management.Automation.CmdletInfo
+Описатели командлет. Именно для них и будет сгенерирована XML справка.
+Получены описатели могут быть через `Get-Command`.
+
+##### Передаваемые по конвейеру данные
+
+- System.Xml.XmlDocument
+Содержимое XML справки.
+
+##### Параметры
+
+- `ModuleInfo <PSModuleInfo>`
+        Описатель модуля
+
+        Требуется? true
+        Позиция? 1
+        Значение по умолчанию
+        Принимать входные данные конвейера?true (ByValue)
+        Принимать подстановочные знаки?
+
+- `OutDefaultFile [<SwitchParameter>]`
+        выводить help в файл `<ModuleName>-Help.xml` в каталоге модуля
+
+        Требуется? false
+        Позиция? named
+        Значение по умолчанию
+        Принимать входные данные конвейера?false
+        Принимать подстановочные знаки?
+
+- `FunctionInfo <FunctionInfo>`
+        Описатель функции
+
+        Требуется? true
+        Позиция? 1
+        Значение по умолчанию
+        Принимать входные данные конвейера?true (ByValue)
+        Принимать подстановочные знаки?
+
+- `<CommonParameters>`
+        Данный командлет поддерживает общие параметры: Verbose, Debug,
+        ErrorAction, ErrorVariable, WarningAction, WarningVariable,
+        OutBuffer и OutVariable. Для получения дополнительных сведений введите
+        [`get-help about_CommonParameters`][about_CommonParameters].
+
+
+
+##### Примеры использования
+
+1. Генерация xml файла справки для модуля `ITG.Yandex.DnsServer`
+в каталоге модуля.
+
+		Get-Module 'ITG.Yandex.DnsServer' | Get-HelpXML -OutDefaultFile;
+
+##### См. также
+
+- [Online версия справки](http://github.com/IT-Service/ITG.Readme#Get-HelpXML)
+- [about_Comment_Based_Help][]
+- [][]
+- [Creating the Cmdlet Help File](http://msdn.microsoft.com/en-us/library/bb525433.aspx)
 
 #### Get-Readme
 
@@ -56,10 +156,17 @@ Readme
 
 ##### Принимаемые данные по конвейеру
 
-- System.Management.Automation.PSModuleInfo, System.Management.Automation.CmdletInfo,
-System.Management.Automation.FunctionInfo, System.Management.Automation.ExternalScriptInfo.
-Описатели модулей. Именно для них и будет сгенерирован readme.md.
-Получены описатели могут быть через Get-Module, Get-Command.
+- System.Management.Automation.PSModuleInfo.
+Описатели модулей, для которых будет сгенерирован readme.md.
+Получены описатели могут быть через Get-Module.
+- System.Management.Automation.ExternalScriptInfo.
+Описатели сценариев, для которых будет сгенерирован readme.md.
+- System.Management.Automation.CmdletInfo.
+Описатели командлет, для которых будет сгенерирован readme.md.
+Получены описатели могут быть через Get-Command.
+- System.Management.Automation.FunctionInfo.
+Описатели функций, для которых будет сгенерирован readme.md.
+Получены описатели могут быть через Get-Command.
 
 ##### Передаваемые по конвейеру данные
 
@@ -75,16 +182,16 @@ System.Management.Automation.FunctionInfo, System.Management.Automation.External
         Позиция? 1
         Значение по умолчанию
         Принимать входные данные конвейера?true (ByValue)
-        Принимать подстановочные знаки?false
+        Принимать подстановочные знаки?
 
 - `OutDefaultFile [<SwitchParameter>]`
         выводить readme в файл readme.md в каталоге модуля
 
         Требуется? false
         Позиция? named
-        Значение по умолчанию False
+        Значение по умолчанию
         Принимать входные данные конвейера?false
-        Принимать подстановочные знаки?false
+        Принимать подстановочные знаки?
 
 - `ExternalScriptInfo <ExternalScriptInfo>`
         Описатель внешнего сценария
@@ -93,7 +200,7 @@ System.Management.Automation.FunctionInfo, System.Management.Automation.External
         Позиция? 1
         Значение по умолчанию
         Принимать входные данные конвейера?true (ByValue)
-        Принимать подстановочные знаки?false
+        Принимать подстановочные знаки?
 
 - `FunctionInfo <FunctionInfo>`
         Описатель функции
@@ -102,40 +209,40 @@ System.Management.Automation.FunctionInfo, System.Management.Automation.External
         Позиция? 1
         Значение по умолчанию
         Принимать входные данные конвейера?true (ByValue)
-        Принимать подстановочные знаки?false
+        Принимать подстановочные знаки?
 
 - `ReferencedModules <PSModuleInfo[]>`
         Перечень модулей, упоминания функций которых будут заменены на ссылки
 
         Требуется? false
         Позиция? named
-        Значение по умолчанию @()
+        Значение по умолчанию
         Принимать входные данные конвейера?false
-        Принимать подстановочные знаки?false
+        Принимать подстановочные знаки?
 
 - `TranslateRules <Array>`
         Правила для обработки readme регулярными выражениями
 
         Требуется? false
         Позиция? named
-        Значение по умолчанию @()
+        Значение по умолчанию
         Принимать входные данные конвейера?false
-        Принимать подстановочные знаки?false
+        Принимать подстановочные знаки?
 
 - `ShortDescription [<SwitchParameter>]`
         Генерировать только краткое описание
 
         Требуется? false
         Позиция? named
-        Значение по умолчанию False
+        Значение по умолчанию
         Принимать входные данные конвейера?false
-        Принимать подстановочные знаки?false
+        Принимать подстановочные знаки?
 
 - `<CommonParameters>`
-        Этот командлет поддерживает общие параметры: Verbose, Debug,
+        Данный командлет поддерживает общие параметры: Verbose, Debug,
         ErrorAction, ErrorVariable, WarningAction, WarningVariable,
-        OutBuffer и OutVariable. Для получения дополнительных сведений см. раздел
-        [about_CommonParameters][] (http://go.microsoft.com/fwlink/?LinkID=113216).
+        OutBuffer и OutVariable. Для получения дополнительных сведений введите
+        [`get-help about_CommonParameters`][about_CommonParameters].
 
 
 
@@ -154,21 +261,23 @@ System.Management.Automation.FunctionInfo, System.Management.Automation.External
 3. Генерация readme.md файла для модуля `ITG.Yandex.DnsServer`
 в каталоге модуля `ITG.Yandex.DnsServer`, при этом все упоминания
 функций модулей `ITG.Yandex`, `ITG.Utils`, `ITG.WinAPI.UrlMon`,
-`ITG.WinAPI.User32`	так же будут заменены перекрёстными ссылками
+`ITG.WinAPI.User32` так же будут заменены перекрёстными ссылками
 на readme.md файлы указанных модулей.
 
 		Get-Module 'ITG.Yandex.DnsServer' | Get-Readme -OutDefaultFile -ReferencedModules @( 'ITG.Yandex', 'ITG.Utils', 'ITG.WinAPI.UrlMon', 'ITG.WinAPI.User32' | Get-Module )
 
 ##### См. также
 
-- [Online версия справки](<http://github.com/IT-Service/ITG.Readme#Get-Readme> "Get-Readme")
+- [Online версия справки](http://github.com/IT-Service/ITG.Readme#Get-Readme)
 - [MarkDown][]
 - [about_Comment_Based_Help][]
 - [Написание справки для командлетов](http://go.microsoft.com/fwlink/?LinkID=123415)
 
 
-[about_Comment_Based_Help]: http://go.microsoft.com/fwlink/?LinkID=144309 "Describes how to write comment-based help topics for functions and scripts."
-[about_CommonParameters]: http://go.microsoft.com/fwlink/?LinkID=113216 "Describes the parameters that can be used with any cmdlet."
+[]: http://go.microsoft.com/fwlink/?LinkID= 
+[about_Comment_Based_Help]: http://go.microsoft.com/fwlink/?LinkID=144309 "Описание написания разделов справки на основе комментариев для..."
+[about_CommonParameters]: http://go.microsoft.com/fwlink/?LinkID=113216 "Описание параметров, которые могут использоваться с любым командлетом."
+[Get-HelpXML]: <ITG.Readme#Get-HelpXML> "Генерирует XML справку для переданного модуля, функции, командлеты."
 [Get-Readme]: <ITG.Readme#Get-Readme> "Генерирует readme файл с MarkDown разметкой по данным модуля и комментариям к его функциям. Файл предназначен, в частности, для размещения в репозиториях github."
 [MarkDown]: http://daringfireball.net/projects/markdown/syntax "MarkDown (md) Syntax"
 
