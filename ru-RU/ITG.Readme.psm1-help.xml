@@ -573,4 +573,94 @@
 			</maml:navigationLink>
 		</maml:relatedLinks>
 	</command>
+	<command xmlns:msh="http://msh" xmlns="http://schemas.microsoft.com/maml/dev/command/2004/10">
+		<details>
+			<name>Set-HelpInfo</name>
+			<verb>Set</verb>
+			<noun>HelpInfo</noun>
+			<maml:description>
+				<maml:para>Генерирует HelpInfo XML для указанного модуля.</maml:para>
+			</maml:description>
+			<maml:copyright>
+				<maml:para>(c) 2012 Sergey S. Betke. All rights reserved.</maml:para>
+			</maml:copyright>
+			<dev:version>1.6.3</dev:version>
+		</details>
+		<maml:role>Everyone</maml:role>
+		<maml:description>
+			<maml:para>Генерирует HelpInfo XML для переданного модуля, и вносит изменения (в части текущей культуры) в существующий файл HelpInfo.xml в каталоге модуля, либо создаёт новый файл.</maml:para>
+		</maml:description>
+		<syntax>
+			<syntaxItem>
+				<maml:name>Set-HelpInfo</maml:name>
+				<parameter required="true" position="1" pipelineInput="true (ByValue)">
+					<maml:name>ModuleInfo</maml:name>
+					<parameterValue required="true">PSModuleInfo</parameterValue>
+				</parameter>
+				<parameter required="false" position="named" pipelineInput="false">
+					<maml:name>HelpInfoURITemplate</maml:name>
+					<parameterValue required="false">ScriptBlock</parameterValue>
+				</parameter>
+			</syntaxItem>
+		</syntax>
+		<parameters>
+			<parameter required="true" position="1" pipelineInput="true (ByValue)">
+				<maml:name>ModuleInfo</maml:name>
+				<maml:description>
+					<maml:para>Описатель модуля</maml:para>
+				</maml:description>
+				<parameterValue required="True">PSModuleInfo</parameterValue>
+			</parameter>
+			<parameter required="false" position="named" pipelineInput="false">
+				<maml:name>HelpInfoURITemplate</maml:name>
+				<maml:description>
+					<maml:para>"Заготовка" для `HelpContentURI` - функционал (блок), вычисляющий URI для HelpInfo.xml файла</maml:para>
+				</maml:description>
+				<parameterValue required="True">ScriptBlock</parameterValue>
+			</parameter>
+		</parameters>
+		<inputTypes>
+			<inputType>
+				<dev:type>
+					<maml:name>System.Management.Automation.PSModuleInfo</maml:name>
+					<maml:description>
+						<maml:para>Описатели модулей. Именно для них и будет сгенерирован манифест XML справки (HelpInfo.xml). Получены описатели могут быть через `Get-Module`.</maml:para>
+					</maml:description>
+				</dev:type>
+				<maml:description>
+					<maml:para>Описатели модулей. Именно для них и будет сгенерирован манифест XML справки (HelpInfo.xml). Получены описатели могут быть через `Get-Module`.</maml:para>
+				</maml:description>
+			</inputType>
+		</inputTypes>
+		<returnValues>
+			<returnValue>
+				<dev:type>
+					<maml:name>None.</maml:name>
+				</dev:type>
+			</returnValue>
+		</returnValues>
+		<examples>
+			<example>
+				<maml:title>-------------------------- ПРИМЕР 1 --------------------------</maml:title>
+				<maml:introduction>
+					<maml:paragraph>C:\PS&gt;</maml:paragraph>
+				</maml:introduction>
+				<dev:code>Set-HelpInfo -ModuleInfo ( Get-Module 'ITG.Yandex.DnsServer' );</dev:code>
+				<maml:remarks>
+					<maml:para>Создание / модификация HelpInfo.xml файла для модуля `ITG.Yandex.DnsServer` в каталоге модуля.</maml:para>
+				</maml:remarks>
+			</example>
+		</examples>
+		<maml:relatedLinks>
+			<maml:navigationLink>
+				<maml:linkText>about_Updatable_Help</maml:linkText>
+			</maml:navigationLink>
+			<maml:navigationLink>
+				<maml:uri>http://github.com/IT-Service/ITG.Readme#Set-HelpInfo</maml:uri>
+			</maml:navigationLink>
+			<maml:navigationLink>
+				<maml:linkText>[HelpInfo XML Sample File](http://msdn.microsoft.com/en-us/library/windows/desktop/hh852750.aspx)</maml:linkText>
+			</maml:navigationLink>
+		</maml:relatedLinks>
+	</command>
 </helpItems>

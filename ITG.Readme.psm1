@@ -3,8 +3,8 @@
 ;
 
 $HelpInfoFileName = { "$( $ModuleInfo.Name )_$( $ModuleInfo.GUID )_HelpInfo.xml"; };
-
 $GitHubHelpInfoURI = { "http://raw.github.com/IT-Service/$( $ModuleInfo.Name )/$( $ModuleInfo.Version )/$( & $HelpInfoFileName )"; };
+$GitHubHelpContentURI = { "http://raw.github.com/IT-Service/$( $ModuleInfo.Name )/$( $ModuleInfo.Version )/help.cab"; };
 
 $Translator = @{
 	RegExp = $null;
@@ -1771,8 +1771,6 @@ Function Get-HelpXML {
 					);
 					$HelpContent.WriteTo( $Writer );
 					$Writer.Close();
-
-#					-ChildPath "$( ( Get-Culture ).Name )\$( $ModuleInfo.Name )_$( $ModuleInfo.GUID )_HelpInfo.xml" `
 				} else {
 					return $HelpContent;
 				};
@@ -1838,7 +1836,7 @@ Function New-HelpInfo {
 		[ScriptBlock]
 		[Alias('HelpInfoURI')]
 		[Alias('URI')]
-		$HelpInfoURITemplate = $GitHubHelpInfoURI
+		$HelpInfoURITemplate = $GitHubHelpContentURI
 	)
 
 	process {
@@ -1952,9 +1950,144 @@ Function Get-HelpInfo {
 	}
 }
 
+Function Set-HelpInfo {
+	<#
+		.Synopsis
+			Генерирует HelpInfo XML для указанного модуля.
+		.Description
+			Генерирует HelpInfo XML для переданного модуля, и
+			вносит изменения (в части текущей культуры) в существующий файл
+			HelpInfo.xml в каталоге модуля, либо создаёт новый файл.
+		.Role
+			Everyone
+		.Inputs
+			System.Management.Automation.PSModuleInfo
+			Описатели модулей. Именно для них и будет сгенерирован манифест XML справки (HelpInfo.xml). 
+			Получены описатели могут быть через `Get-Module`.
+		.Outputs
+			None.
+		.Link
+			about_Updatable_Help
+		.Link
+			http://github.com/IT-Service/ITG.Readme#Set-HelpInfo
+		.Link
+			[HelpInfo XML Sample File](http://msdn.microsoft.com/en-us/library/windows/desktop/hh852750.aspx)
+		.Example
+			Set-HelpInfo -ModuleInfo ( Get-Module 'ITG.Yandex.DnsServer' );
+			Создание / модификация HelpInfo.xml файла для модуля `ITG.Yandex.DnsServer` в каталоге модуля.
+	#>
+	
+	[CmdletBinding(
+		DefaultParametersetName='ModuleInfo'
+	)]
+
+	param (
+		# Описатель модуля
+		[Parameter(
+			Mandatory=$true
+			, Position=0
+			, ValueFromPipeline=$true
+			, ParameterSetName='ModuleInfo'
+		)]
+		[PSModuleInfo]
+		[Alias('Module')]
+		$ModuleInfo
+	,
+		# "Заготовка" для `HelpContentURI` - функционал (блок), вычисляющий URI для HelpInfo.xml файла
+		[Parameter(
+			Mandatory=$false
+		)]
+		[ScriptBlock]
+		[Alias('HelpInfoURI')]
+		[Alias('URI')]
+		$HelpInfoURITemplate = $GitHubHelpContentURI
+	)
+
+	process {
+		trap {
+			break;
+		};
+		switch ( $PsCmdlet.ParameterSetName ) {
+			'ModuleInfo' {
+				$HelpInfoContent = Get-HelpInfo `
+					-ModuleInfo $ModuleInfo `
+				;
+				$NewHelpInfoContent = New-HelpInfo `
+					-ModuleInfo $ModuleInfo `
+					-HelpInfoURITemplate $HelpInfoURITemplate `
+				;
+
+				$HelpInfoNS = [System.Xml.XmlNamespaceManager] ($NewHelpInfoContent.NameTable);
+ 				$HelpInfoNS.AddNamespace( 'hi', $HelpXMLNS.HelpInfo );
+
+				$HelpContentURIEl = $HelpInfoContent.SelectSingleNode(
+					'/hi:HelpInfo/hi:HelpContentURI'
+					, $HelpInfoNS
+				);
+				if ( $HelpContentURIEl ) {
+					$null = $HelpInfoContent.HelpInfo.RemoveChild( $HelpContentURIEl );
+				};
+				$null = $HelpInfoContent.HelpInfo.PrependChild(
+					$HelpInfoContent.ImportNode(
+						$NewHelpInfoContent.SelectSingleNode(
+							'/hi:HelpInfo/hi:HelpContentURI'
+							, $HelpInfoNS
+						)
+						, $true 
+					)
+				);
+				$SupportedUICultures = $HelpInfoContent.SelectSingleNode(
+					'/hi:HelpInfo/hi:SupportedUICultures'
+					, $HelpInfoNS
+				);
+				$NewSupportedUICultures = $NewHelpInfoContent.HelpInfo.SupportedUICultures;
+				$NewSupportedUICultures.UICulture `
+				| % {
+					$UICultureEl = $HelpInfoContent.SelectSingleNode(
+						"/hi:HelpInfo/hi:SupportedUICultures/hi:UICulture[hi:UICultureName/text()='$( $_.UICultureName )']"
+						, $HelpInfoNS
+					);
+					if ( $UICultureEl ) {
+						$null = $SupportedUICultures.ReplaceChild(
+							$HelpInfoContent.ImportNode( $_, $true )
+							, $UICultureEl
+						);
+					} else {
+						$null = $SupportedUICultures.AppendChild(
+							$HelpInfoContent.ImportNode( $_, $true )
+						);
+					};
+				};
+
+				$HelpInfoPath = ( Join-Path `
+					-Path ( Split-Path -Path ( $ModuleInfo.Path ) -Parent ) `
+					-ChildPath ( & $HelpInfoFileName ) `
+				);
+				$Writer = [System.Xml.XmlWriter]::Create(
+					$HelpInfoPath `
+					, ( New-Object `
+						-TypeName System.Xml.XmlWriterSettings `
+						-Property @{
+							Indent = $true;
+							OmitXmlDeclaration = $false;
+							NamespaceHandling = [System.Xml.NamespaceHandling]::OmitDuplicates;
+							NewLineOnAttributes = $false;
+							CloseOutput = $true;
+							IndentChars = "`t";
+						} `
+					) `
+				);
+				$HelpInfoContent.WriteTo( $Writer );
+				$Writer.Close();
+			}
+		};
+	}
+}
+
 Export-ModuleMember `
 	  Get-Readme `
 	, Get-HelpXML `
 	, New-HelpInfo `
 	, Get-HelpInfo `
+	, Set-HelpInfo `
 ;
