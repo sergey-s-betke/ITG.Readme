@@ -2,6 +2,10 @@
 | Import-Module `
 ;
 
+$HelpInfoFileName = { "$( $ModuleInfo.Name )_$( $ModuleInfo.GUID )_HelpInfo.xml"; };
+
+$GitHubHelpInfoURI = { "http://raw.github.com/IT-Service/$( $ModuleInfo.Name )/$( $ModuleInfo.Version )/$( & $HelpInfoFileName )"; };
+
 $Translator = @{
 	RegExp = $null;
 	RuleType = @();
@@ -1298,7 +1302,8 @@ $HelpXMLNS = @{
 	maml='http://schemas.microsoft.com/maml/2004/10';
 	command='http://schemas.microsoft.com/maml/dev/command/2004/10';
 	dev='http://schemas.microsoft.com/maml/dev/2004/10';
-	MSHelp='http://msdn.microsoft.com/mshelp'
+	MSHelp='http://msdn.microsoft.com/mshelp';
+	HelpInfo='http://schemas.microsoft.com/powershell/help/2010/05';
 };
 
 Function DoTextElement( $HelpContent, $Root, $Prefix, $El, $NS, $Txt ) {
@@ -1644,7 +1649,6 @@ Function Get-InternalHelpXML {
 	};
 }
 
-
 Function Get-HelpXML {
 	<#
 		.Synopsis
@@ -1780,7 +1784,95 @@ Function Get-HelpXML {
 	}
 }
 
+Function New-HelpInfo {
+	<#
+		.Synopsis
+			Генерирует HelpInfo XML для переданного модуля.
+		.Description
+			Генерирует HelpInfo XML для переданного модуля, без записи в файл. 
+			HelpInfo.XML по сути является манифестом для xml справки модуля.
+		.Notes
+			Для записи HelpInfo.xml файла используйте Set-HelpInfoXML.
+		.Role
+			Everyone
+		.Inputs
+			System.Management.Automation.PSModuleInfo
+			Описатели модулей. Именно для них и будет сгенерирован манифест XML справки (HelpInfo.xml). 
+			Получены описатели могут быть через `Get-Module`.
+		.Outputs
+			System.Xml.XmlDocument
+			Содержимое XML манифеста (HelpInfo.xml) справки.
+		.Link
+			about_Updatable_Help
+		.Link
+			Set-HelpInfoXML
+		.Link
+			http://github.com/IT-Service/ITG.Readme#New-HelpInfoXML
+		.Link
+			[HelpInfo XML Sample File](http://msdn.microsoft.com/en-us/library/windows/desktop/hh852750.aspx)
+		.Example
+			Get-Module 'ITG.Yandex.DnsServer' | New-HelpInfo;
+			Генерация xml манифеста справки для модуля `ITG.Yandex.DnsServer`.
+	#>
+	
+	[CmdletBinding(
+		DefaultParametersetName='ModuleInfo'
+	)]
+
+	param (
+		# Описатель модуля
+		[Parameter(
+			Mandatory=$true
+			, Position=0
+			, ValueFromPipeline=$true
+			, ParameterSetName='ModuleInfo'
+		)]
+		[PSModuleInfo]
+		[Alias('Module')]
+		$ModuleInfo
+	,
+		# "Заготовка" для `HelpContentURI` - функционал (блок), вычисляющий URI для HelpInfo.xml файла
+		[Parameter(
+			Mandatory=$false
+		)]
+		[ScriptBlock]
+		[Alias('HelpInfoURI')]
+		[Alias('URI')]
+		$HelpInfoURITemplate = $GitHubHelpInfoURI
+	)
+
+	process {
+		trap {
+			break;
+		};
+		switch ( $PsCmdlet.ParameterSetName ) {
+			'ModuleInfo' {
+				$HelpInfoContent = New-Object -TypeName System.Xml.XmlDocument;
+				$HelpInfo = $HelpInfoContent.AppendChild(
+					$HelpInfoContent.CreateElement( '', 'HelpInfo', ( $HelpXMLNS.HelpInfo ) )
+				);
+				DoTextElement $HelpInfoContent $HelpInfo '' 'HelpContentURI' ( $HelpXMLNS.HelpInfo ) (
+					& $HelpInfoURITemplate
+				);
+				$SupportedUICultures = $HelpInfo.AppendChild(
+					$HelpInfoContent.CreateElement( '', 'SupportedUICultures', ( $HelpXMLNS.HelpInfo ) )
+				);
+				Get-Culture `
+				| % {
+					$UICulture = $SupportedUICultures.AppendChild(
+						$HelpInfoContent.CreateElement( '', 'UICulture', ( $HelpXMLNS.HelpInfo ) )
+					);
+					DoTextElement $HelpInfoContent $UICulture '' 'UICultureName' ( $HelpXMLNS.HelpInfo ) ( $_.Name );
+					DoTextElement $HelpInfoContent $UICulture '' 'UICultureVersion' ( $HelpXMLNS.HelpInfo ) ( $ModuleInfo.Version );
+				};
+				return $HelpInfoContent;
+			}
+		};
+	}
+}
+
 Export-ModuleMember `
 	  Get-Readme `
 	, Get-HelpXML `
+	, New-HelpInfo `
 ;

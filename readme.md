@@ -13,6 +13,16 @@
 Функции модуля
 --------------
 
+### HelpInfo
+
+#### Обзор [New-HelpInfo][]
+
+Генерирует HelpInfo XML для переданного модуля.
+
+	New-HelpInfo [-ModuleInfo] <PSModuleInfo> [-HelpInfoURITemplate <ScriptBlock>] <CommonParameters>
+
+Подробнее - [New-HelpInfo][].
+
 ### HelpXML
 
 #### Обзор [Get-HelpXML][]
@@ -42,6 +52,72 @@
 
 Подробное описание функций модуля
 ---------------------------------
+
+#### New-HelpInfo
+
+Генерирует HelpInfo XML для переданного модуля, без записи в файл.
+HelpInfo.XML по сути является манифестом для xml справки модуля.
+
+##### Синтаксис
+
+	New-HelpInfo [-ModuleInfo] <PSModuleInfo> [-HelpInfoURITemplate <ScriptBlock>] <CommonParameters>
+
+##### Требуемая роль пользователя
+
+Для выполнения функции New-HelpInfo требуется роль Everyone для учётной записи,
+от имени которой будет выполнена описываемая функция.
+
+##### Принимаемые данные по конвейеру
+
+- System.Management.Automation.PSModuleInfo
+Описатели модулей. Именно для них и будет сгенерирован манифест XML справки (HelpInfo.xml).
+Получены описатели могут быть через `Get-Module`.
+
+##### Передаваемые по конвейеру данные
+
+- System.Xml.XmlDocument
+Содержимое XML манифеста (HelpInfo.xml) справки.
+
+##### Параметры
+
+- `ModuleInfo <PSModuleInfo>`
+        Описатель модуля
+
+        Требуется? true
+        Позиция? 1
+        Значение по умолчанию
+        Принимать входные данные конвейера?true (ByValue)
+        Принимать подстановочные знаки?
+
+- `HelpInfoURITemplate <ScriptBlock>`
+        "Заготовка" для `HelpContentURI` - функционал (блок), вычисляющий URI для HelpInfo.xml файла
+
+        Требуется? false
+        Позиция? named
+        Значение по умолчанию
+        Принимать входные данные конвейера?false
+        Принимать подстановочные знаки?
+
+- `<CommonParameters>`
+        Данный командлет поддерживает общие параметры: Verbose, Debug,
+        ErrorAction, ErrorVariable, WarningAction, WarningVariable,
+        OutBuffer и OutVariable. Для получения дополнительных сведений введите
+        [`get-help about_CommonParameters`][about_CommonParameters].
+
+
+
+##### Примеры использования
+
+1. Генерация xml манифеста справки для модуля `ITG.Yandex.DnsServer`.
+
+		Get-Module 'ITG.Yandex.DnsServer' | New-HelpInfo;
+
+##### См. также
+
+- [Online версия справки](http://github.com/IT-Service/ITG.Readme#New-HelpInfoXML)
+- about_Updatable_Help
+- Set-HelpInfoXML
+- [HelpInfo XML Sample File](http://msdn.microsoft.com/en-us/library/windows/desktop/hh852750.aspx)
 
 #### Get-HelpXML
 
@@ -274,11 +350,12 @@ Readme
 - [Написание справки для командлетов](http://go.microsoft.com/fwlink/?LinkID=123415)
 
 
-[about_Comment_Based_Help]: http://go.microsoft.com/fwlink/?LinkID=144309 "Описание написания разделов справки на основе комментариев для..."
-[about_CommonParameters]: http://go.microsoft.com/fwlink/?LinkID=113216 "Описание параметров, которые могут использоваться с любым командлетом."
+[about_Comment_Based_Help]: http://go.microsoft.com/fwlink/?LinkID=144309 
+[about_CommonParameters]: http://go.microsoft.com/fwlink/?LinkID=113216 
 [Get-HelpXML]: <ITG.Readme#Get-HelpXML> "Генерирует XML справку для переданного модуля, функции, командлеты."
 [Get-Readme]: <ITG.Readme#Get-Readme> "Генерирует readme файл с MarkDown разметкой по данным модуля и комментариям к его функциям. Файл предназначен, в частности, для размещения в репозиториях github."
 [MarkDown]: http://daringfireball.net/projects/markdown/syntax "MarkDown (md) Syntax"
+[New-HelpInfo]: <ITG.Readme#New-HelpInfo> "Генерирует HelpInfo XML для переданного модуля."
 
 ---------------------------------------
 

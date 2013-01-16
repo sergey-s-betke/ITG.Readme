@@ -375,4 +375,108 @@
 			</maml:navigationLink>
 		</maml:relatedLinks>
 	</command>
+	<command xmlns:msh="http://msh" xmlns="http://schemas.microsoft.com/maml/dev/command/2004/10">
+		<details>
+			<name>New-HelpInfo</name>
+			<verb>New</verb>
+			<noun>HelpInfo</noun>
+			<maml:description>
+				<maml:para>Генерирует HelpInfo XML для переданного модуля.</maml:para>
+			</maml:description>
+			<maml:copyright>
+				<maml:para>(c) 2012 Sergey S. Betke. All rights reserved.</maml:para>
+			</maml:copyright>
+			<dev:version>1.6.3</dev:version>
+		</details>
+		<maml:role>Everyone</maml:role>
+		<maml:description>
+			<maml:para>Генерирует HelpInfo XML для переданного модуля, без записи в файл. HelpInfo.XML по сути является манифестом для xml справки модуля.</maml:para>
+		</maml:description>
+		<syntax>
+			<syntaxItem>
+				<maml:name>New-HelpInfo</maml:name>
+				<parameter required="true" position="1" pipelineInput="true (ByValue)">
+					<maml:name>ModuleInfo</maml:name>
+					<parameterValue required="true">PSModuleInfo</parameterValue>
+				</parameter>
+				<parameter required="false" position="named" pipelineInput="false">
+					<maml:name>HelpInfoURITemplate</maml:name>
+					<parameterValue required="false">ScriptBlock</parameterValue>
+				</parameter>
+			</syntaxItem>
+		</syntax>
+		<parameters>
+			<parameter required="true" position="1" pipelineInput="true (ByValue)">
+				<maml:name>ModuleInfo</maml:name>
+				<maml:description>
+					<maml:para>Описатель модуля</maml:para>
+				</maml:description>
+				<parameterValue required="True">PSModuleInfo</parameterValue>
+			</parameter>
+			<parameter required="false" position="named" pipelineInput="false">
+				<maml:name>HelpInfoURITemplate</maml:name>
+				<maml:description>
+					<maml:para>"Заготовка" для `HelpContentURI` - функционал (блок), вычисляющий URI для HelpInfo.xml файла</maml:para>
+				</maml:description>
+				<parameterValue required="True">ScriptBlock</parameterValue>
+			</parameter>
+		</parameters>
+		<inputTypes>
+			<inputType>
+				<dev:type>
+					<maml:name>System.Management.Automation.PSModuleInfo</maml:name>
+					<maml:description>
+						<maml:para>Описатели модулей. Именно для них и будет сгенерирован манифест XML справки (HelpInfo.xml). Получены описатели могут быть через `Get-Module`.</maml:para>
+					</maml:description>
+				</dev:type>
+				<maml:description>
+					<maml:para>Описатели модулей. Именно для них и будет сгенерирован манифест XML справки (HelpInfo.xml). Получены описатели могут быть через `Get-Module`.</maml:para>
+				</maml:description>
+			</inputType>
+		</inputTypes>
+		<returnValues>
+			<returnValue>
+				<dev:type>
+					<maml:name>System.Xml.XmlDocument</maml:name>
+					<maml:description>
+						<maml:para>Содержимое XML манифеста (HelpInfo.xml) справки.</maml:para>
+					</maml:description>
+				</dev:type>
+				<maml:description>
+					<maml:para>Содержимое XML манифеста (HelpInfo.xml) справки.</maml:para>
+				</maml:description>
+			</returnValue>
+		</returnValues>
+		<maml:alertSet>
+			<maml:alert>
+				<maml:para>Для записи HelpInfo.xml файла используйте Set-HelpInfoXML.</maml:para>
+			</maml:alert>
+		</maml:alertSet>
+		<examples>
+			<example>
+				<maml:title>-------------------------- ПРИМЕР 1 --------------------------</maml:title>
+				<maml:introduction>
+					<maml:paragraph>C:\PS&gt;</maml:paragraph>
+				</maml:introduction>
+				<dev:code>Get-Module 'ITG.Yandex.DnsServer' | New-HelpInfo;</dev:code>
+				<maml:remarks>
+					<maml:para>Генерация xml манифеста справки для модуля `ITG.Yandex.DnsServer`.</maml:para>
+				</maml:remarks>
+			</example>
+		</examples>
+		<maml:relatedLinks>
+			<maml:navigationLink>
+				<maml:linkText>about_Updatable_Help</maml:linkText>
+			</maml:navigationLink>
+			<maml:navigationLink>
+				<maml:linkText>Set-HelpInfoXML</maml:linkText>
+			</maml:navigationLink>
+			<maml:navigationLink>
+				<maml:uri>http://github.com/IT-Service/ITG.Readme#New-HelpInfoXML</maml:uri>
+			</maml:navigationLink>
+			<maml:navigationLink>
+				<maml:linkText>[HelpInfo XML Sample File](http://msdn.microsoft.com/en-us/library/windows/desktop/hh852750.aspx)</maml:linkText>
+			</maml:navigationLink>
+		</maml:relatedLinks>
+	</command>
 </helpItems>
