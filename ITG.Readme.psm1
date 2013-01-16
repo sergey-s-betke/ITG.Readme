@@ -1792,7 +1792,7 @@ Function New-HelpInfo {
 			Генерирует HelpInfo XML для переданного модуля, без записи в файл. 
 			HelpInfo.XML по сути является манифестом для xml справки модуля.
 		.Notes
-			Для записи HelpInfo.xml файла используйте Set-HelpInfoXML.
+			Для записи HelpInfo.xml файла используйте Set-HelpInfo.
 		.Role
 			Everyone
 		.Inputs
@@ -1805,9 +1805,9 @@ Function New-HelpInfo {
 		.Link
 			about_Updatable_Help
 		.Link
-			Set-HelpInfoXML
+			Set-HelpInfo
 		.Link
-			http://github.com/IT-Service/ITG.Readme#New-HelpInfoXML
+			http://github.com/IT-Service/ITG.Readme#New-HelpInfo
 		.Link
 			[HelpInfo XML Sample File](http://msdn.microsoft.com/en-us/library/windows/desktop/hh852750.aspx)
 		.Example
@@ -1871,8 +1871,90 @@ Function New-HelpInfo {
 	}
 }
 
+Function Get-HelpInfo {
+	<#
+		.Synopsis
+			Возвращает HelpInfo.xml (как xml) для указанного модуля.
+		.Description
+			Вычисляет наименование и положение HelpInfo.xml файла для указанного модуля
+			и возвращает его содержимое. Если файл не обнаружен - возвращает пустую
+			xml "заготовку" HelpInfo.xml, но валидную.
+		.Role
+			Everyone
+		.Inputs
+			System.Management.Automation.PSModuleInfo
+			Описатели модулей. Именно для них и будет возвращён манифест XML справки (HelpInfo.xml). 
+			Получены описатели могут быть через `Get-Module`.
+		.Outputs
+			System.Xml.XmlDocument
+			Содержимое XML манифеста (HelpInfo.xml) справки.
+		.Link
+			about_Updatable_Help
+		.Link
+			Set-HelpInfo
+		.Link
+			New-HelpInfo
+		.Link
+			http://github.com/IT-Service/ITG.Readme#Get-HelpInfo
+		.Link
+			[How to Name a HelpInfo XML File](http://msdn.microsoft.com/en-us/library/windows/desktop/hh852748.aspx)
+		.Link
+			[HelpInfo XML Sample File](http://msdn.microsoft.com/en-us/library/windows/desktop/hh852750.aspx)
+		.Example
+			Get-Module 'ITG.Yandex.DnsServer' | Get-HelpInfo;
+			Возвращает xml манифест справки для модуля `ITG.Yandex.DnsServer`.
+	#>
+	
+	[CmdletBinding(
+		DefaultParametersetName='ModuleInfo'
+	)]
+
+	param (
+		# Описатель модуля
+		[Parameter(
+			Mandatory=$true
+			, Position=0
+			, ValueFromPipeline=$true
+			, ParameterSetName='ModuleInfo'
+		)]
+		[PSModuleInfo]
+		[Alias('Module')]
+		$ModuleInfo
+	)
+
+	process {
+		trap {
+			break;
+		};
+		switch ( $PsCmdlet.ParameterSetName ) {
+			'ModuleInfo' {
+				$HelpInfoPath = ( Join-Path `
+					-Path ( Split-Path -Path ( $ModuleInfo.Path ) -Parent ) `
+					-ChildPath ( & $HelpInfoFileName ) `
+				);
+				if ( Test-Path $HelpInfoPath ) {
+					return ( [xml](
+						Get-Content `
+							-LiteralPath $HelpInfoPath `
+							-ReadCount 0 `
+					));
+				} else {
+					$HelpInfoContent = New-Object -TypeName System.Xml.XmlDocument;
+					$null = $HelpInfoContent.AppendChild(
+						$HelpInfoContent.CreateElement( '', 'HelpInfo', ( $HelpXMLNS.HelpInfo ) )
+					).AppendChild(
+						$HelpInfoContent.CreateElement( '', 'SupportedUICultures', ( $HelpXMLNS.HelpInfo ) )
+					);
+					return $HelpInfoContent;
+				};
+			}
+		};
+	}
+}
+
 Export-ModuleMember `
 	  Get-Readme `
 	, Get-HelpXML `
 	, New-HelpInfo `
+	, Get-HelpInfo `
 ;

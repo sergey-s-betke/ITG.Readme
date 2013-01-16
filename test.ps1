@@ -12,7 +12,5 @@ Import-Module `
 Get-Readme -Module ( Get-Module 'ITG.Readme' ) -OutDefaultFile;
 Get-HelpXML -Module ( Get-Module 'ITG.Readme' ) -OutDefaultFile;
 
-New-HelpInfo -Module ( Get-Module 'ITG.Readme' ) `
-| % {
-	$_.OuterXml;
-};
+( New-HelpInfo -Module ( Get-Module 'ITG.Readme' ) ).OuterXml;
+( Get-HelpInfo -Module ( Get-Module 'ITG.Readme' ) ).OuterXml;
