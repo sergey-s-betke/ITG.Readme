@@ -31,6 +31,14 @@
 
 Подробнее - [New-HelpInfo][].
 
+#### Обзор [Set-HelpInfo][]
+
+Генерирует HelpInfo XML для указанного модуля.
+
+	Set-HelpInfo [-ModuleInfo] <PSModuleInfo> [-HelpInfoURITemplate <ScriptBlock>] <CommonParameters>
+
+Подробнее - [Set-HelpInfo][].
+
 ### HelpXML
 
 #### Обзор [Get-HelpXML][]
@@ -116,7 +124,7 @@ xml "заготовку" HelpInfo.xml, но валидную.
 
 - [Online версия справки](http://github.com/IT-Service/ITG.Readme#Get-HelpInfo)
 - about_Updatable_Help
-- Set-HelpInfo
+- [Set-HelpInfo][]
 - [New-HelpInfo][]
 - [How to Name a HelpInfo XML File](http://msdn.microsoft.com/en-us/library/windows/desktop/hh852748.aspx)
 - [HelpInfo XML Sample File](http://msdn.microsoft.com/en-us/library/windows/desktop/hh852750.aspx)
@@ -184,7 +192,72 @@ HelpInfo.XML по сути является манифестом для xml сп
 
 - [Online версия справки](http://github.com/IT-Service/ITG.Readme#New-HelpInfo)
 - about_Updatable_Help
-- Set-HelpInfo
+- [Set-HelpInfo][]
+- [HelpInfo XML Sample File](http://msdn.microsoft.com/en-us/library/windows/desktop/hh852750.aspx)
+
+#### Set-HelpInfo
+
+Генерирует HelpInfo XML для переданного модуля, и
+вносит изменения (в части текущей культуры) в существующий файл
+HelpInfo.xml в каталоге модуля, либо создаёт новый файл.
+
+##### Синтаксис
+
+	Set-HelpInfo [-ModuleInfo] <PSModuleInfo> [-HelpInfoURITemplate <ScriptBlock>] <CommonParameters>
+
+##### Требуемая роль пользователя
+
+Для выполнения функции Set-HelpInfo требуется роль Everyone для учётной записи,
+от имени которой будет выполнена описываемая функция.
+
+##### Принимаемые данные по конвейеру
+
+- System.Management.Automation.PSModuleInfo
+Описатели модулей. Именно для них и будет сгенерирован манифест XML справки (HelpInfo.xml).
+Получены описатели могут быть через `Get-Module`.
+
+##### Передаваемые по конвейеру данные
+
+- None.
+
+##### Параметры
+
+- `ModuleInfo <PSModuleInfo>`
+        Описатель модуля
+
+        Требуется? true
+        Позиция? 1
+        Значение по умолчанию
+        Принимать входные данные конвейера?true (ByValue)
+        Принимать подстановочные знаки?
+
+- `HelpInfoURITemplate <ScriptBlock>`
+        "Заготовка" для `HelpContentURI` - функционал (блок), вычисляющий URI для HelpInfo.xml файла
+
+        Требуется? false
+        Позиция? named
+        Значение по умолчанию
+        Принимать входные данные конвейера?false
+        Принимать подстановочные знаки?
+
+- `<CommonParameters>`
+        Данный командлет поддерживает общие параметры: Verbose, Debug,
+        ErrorAction, ErrorVariable, WarningAction, WarningVariable,
+        OutBuffer и OutVariable. Для получения дополнительных сведений введите
+        [`get-help about_CommonParameters`][about_CommonParameters].
+
+
+
+##### Примеры использования
+
+1. Создание / модификация HelpInfo.xml файла для модуля `ITG.Yandex.DnsServer` в каталоге модуля.
+
+		Set-HelpInfo -ModuleInfo ( Get-Module 'ITG.Yandex.DnsServer' );
+
+##### См. также
+
+- [Online версия справки](http://github.com/IT-Service/ITG.Readme#Set-HelpInfo)
+- about_Updatable_Help
 - [HelpInfo XML Sample File](http://msdn.microsoft.com/en-us/library/windows/desktop/hh852750.aspx)
 
 #### Get-HelpXML
@@ -425,6 +498,7 @@ Readme
 [Get-Readme]: <ITG.Readme#Get-Readme> "Генерирует readme файл с MarkDown разметкой по данным модуля и комментариям к его функциям. Файл предназначен, в частности, для размещения в репозиториях github."
 [MarkDown]: http://daringfireball.net/projects/markdown/syntax "MarkDown (md) Syntax"
 [New-HelpInfo]: <ITG.Readme#New-HelpInfo> "Генерирует HelpInfo XML для переданного модуля."
+[Set-HelpInfo]: <ITG.Readme#Set-HelpInfo> "Генерирует HelpInfo XML для указанного модуля."
 
 ---------------------------------------
 
