@@ -27,7 +27,7 @@
 
 Генерирует HelpInfo XML для переданного модуля.
 
-	New-HelpInfo [-ModuleInfo] <PSModuleInfo> [-HelpInfoURITemplate <ScriptBlock>] <CommonParameters>
+	New-HelpInfo [-ModuleInfo] <PSModuleInfo> [-HelpContentURITemplate <ScriptBlock>] <CommonParameters>
 
 Подробнее - [New-HelpInfo][].
 
@@ -35,7 +35,7 @@
 
 Генерирует HelpInfo XML для указанного модуля.
 
-	Set-HelpInfo [-ModuleInfo] <PSModuleInfo> [-HelpInfoURITemplate <ScriptBlock>] <CommonParameters>
+	Set-HelpInfo [-ModuleInfo] <PSModuleInfo> [-HelpContentURITemplate <ScriptBlock>] <CommonParameters>
 
 Подробнее - [Set-HelpInfo][].
 
@@ -136,7 +136,7 @@ HelpInfo.XML по сути является манифестом для xml сп
 
 ##### Синтаксис
 
-	New-HelpInfo [-ModuleInfo] <PSModuleInfo> [-HelpInfoURITemplate <ScriptBlock>] <CommonParameters>
+	New-HelpInfo [-ModuleInfo] <PSModuleInfo> [-HelpContentURITemplate <ScriptBlock>] <CommonParameters>
 
 ##### Требуемая роль пользователя
 
@@ -165,8 +165,14 @@ HelpInfo.XML по сути является манифестом для xml сп
         Принимать входные данные конвейера?true (ByValue)
         Принимать подстановочные знаки?
 
-- `HelpInfoURITemplate <ScriptBlock>`
-        "Заготовка" для `HelpContentURI` - функционал (блок), вычисляющий URI для HelpInfo.xml файла
+- `HelpContentURITemplate <ScriptBlock>`
+        "Заготовка" для `HelpContentURI` - функционал (блок), вычисляющий URI для .cab файлов справки
+
+        По умолчанию используется URI для github вида
+
+            { "<http://raw.github.com/IT-Service/$>( $ModuleInfo.Name )/$( $ModuleInfo.Version )/help.cab" }
+
+        Вероятнее всего, Вам потребуется переопределять "генератор" данного URI.
 
         Требуется? false
         Позиция? named
@@ -203,7 +209,7 @@ HelpInfo.xml в каталоге модуля, либо создаёт новы�
 
 ##### Синтаксис
 
-	Set-HelpInfo [-ModuleInfo] <PSModuleInfo> [-HelpInfoURITemplate <ScriptBlock>] <CommonParameters>
+	Set-HelpInfo [-ModuleInfo] <PSModuleInfo> [-HelpContentURITemplate <ScriptBlock>] <CommonParameters>
 
 ##### Требуемая роль пользователя
 
@@ -231,8 +237,14 @@ HelpInfo.xml в каталоге модуля, либо создаёт новы�
         Принимать входные данные конвейера?true (ByValue)
         Принимать подстановочные знаки?
 
-- `HelpInfoURITemplate <ScriptBlock>`
-        "Заготовка" для `HelpContentURI` - функционал (блок), вычисляющий URI для HelpInfo.xml файла
+- `HelpContentURITemplate <ScriptBlock>`
+        "Заготовка" для `HelpContentURI` - функционал (блок), вычисляющий URI для .cab файлов справки
+
+        По умолчанию используется URI для github вида
+
+            { "<http://raw.github.com/IT-Service/$>( $ModuleInfo.Name )/$( $ModuleInfo.Version )/help.cab" }
+
+        Вероятнее всего, Вам потребуется переопределять "генератор" данного URI.
 
         Требуется? false
         Позиция? named
@@ -491,8 +503,8 @@ Readme
 - [Написание справки для командлетов](http://go.microsoft.com/fwlink/?LinkID=123415)
 
 
-[about_Comment_Based_Help]: http://go.microsoft.com/fwlink/?LinkID=144309 
-[about_CommonParameters]: http://go.microsoft.com/fwlink/?LinkID=113216 
+[about_Comment_Based_Help]: http://go.microsoft.com/fwlink/?LinkID=144309 "Описание написания разделов справки на основе комментариев для..."
+[about_CommonParameters]: http://go.microsoft.com/fwlink/?LinkID=113216 "Описание параметров, которые могут использоваться с любым командлетом."
 [Get-HelpInfo]: <ITG.Readme#Get-HelpInfo> "Возвращает HelpInfo.xml (как xml) для указанного модуля."
 [Get-HelpXML]: <ITG.Readme#Get-HelpXML> "Генерирует XML справку для переданного модуля, функции, командлеты."
 [Get-Readme]: <ITG.Readme#Get-Readme> "Генерирует readme файл с MarkDown разметкой по данным модуля и комментариям к его функциям. Файл предназначен, в частности, для размещения в репозиториях github."

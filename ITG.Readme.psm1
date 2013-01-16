@@ -1829,14 +1829,22 @@ Function New-HelpInfo {
 		[Alias('Module')]
 		$ModuleInfo
 	,
-		# "Заготовка" для `HelpContentURI` - функционал (блок), вычисляющий URI для HelpInfo.xml файла
+		<#
+			"Заготовка" для `HelpContentURI` - функционал (блок), вычисляющий URI для .cab файлов справки
+		 
+			По умолчанию используется URI для github вида
+
+				{ "http://raw.github.com/IT-Service/$( $ModuleInfo.Name )/$( $ModuleInfo.Version )/help.cab" }
+				
+			Вероятнее всего, Вам потребуется переопределять "генератор" данного URI.
+		#>
 		[Parameter(
 			Mandatory=$false
 		)]
 		[ScriptBlock]
-		[Alias('HelpInfoURI')]
+		[Alias('HelpContentURI')]
 		[Alias('URI')]
-		$HelpInfoURITemplate = $GitHubHelpContentURI
+		$HelpContentURITemplate = $GitHubHelpContentURI
 	)
 
 	process {
@@ -1850,7 +1858,7 @@ Function New-HelpInfo {
 					$HelpInfoContent.CreateElement( '', 'HelpInfo', ( $HelpXMLNS.HelpInfo ) )
 				);
 				DoTextElement $HelpInfoContent $HelpInfo '' 'HelpContentURI' ( $HelpXMLNS.HelpInfo ) (
-					& $HelpInfoURITemplate
+					& $HelpContentURITemplate
 				);
 				$SupportedUICultures = $HelpInfo.AppendChild(
 					$HelpInfoContent.CreateElement( '', 'SupportedUICultures', ( $HelpXMLNS.HelpInfo ) )
@@ -1993,14 +2001,22 @@ Function Set-HelpInfo {
 		[Alias('Module')]
 		$ModuleInfo
 	,
-		# "Заготовка" для `HelpContentURI` - функционал (блок), вычисляющий URI для HelpInfo.xml файла
+		<#
+			"Заготовка" для `HelpContentURI` - функционал (блок), вычисляющий URI для .cab файлов справки
+		 
+			По умолчанию используется URI для github вида
+
+				{ "http://raw.github.com/IT-Service/$( $ModuleInfo.Name )/$( $ModuleInfo.Version )/help.cab" }
+				
+			Вероятнее всего, Вам потребуется переопределять "генератор" данного URI.
+		#>
 		[Parameter(
 			Mandatory=$false
 		)]
 		[ScriptBlock]
-		[Alias('HelpInfoURI')]
+		[Alias('HelpContentURI')]
 		[Alias('URI')]
-		$HelpInfoURITemplate = $GitHubHelpContentURI
+		$HelpContentURITemplate = $GitHubHelpContentURI
 	)
 
 	process {
@@ -2014,7 +2030,7 @@ Function Set-HelpInfo {
 				;
 				$NewHelpInfoContent = New-HelpInfo `
 					-ModuleInfo $ModuleInfo `
-					-HelpInfoURITemplate $HelpInfoURITemplate `
+					-HelpContentURITemplate $HelpContentURITemplate `
 				;
 
 				$HelpInfoNS = [System.Xml.XmlNamespaceManager] ($NewHelpInfoContent.NameTable);

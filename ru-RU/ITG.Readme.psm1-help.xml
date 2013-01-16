@@ -494,7 +494,7 @@
 					<parameterValue required="true">PSModuleInfo</parameterValue>
 				</parameter>
 				<parameter required="false" position="named" pipelineInput="false">
-					<maml:name>HelpInfoURITemplate</maml:name>
+					<maml:name>HelpContentURITemplate</maml:name>
 					<parameterValue required="false">ScriptBlock</parameterValue>
 				</parameter>
 			</syntaxItem>
@@ -508,9 +508,12 @@
 				<parameterValue required="True">PSModuleInfo</parameterValue>
 			</parameter>
 			<parameter required="false" position="named" pipelineInput="false">
-				<maml:name>HelpInfoURITemplate</maml:name>
+				<maml:name>HelpContentURITemplate</maml:name>
 				<maml:description>
-					<maml:para>"Заготовка" для `HelpContentURI` - функционал (блок), вычисляющий URI для HelpInfo.xml файла</maml:para>
+					<maml:para>"Заготовка" для `HelpContentURI` - функционал (блок), вычисляющий URI для .cab файлов справки</maml:para>
+					<maml:para>По умолчанию используется URI для github вида</maml:para>
+					<maml:para>{ "http://raw.github.com/IT-Service/$( $ModuleInfo.Name )/$( $ModuleInfo.Version )/help.cab" }</maml:para>
+					<maml:para>Вероятнее всего, Вам потребуется переопределять "генератор" данного URI.</maml:para>
 				</maml:description>
 				<parameterValue required="True">ScriptBlock</parameterValue>
 			</parameter>
@@ -598,7 +601,7 @@
 					<parameterValue required="true">PSModuleInfo</parameterValue>
 				</parameter>
 				<parameter required="false" position="named" pipelineInput="false">
-					<maml:name>HelpInfoURITemplate</maml:name>
+					<maml:name>HelpContentURITemplate</maml:name>
 					<parameterValue required="false">ScriptBlock</parameterValue>
 				</parameter>
 			</syntaxItem>
@@ -612,9 +615,12 @@
 				<parameterValue required="True">PSModuleInfo</parameterValue>
 			</parameter>
 			<parameter required="false" position="named" pipelineInput="false">
-				<maml:name>HelpInfoURITemplate</maml:name>
+				<maml:name>HelpContentURITemplate</maml:name>
 				<maml:description>
-					<maml:para>"Заготовка" для `HelpContentURI` - функционал (блок), вычисляющий URI для HelpInfo.xml файла</maml:para>
+					<maml:para>"Заготовка" для `HelpContentURI` - функционал (блок), вычисляющий URI для .cab файлов справки</maml:para>
+					<maml:para>По умолчанию используется URI для github вида</maml:para>
+					<maml:para>{ "http://raw.github.com/IT-Service/$( $ModuleInfo.Name )/$( $ModuleInfo.Version )/help.cab" }</maml:para>
+					<maml:para>Вероятнее всего, Вам потребуется переопределять "генератор" данного URI.</maml:para>
 				</maml:description>
 				<parameterValue required="True">ScriptBlock</parameterValue>
 			</parameter>
