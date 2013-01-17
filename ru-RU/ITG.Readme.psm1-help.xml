@@ -651,6 +651,17 @@
 					<maml:name>HelpContentURITemplate</maml:name>
 					<parameterValue required="false">ScriptBlock</parameterValue>
 				</parameter>
+				<parameter required="false" position="named" pipelineInput="false">
+					<maml:name>UpdateManifest</maml:name>
+				</parameter>
+				<parameter required="false" position="named" pipelineInput="false">
+					<maml:name>HelpInfoUriTemplate</maml:name>
+					<parameterValue required="false">ScriptBlock</parameterValue>
+				</parameter>
+				<parameter required="false" position="named" pipelineInput="false">
+					<maml:name>HelpInfoUri</maml:name>
+					<parameterValue required="false">Uri</parameterValue>
+				</parameter>
 			</syntaxItem>
 		</syntax>
 		<parameters>
@@ -670,6 +681,27 @@
 					<maml:para>Вероятнее всего, Вам потребуется переопределять "генератор" данного URI.</maml:para>
 				</maml:description>
 				<parameterValue required="True">ScriptBlock</parameterValue>
+			</parameter>
+			<parameter required="false" position="named" pipelineInput="false">
+				<maml:name>UpdateManifest</maml:name>
+				<maml:description>
+					<maml:para>Обновлять или нет манифест модуля. Речь идёт о создании / обновлении параметра HelpInfoURI в манифесте, который как раз и должен указывать на HelpInfo.xml файл</maml:para>
+				</maml:description>
+				<parameterValue required="True">SwitchParameter</parameterValue>
+			</parameter>
+			<parameter required="false" position="named" pipelineInput="false">
+				<maml:name>HelpInfoUriTemplate</maml:name>
+				<maml:description>
+					<maml:para>Функционал (`[ScriptBlock]`), вычисляющий `HelpInfoUri`. Используется только совместно с `UpdateManifest`. Значение по умолчанию генерирует url к репозиторию проекта на github.</maml:para>
+				</maml:description>
+				<parameterValue required="True">ScriptBlock</parameterValue>
+			</parameter>
+			<parameter required="false" position="named" pipelineInput="false">
+				<maml:name>HelpInfoUri</maml:name>
+				<maml:description>
+					<maml:para>Используется только совместно с `UpdateManifest`. Значение по умолчанию - url к репозиторию проекта на github.</maml:para>
+				</maml:description>
+				<parameterValue required="True">Uri</parameterValue>
 			</parameter>
 		</parameters>
 		<inputTypes>

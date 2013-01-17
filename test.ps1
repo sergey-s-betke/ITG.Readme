@@ -11,4 +11,4 @@ Import-Module `
 ;
 Get-Readme -Module ( Get-Module 'ITG.Readme' ) -OutDefaultFile;
 Get-HelpXML -Module ( Get-Module 'ITG.Readme' ) -OutDefaultFile -Cab;
-Set-HelpInfo -Module ( Get-Module 'ITG.Readme' );
+Set-HelpInfo -Module ( Get-Module 'ITG.Readme' ) ; # -UpdateManifest;

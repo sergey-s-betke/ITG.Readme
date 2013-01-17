@@ -1258,14 +1258,13 @@ Function Get-Readme {
 			'ModuleInfo' {
 				if ( $OutDefaultFile ) {
 					$ReadMeContent `
-					| Out-File `
-						-FilePath ( Join-Path `
+					| Set-Content `
+						-LiteralPath ( Join-Path `
 							-Path ( Split-Path -Path ( $ModuleInfo.Path ) -Parent ) `
 							-ChildPath 'readme.md' `
 						) `
-						-Force `
 						-Encoding 'UTF8' `
-						-Width 1024 `
+						-Force `
 					;
 				} else {
 					return $ReadMeContent;
@@ -1460,7 +1459,7 @@ Function Get-InternalHelpXML {
 			}
 			'FunctionInfo' {
 				$ModuleManifestPath = Join-Path `
-					-Path ( Split-Path ( $FunctionInfo.Module.Path ) -Parent ) `
+					-Path ( $FunctionInfo.Module.ModuleBase ) `
 					-ChildPath "$( $FunctionInfo.Module.Name ).psd1" `
 				;
 				if ( -not ( Test-Path -LiteralPath $ModuleManifestPath ) ) {
@@ -2075,6 +2074,32 @@ Function Set-HelpInfo {
 		[Alias('HelpContentURI')]
 		[Alias('URI')]
 		$HelpContentURITemplate = $GitHubHelpContentURI
+	,
+		# Обновлять или нет манифест модуля. Речь идёт о создании / обновлении параметра 
+		# HelpInfoURI в манифесте, который как раз и должен указывать на HelpInfo.xml файл
+		[Parameter(
+			ParameterSetName='ModuleInfo'
+		)]
+		[switch]
+		$UpdateManifest
+	,
+		# Функционал (`[ScriptBlock]`), вычисляющий `HelpInfoUri`. Используется только совместно
+		# с `UpdateManifest`. Значение по умолчанию генерирует url к репозиторию проекта на github.
+		[Parameter(
+			ParameterSetName='ModuleInfo'
+			, Mandatory=$false
+		)]
+		[ScriptBlock]
+		$HelpInfoUriTemplate = $GitHubHelpInfoURI
+	,
+		# Используется только совместно
+		# с `UpdateManifest`. Значение по умолчанию - url к репозиторию проекта на github.
+		[Parameter(
+			ParameterSetName='ModuleInfo'
+			, Mandatory=$false
+		)]
+		[System.Uri]
+		$HelpInfoUri = ( & $HelpInfoUriTemplate )
 	)
 
 	process {
@@ -2153,6 +2178,38 @@ Function Set-HelpInfo {
 				);
 				$HelpInfoContent.WriteTo( $Writer );
 				$Writer.Close();
+
+				if ( $UpdateManifest ) {
+					$ModuleManifestPath = Join-Path `
+						-Path ( $ModuleInfo.ModuleBase ) `
+						-ChildPath "$( $ModuleInfo.Name ).psd1" `
+					;
+					if ( -not ( Test-Path -LiteralPath $ModuleManifestPath ) ) {
+						Write-Error `
+							-Message "Не обнаружен манифест ($ModuleManifestPath) модуля." `
+							-Category ResourceUnavailable `
+							-CategoryActivity 'Загрузка манифеста модуля' `
+							-CategoryReason 'Не обнаружен манифест модуля.' `
+							-CategoryTargetName ( $ModuleInfo.Name ) `
+							-TargetObject ( $ModuleInfo ) `
+							-RecommendedAction 'Создайте .psd1 манифест к модулю и разместите его в каталоге модуля.' `
+						;
+						return;
+					};
+					( Get-Content `
+						-LiteralPath $ModuleManifestPath `
+						-ReadCount 0 `
+					) `
+					-join "`r`n" `
+					-replace `
+						"(?s)`r?`nHelpInfoUri\s*=\s*['`"].*?['`"]\s+|(?<!HelpInfoUri.*)(?=})" `
+						, "`r`nHelpInfoUri = '$HelpInfoUri'`r`n`r`n" `
+					| Set-Content `
+						-LiteralPath $ModuleManifestPath `
+						-Encoding 'UTF8' `
+						-Force `
+					;
+				};
 			}
 		};
 	}
