@@ -4,7 +4,15 @@
 
 $HelpInfoFileName = { "$( $ModuleInfo.Name )_$( $ModuleInfo.GUID )_HelpInfo.xml"; };
 $GitHubHelpInfoURI = { "http://raw.github.com/IT-Service/$( $ModuleInfo.Name )/$( $ModuleInfo.Version )/$( & $HelpInfoFileName )"; };
-$GitHubHelpContentURI = { "http://raw.github.com/IT-Service/$( $ModuleInfo.Name )/$( $ModuleInfo.Version )/help.cab"; };
+
+$HelpXMLCabFileName = { "$( $ModuleInfo.Name )_$( $ModuleInfo.GUID )_$( $UICulture )_HelpContent.cab"; };
+$CabFolderName = 'help.cab';
+$GitHubHelpContentURI = { "http://raw.github.com/IT-Service/$( $ModuleInfo.Name )/$( $ModuleInfo.Version )/$CabFolderName"; };
+$CabPathTemplateDefault = {
+	( Split-Path -Path ( $ModuleInfo.Path ) -Parent ) `
+	| Join-Path -ChildPath $CabFolderName `
+	| Join-Path -ChildPath ( & $HelpXMLCabFileName ) `
+};
 
 $Translator = @{
 	RegExp = $null;
@@ -1709,13 +1717,6 @@ Function Get-HelpXML {
 		[Alias('Module')]
 		$ModuleInfo
 	,
-		# выводить help в файл `<ModuleName>-Help.xml` в каталоге модуля
-		[Parameter(
-			ParameterSetName='ModuleInfo'
-		)]
-		[switch]
-		$OutDefaultFile
-	,
 		# Описатель функции
 		[Parameter(
 			Mandatory=$true
@@ -1725,16 +1726,52 @@ Function Get-HelpXML {
 		)]
 		[System.Management.Automation.FunctionInfo]
 		$FunctionInfo
+	,
+		# культура, для которой генерировать данные, на данный момент параметр задавать не следует.
+		[Parameter(
+			Mandatory=$false
+		)]
+		[System.Globalization.CultureInfo]
+		$UICulture = ( Get-Culture )
+	,
+		# выводить help в файл `<ModuleName>-Help.xml` в каталоге модуля
+		[Parameter(
+			ParameterSetName='ModuleInfo'
+		)]
+		[switch]
+		$OutDefaultFile
+	,
+		# генерировать / обновлять или нет .cab файл
+		[Parameter(
+			ParameterSetName='ModuleInfo'
+		)]
+		[switch]
+		$Cab
+	,
+		# функционал (`[ScriptBlock]`), вычисляющий полный путь к .cab файлу
+		[Parameter(
+			ParameterSetName='ModuleInfo'
+			, Mandatory=$false
+		)]
+		[ScriptBlock]
+		$CabPathTemplate = $CabPathTemplateDefault
+	,
+		# Путь к .cab файлу
+		[Parameter(
+			ParameterSetName='ModuleInfo'
+			, Mandatory=$false
+		)]
+		[System.IO.FileInfo]
+		$CabPath = ( & $CabPathTemplate )
 	)
 
 	process {
 		trap {
 			break;
 		};
-		$res = $PSBoundParameters.Remove( 'OutDefaultFile' );
-		[System.Xml.XmlDocument]$HelpContent = Get-InternalHelpXML @PSBoundParameters;
 		switch ( $PsCmdlet.ParameterSetName ) {
 			'ModuleInfo' {
+				[System.Xml.XmlDocument]$HelpContent = Get-InternalHelpXML -ModuleInfo $ModuleInfo;
 				if ( $OutDefaultFile ) {
 					$RootHelpDir = Split-Path `
 						-Path ( $ModuleInfo.Path ) `
@@ -1745,6 +1782,10 @@ Function Get-HelpXML {
 						-ChildPath ( ( Get-Culture ).Name ) `
 					;
 					$HelpFileName = "$( Split-Path -Path ($ModuleInfo.Path) -Leaf )-help.xml";
+					$HelpFilePath = Join-Path `
+						-Path $CultureHelpDir `
+						-ChildPath $HelpFileName `
+					;
 					if ( -not ( Test-Path $CultureHelpDir ) ) {
 						$res = New-Item `
 							-Path $CultureHelpDir `
@@ -1753,10 +1794,7 @@ Function Get-HelpXML {
 					};
 					
 					$Writer = [System.Xml.XmlWriter]::Create(
-						( Join-Path `
-							-Path $CultureHelpDir `
-							-ChildPath $HelpFileName `
-						) `
+						$HelpFilePath `
 						, ( New-Object `
 							-TypeName System.Xml.XmlWriterSettings `
 							-Property @{
@@ -1771,11 +1809,31 @@ Function Get-HelpXML {
 					);
 					$HelpContent.WriteTo( $Writer );
 					$Writer.Close();
+					
+					if ( $Cab ) {
+						$CabDir = Split-Path -Path ( $CabPath.FullName ) -Parent;
+						if ( -not ( Test-Path -LiteralPath $CabDir ) ) {
+							$null = New-Item -Path $CabDir -ItemType Directory;
+						};
+						$MakeCabProcess = Start-Process `
+							-FilePath 'makecab' `
+							-ArgumentList "`"$( $HelpFilePath )`"", "`"$( $CabPath.FullName )`"" `
+							-NoNewWindow `
+							-Wait `
+							-PassThru `
+						;
+						if ( $MakeCabProcess.ExitCode ) {
+							Write-Error `
+								-Message "Возникла ошибка $( $MakeCabProcess.ExitCode ) при выполнении makecab.exe." `
+							;
+						};
+					};
 				} else {
 					return $HelpContent;
 				};
 			}
 			default {
+				[System.Xml.XmlDocument]$HelpContent = Get-InternalHelpXML -FunctionInfo $FunctionInfo;
 				return $HelpContent;
 			};
 		};
