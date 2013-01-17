@@ -27,7 +27,7 @@
 
 Генерирует HelpInfo XML для переданного модуля.
 
-	New-HelpInfo [-ModuleInfo] <PSModuleInfo> [-HelpInfoURITemplate <ScriptBlock>] <CommonParameters>
+	New-HelpInfo [-ModuleInfo] <PSModuleInfo> [-HelpContentURITemplate <ScriptBlock>] <CommonParameters>
 
 Подробнее - [New-HelpInfo][].
 
@@ -35,7 +35,7 @@
 
 Генерирует HelpInfo XML для указанного модуля.
 
-	Set-HelpInfo [-ModuleInfo] <PSModuleInfo> [-HelpInfoURITemplate <ScriptBlock>] <CommonParameters>
+	Set-HelpInfo [-ModuleInfo] <PSModuleInfo> [-HelpContentURITemplate <ScriptBlock>] <CommonParameters>
 
 Подробнее - [Set-HelpInfo][].
 
@@ -45,9 +45,9 @@
 
 Генерирует XML справку для переданного модуля, функции, командлеты.
 
-	Get-HelpXML [-ModuleInfo] <PSModuleInfo> [-OutDefaultFile] <CommonParameters>
+	Get-HelpXML [-ModuleInfo] <PSModuleInfo> [-UICulture <CultureInfo>] [-OutDefaultFile] [-Cab] [-CabPathTemplate <ScriptBlock>] [-CabPath <FileInfo>] <CommonParameters>
 
-	Get-HelpXML [-FunctionInfo] <FunctionInfo> <CommonParameters>
+	Get-HelpXML [-FunctionInfo] <FunctionInfo> [-UICulture <CultureInfo>] <CommonParameters>
 
 Подробнее - [Get-HelpXML][].
 
@@ -136,7 +136,7 @@ HelpInfo.XML по сути является манифестом для xml сп
 
 ##### Синтаксис
 
-	New-HelpInfo [-ModuleInfo] <PSModuleInfo> [-HelpInfoURITemplate <ScriptBlock>] <CommonParameters>
+	New-HelpInfo [-ModuleInfo] <PSModuleInfo> [-HelpContentURITemplate <ScriptBlock>] <CommonParameters>
 
 ##### Требуемая роль пользователя
 
@@ -165,8 +165,14 @@ HelpInfo.XML по сути является манифестом для xml сп
         Принимать входные данные конвейера?true (ByValue)
         Принимать подстановочные знаки?
 
-- `HelpInfoURITemplate <ScriptBlock>`
-        "Заготовка" для `HelpContentURI` - функционал (блок), вычисляющий URI для HelpInfo.xml файла
+- `HelpContentURITemplate <ScriptBlock>`
+        "Заготовка" для `HelpContentURI` - функционал (блок), вычисляющий URI для .cab файлов справки
+
+        По умолчанию используется URI для github вида
+
+            { "<http://raw.github.com/IT-Service/$>( $ModuleInfo.Name )/$( $ModuleInfo.Version )/help.cab" }
+
+        Вероятнее всего, Вам потребуется переопределять "генератор" данного URI.
 
         Требуется? false
         Позиция? named
@@ -203,7 +209,7 @@ HelpInfo.xml в каталоге модуля, либо создаёт новы�
 
 ##### Синтаксис
 
-	Set-HelpInfo [-ModuleInfo] <PSModuleInfo> [-HelpInfoURITemplate <ScriptBlock>] <CommonParameters>
+	Set-HelpInfo [-ModuleInfo] <PSModuleInfo> [-HelpContentURITemplate <ScriptBlock>] <CommonParameters>
 
 ##### Требуемая роль пользователя
 
@@ -231,8 +237,14 @@ HelpInfo.xml в каталоге модуля, либо создаёт новы�
         Принимать входные данные конвейера?true (ByValue)
         Принимать подстановочные знаки?
 
-- `HelpInfoURITemplate <ScriptBlock>`
-        "Заготовка" для `HelpContentURI` - функционал (блок), вычисляющий URI для HelpInfo.xml файла
+- `HelpContentURITemplate <ScriptBlock>`
+        "Заготовка" для `HelpContentURI` - функционал (блок), вычисляющий URI для .cab файлов справки
+
+        По умолчанию используется URI для github вида
+
+            { "<http://raw.github.com/IT-Service/$>( $ModuleInfo.Name )/$( $ModuleInfo.Version )/help.cab" }
+
+        Вероятнее всего, Вам потребуется переопределять "генератор" данного URI.
 
         Требуется? false
         Позиция? named
@@ -271,9 +283,9 @@ HelpInfo.xml в каталоге модуля, либо создаёт новы�
 
 ##### Синтаксис
 
-	Get-HelpXML [-ModuleInfo] <PSModuleInfo> [-OutDefaultFile] <CommonParameters>
+	Get-HelpXML [-ModuleInfo] <PSModuleInfo> [-UICulture <CultureInfo>] [-OutDefaultFile] [-Cab] [-CabPathTemplate <ScriptBlock>] [-CabPath <FileInfo>] <CommonParameters>
 
-	Get-HelpXML [-FunctionInfo] <FunctionInfo> <CommonParameters>
+	Get-HelpXML [-FunctionInfo] <FunctionInfo> [-UICulture <CultureInfo>] <CommonParameters>
 
 ##### Требуемая роль пользователя
 
@@ -308,6 +320,24 @@ HelpInfo.xml в каталоге модуля, либо создаёт новы�
         Принимать входные данные конвейера?true (ByValue)
         Принимать подстановочные знаки?
 
+- `FunctionInfo <FunctionInfo>`
+        Описатель функции
+
+        Требуется? true
+        Позиция? 1
+        Значение по умолчанию
+        Принимать входные данные конвейера?true (ByValue)
+        Принимать подстановочные знаки?
+
+- `UICulture <CultureInfo>`
+        культура, для которой генерировать данные, на данный момент параметр задавать не следует.
+
+        Требуется? false
+        Позиция? named
+        Значение по умолчанию
+        Принимать входные данные конвейера?false
+        Принимать подстановочные знаки?
+
 - `OutDefaultFile [<SwitchParameter>]`
         выводить help в файл `<ModuleName>-Help.xml` в каталоге модуля
 
@@ -317,13 +347,31 @@ HelpInfo.xml в каталоге модуля, либо создаёт новы�
         Принимать входные данные конвейера?false
         Принимать подстановочные знаки?
 
-- `FunctionInfo <FunctionInfo>`
-        Описатель функции
+- `Cab [<SwitchParameter>]`
+        генерировать / обновлять или нет .cab файл
 
-        Требуется? true
-        Позиция? 1
+        Требуется? false
+        Позиция? named
         Значение по умолчанию
-        Принимать входные данные конвейера?true (ByValue)
+        Принимать входные данные конвейера?false
+        Принимать подстановочные знаки?
+
+- `CabPathTemplate <ScriptBlock>`
+        функционал (`[ScriptBlock]`), вычисляющий полный путь к .cab файлу
+
+        Требуется? false
+        Позиция? named
+        Значение по умолчанию
+        Принимать входные данные конвейера?false
+        Принимать подстановочные знаки?
+
+- `CabPath <FileInfo>`
+        Путь к .cab файлу
+
+        Требуется? false
+        Позиция? named
+        Значение по умолчанию
+        Принимать входные данные конвейера?false
         Принимать подстановочные знаки?
 
 - `<CommonParameters>`

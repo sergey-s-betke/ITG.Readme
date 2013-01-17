@@ -121,7 +121,22 @@
 					<parameterValue required="true">PSModuleInfo</parameterValue>
 				</parameter>
 				<parameter required="false" position="named" pipelineInput="false">
+					<maml:name>UICulture</maml:name>
+					<parameterValue required="false">CultureInfo</parameterValue>
+				</parameter>
+				<parameter required="false" position="named" pipelineInput="false">
 					<maml:name>OutDefaultFile</maml:name>
+				</parameter>
+				<parameter required="false" position="named" pipelineInput="false">
+					<maml:name>Cab</maml:name>
+				</parameter>
+				<parameter required="false" position="named" pipelineInput="false">
+					<maml:name>CabPathTemplate</maml:name>
+					<parameterValue required="false">ScriptBlock</parameterValue>
+				</parameter>
+				<parameter required="false" position="named" pipelineInput="false">
+					<maml:name>CabPath</maml:name>
+					<parameterValue required="false">FileInfo</parameterValue>
 				</parameter>
 			</syntaxItem>
 			<syntaxItem>
@@ -129,6 +144,10 @@
 				<parameter required="true" position="1" pipelineInput="true (ByValue)">
 					<maml:name>FunctionInfo</maml:name>
 					<parameterValue required="true">FunctionInfo</parameterValue>
+				</parameter>
+				<parameter required="false" position="named" pipelineInput="false">
+					<maml:name>UICulture</maml:name>
+					<parameterValue required="false">CultureInfo</parameterValue>
 				</parameter>
 			</syntaxItem>
 		</syntax>
@@ -140,6 +159,20 @@
 				</maml:description>
 				<parameterValue required="True">PSModuleInfo</parameterValue>
 			</parameter>
+			<parameter required="true" position="1" pipelineInput="true (ByValue)">
+				<maml:name>FunctionInfo</maml:name>
+				<maml:description>
+					<maml:para>Описатель функции</maml:para>
+				</maml:description>
+				<parameterValue required="True">FunctionInfo</parameterValue>
+			</parameter>
+			<parameter required="false" position="named" pipelineInput="false">
+				<maml:name>UICulture</maml:name>
+				<maml:description>
+					<maml:para>культура, для которой генерировать данные, на данный момент параметр задавать не следует.</maml:para>
+				</maml:description>
+				<parameterValue required="True">CultureInfo</parameterValue>
+			</parameter>
 			<parameter required="false" position="named" pipelineInput="false">
 				<maml:name>OutDefaultFile</maml:name>
 				<maml:description>
@@ -147,12 +180,26 @@
 				</maml:description>
 				<parameterValue required="True">SwitchParameter</parameterValue>
 			</parameter>
-			<parameter required="true" position="1" pipelineInput="true (ByValue)">
-				<maml:name>FunctionInfo</maml:name>
+			<parameter required="false" position="named" pipelineInput="false">
+				<maml:name>Cab</maml:name>
 				<maml:description>
-					<maml:para>Описатель функции</maml:para>
+					<maml:para>генерировать / обновлять или нет .cab файл</maml:para>
 				</maml:description>
-				<parameterValue required="True">FunctionInfo</parameterValue>
+				<parameterValue required="True">SwitchParameter</parameterValue>
+			</parameter>
+			<parameter required="false" position="named" pipelineInput="false">
+				<maml:name>CabPathTemplate</maml:name>
+				<maml:description>
+					<maml:para>функционал (`[ScriptBlock]`), вычисляющий полный путь к .cab файлу</maml:para>
+				</maml:description>
+				<parameterValue required="True">ScriptBlock</parameterValue>
+			</parameter>
+			<parameter required="false" position="named" pipelineInput="false">
+				<maml:name>CabPath</maml:name>
+				<maml:description>
+					<maml:para>Путь к .cab файлу</maml:para>
+				</maml:description>
+				<parameterValue required="True">FileInfo</parameterValue>
 			</parameter>
 		</parameters>
 		<inputTypes>
@@ -494,7 +541,7 @@
 					<parameterValue required="true">PSModuleInfo</parameterValue>
 				</parameter>
 				<parameter required="false" position="named" pipelineInput="false">
-					<maml:name>HelpInfoURITemplate</maml:name>
+					<maml:name>HelpContentURITemplate</maml:name>
 					<parameterValue required="false">ScriptBlock</parameterValue>
 				</parameter>
 			</syntaxItem>
@@ -508,9 +555,12 @@
 				<parameterValue required="True">PSModuleInfo</parameterValue>
 			</parameter>
 			<parameter required="false" position="named" pipelineInput="false">
-				<maml:name>HelpInfoURITemplate</maml:name>
+				<maml:name>HelpContentURITemplate</maml:name>
 				<maml:description>
-					<maml:para>"Заготовка" для `HelpContentURI` - функционал (блок), вычисляющий URI для HelpInfo.xml файла</maml:para>
+					<maml:para>"Заготовка" для `HelpContentURI` - функционал (блок), вычисляющий URI для .cab файлов справки</maml:para>
+					<maml:para>По умолчанию используется URI для github вида</maml:para>
+					<maml:para>{ "http://raw.github.com/IT-Service/$( $ModuleInfo.Name )/$( $ModuleInfo.Version )/help.cab" }</maml:para>
+					<maml:para>Вероятнее всего, Вам потребуется переопределять "генератор" данного URI.</maml:para>
 				</maml:description>
 				<parameterValue required="True">ScriptBlock</parameterValue>
 			</parameter>
@@ -598,7 +648,7 @@
 					<parameterValue required="true">PSModuleInfo</parameterValue>
 				</parameter>
 				<parameter required="false" position="named" pipelineInput="false">
-					<maml:name>HelpInfoURITemplate</maml:name>
+					<maml:name>HelpContentURITemplate</maml:name>
 					<parameterValue required="false">ScriptBlock</parameterValue>
 				</parameter>
 			</syntaxItem>
@@ -612,9 +662,12 @@
 				<parameterValue required="True">PSModuleInfo</parameterValue>
 			</parameter>
 			<parameter required="false" position="named" pipelineInput="false">
-				<maml:name>HelpInfoURITemplate</maml:name>
+				<maml:name>HelpContentURITemplate</maml:name>
 				<maml:description>
-					<maml:para>"Заготовка" для `HelpContentURI` - функционал (блок), вычисляющий URI для HelpInfo.xml файла</maml:para>
+					<maml:para>"Заготовка" для `HelpContentURI` - функционал (блок), вычисляющий URI для .cab файлов справки</maml:para>
+					<maml:para>По умолчанию используется URI для github вида</maml:para>
+					<maml:para>{ "http://raw.github.com/IT-Service/$( $ModuleInfo.Name )/$( $ModuleInfo.Version )/help.cab" }</maml:para>
+					<maml:para>Вероятнее всего, Вам потребуется переопределять "генератор" данного URI.</maml:para>
 				</maml:description>
 				<parameterValue required="True">ScriptBlock</parameterValue>
 			</parameter>
