@@ -45,7 +45,7 @@
 
 Генерирует XML справку для переданного модуля, функции, командлеты.
 
-	Get-HelpXML [-ModuleInfo] <PSModuleInfo> [-UICulture <CultureInfo>] [-OutDefaultFile] [-PathTemplate <ScriptBlock>] [-Path <FileInfo>] [-UpdateModule] [-Cab] [-CabPathTemplate <ScriptBlock>] [-CabPath <FileInfo>] <CommonParameters>
+	Get-HelpXML [-ModuleInfo] <PSModuleInfo> [-UICulture <CultureInfo>] [-OutDefaultFile] [-HelpXMLFileNameTemplate <ScriptBlock>] [-HelpXMLFileName <String>] [-PathTemplate <ScriptBlock>] [-Path <FileInfo>] [-UpdateModule] [-Cab] [-CabPathTemplate <ScriptBlock>] [-CabPath <FileInfo>] <CommonParameters>
 
 	Get-HelpXML [-FunctionInfo] <FunctionInfo> [-UICulture <CultureInfo>] <CommonParameters>
 
@@ -321,7 +321,7 @@ HelpInfo.xml в каталоге модуля, либо создаёт новы�
 
 ##### Синтаксис
 
-	Get-HelpXML [-ModuleInfo] <PSModuleInfo> [-UICulture <CultureInfo>] [-OutDefaultFile] [-PathTemplate <ScriptBlock>] [-Path <FileInfo>] [-UpdateModule] [-Cab] [-CabPathTemplate <ScriptBlock>] [-CabPath <FileInfo>] <CommonParameters>
+	Get-HelpXML [-ModuleInfo] <PSModuleInfo> [-UICulture <CultureInfo>] [-OutDefaultFile] [-HelpXMLFileNameTemplate <ScriptBlock>] [-HelpXMLFileName <String>] [-PathTemplate <ScriptBlock>] [-Path <FileInfo>] [-UpdateModule] [-Cab] [-CabPathTemplate <ScriptBlock>] [-CabPath <FileInfo>] <CommonParameters>
 
 	Get-HelpXML [-FunctionInfo] <FunctionInfo> [-UICulture <CultureInfo>] <CommonParameters>
 
@@ -385,6 +385,24 @@ HelpInfo.xml в каталоге модуля, либо создаёт новы�
         Принимать входные данные конвейера?false
         Принимать подстановочные знаки?
 
+- `HelpXMLFileNameTemplate <ScriptBlock>`
+        "Заготовка" для `HelpXMLFileName` - функционал (блок), имя файла xml справки (без пути)
+
+        Требуется? false
+        Позиция? named
+        Значение по умолчанию
+        Принимать входные данные конвейера?false
+        Принимать подстановочные знаки?
+
+- `HelpXMLFileName <String>`
+        Имя файла для xml файла справки
+
+        Требуется? false
+        Позиция? named
+        Значение по умолчанию
+        Принимать входные данные конвейера?false
+        Принимать подстановочные знаки?
+
 - `PathTemplate <ScriptBlock>`
         "Заготовка" для `Path` - функционал (блок), вычисляющий `Path` - пути для xml файла справки
 
@@ -405,7 +423,7 @@ HelpInfo.xml в каталоге модуля, либо создаёт новы�
 
 - `UpdateModule [<SwitchParameter>]`
         обновлять файл модуля - добавлять в файл модуля в комментарии к функциям модуля
-        записей типа `.ExternalHelp ITG.Readme.psm1-help.xml`
+        записи типа `.ExternalHelp ITG.Readme-help.xml`
 
         Требуется? false
         Позиция? named

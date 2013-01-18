@@ -128,6 +128,14 @@
 					<maml:name>OutDefaultFile</maml:name>
 				</parameter>
 				<parameter required="false" position="named" pipelineInput="false">
+					<maml:name>HelpXMLFileNameTemplate</maml:name>
+					<parameterValue required="false">ScriptBlock</parameterValue>
+				</parameter>
+				<parameter required="false" position="named" pipelineInput="false">
+					<maml:name>HelpXMLFileName</maml:name>
+					<parameterValue required="false">String</parameterValue>
+				</parameter>
+				<parameter required="false" position="named" pipelineInput="false">
 					<maml:name>PathTemplate</maml:name>
 					<parameterValue required="false">ScriptBlock</parameterValue>
 				</parameter>
@@ -192,6 +200,20 @@
 				<parameterValue required="True">SwitchParameter</parameterValue>
 			</parameter>
 			<parameter required="false" position="named" pipelineInput="false">
+				<maml:name>HelpXMLFileNameTemplate</maml:name>
+				<maml:description>
+					<maml:para>"Заготовка" для `HelpXMLFileName` - функционал (блок), имя файла xml справки (без пути)</maml:para>
+				</maml:description>
+				<parameterValue required="True">ScriptBlock</parameterValue>
+			</parameter>
+			<parameter required="false" position="named" pipelineInput="false">
+				<maml:name>HelpXMLFileName</maml:name>
+				<maml:description>
+					<maml:para>Имя файла для xml файла справки</maml:para>
+				</maml:description>
+				<parameterValue required="True">String</parameterValue>
+			</parameter>
+			<parameter required="false" position="named" pipelineInput="false">
 				<maml:name>PathTemplate</maml:name>
 				<maml:description>
 					<maml:para>"Заготовка" для `Path` - функционал (блок), вычисляющий `Path` - пути для xml файла справки</maml:para>
@@ -208,7 +230,7 @@
 			<parameter required="false" position="named" pipelineInput="false">
 				<maml:name>UpdateModule</maml:name>
 				<maml:description>
-					<maml:para>обновлять файл модуля - добавлять в файл модуля в комментарии к функциям модуля записей типа `.ExternalHelp ITG.Readme.psm1-help.xml`</maml:para>
+					<maml:para>обновлять файл модуля - добавлять в файл модуля в комментарии к функциям модуля записи типа `.ExternalHelp ITG.Readme-help.xml`</maml:para>
 				</maml:description>
 				<parameterValue required="True">SwitchParameter</parameterValue>
 			</parameter>
