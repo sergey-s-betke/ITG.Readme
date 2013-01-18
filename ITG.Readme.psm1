@@ -2,6 +2,11 @@
 | Import-Module `
 ;
 
+$ReadmePathTemplateDefault = {
+	$ModuleInfo.ModuleBase `
+	| Join-Path -ChildPath 'readme.md' `
+};
+
 $HelpInfoFileName = { "$( $ModuleInfo.Name )_$( $ModuleInfo.GUID )_HelpInfo.xml"; };
 $GitHubHelpInfoURI = { "http://raw.github.com/IT-Service/$( $ModuleInfo.Name )/$( $ModuleInfo.Version )/$( & $HelpInfoFileName )"; };
 
@@ -9,9 +14,16 @@ $HelpXMLCabFileName = { "$( $ModuleInfo.Name )_$( $ModuleInfo.GUID )_$( $UICultu
 $CabFolderName = 'help.cab';
 $GitHubHelpContentURI = { "http://raw.github.com/IT-Service/$( $ModuleInfo.Name )/$( $ModuleInfo.Version )/$CabFolderName"; };
 $CabPathTemplateDefault = {
-	( Split-Path -Path ( $ModuleInfo.Path ) -Parent ) `
+	$ModuleInfo.ModuleBase `
 	| Join-Path -ChildPath $CabFolderName `
 	| Join-Path -ChildPath ( & $HelpXMLCabFileName ) `
+};
+
+$HelpXMLFileName = { "$( $ModuleInfo.Name )-help.xml" };
+$HelpXMLPathTemplateDefault = {
+	$ModuleInfo.ModuleBase `
+	| Join-Path -ChildPath ( $UICulture.Name ) `
+	| Join-Path -ChildPath ( & $HelpXMLFileName ) `
 };
 
 $Translator = @{
@@ -1155,13 +1167,6 @@ Function Get-Readme {
 		[Alias('Module')]
 		$ModuleInfo
 	,
-		# выводить readme в файл readme.md в каталоге модуля
-		[Parameter(
-			ParameterSetName='ModuleInfo'
-		)]
-		[switch]
-		$OutDefaultFile
-	,
 		# Описатель внешнего сценария
 		[Parameter(
 			Mandatory=$true
@@ -1188,6 +1193,36 @@ Function Get-Readme {
 		)]
 		[PSModuleInfo[]]
 		$ReferencedModules = @()
+	,
+		# культура, для которой генерировать данные, на данный момент параметр задавать не следует.
+		[Parameter(
+			Mandatory=$false
+		)]
+		[System.Globalization.CultureInfo]
+		$UICulture = ( Get-Culture )
+	,
+		# выводить readme в файл readme.md в каталоге модуля
+		[Parameter(
+			ParameterSetName='ModuleInfo'
+		)]
+		[switch]
+		$OutDefaultFile
+	,
+		# "Заготовка" для `Path` - функционал (блок), вычисляющий `Path` - путь для readme файла
+		[Parameter(
+			ParameterSetName='ModuleInfo'
+			, Mandatory=$false
+		)]
+		[ScriptBlock]
+		$PathTemplate = $ReadmePathTemplateDefault
+	,
+		# Путь для readme файла. По умолчанию - `readme.md` в каталоге модуля
+		[Parameter(
+			ParameterSetName='ModuleInfo'
+			, Mandatory=$false
+		)]
+		[System.IO.FileInfo]
+		$Path = ( & $PathTemplate )
 	,
 		# Правила для обработки readme регулярными выражениями
 		[Parameter(
@@ -1237,6 +1272,8 @@ Function Get-Readme {
 		
 		$res = $PSBoundParameters.Remove( 'TranslateRules' );
 		$res = $PSBoundParameters.Remove( 'OutDefaultFile' );
+		$res = $PSBoundParameters.Remove( 'PathTemplate' );
+		$res = $PSBoundParameters.Remove( 'Path' );
 		$ReadMeContent = `
 			( # генерируем собственно readme с подготовленными правилами трансляции терминов
 				Get-InternalReadme @PSBoundParameters `
@@ -1259,10 +1296,7 @@ Function Get-Readme {
 				if ( $OutDefaultFile ) {
 					$ReadMeContent `
 					| Set-Content `
-						-LiteralPath ( Join-Path `
-							-Path ( Split-Path -Path ( $ModuleInfo.Path ) -Parent ) `
-							-ChildPath 'readme.md' `
-						) `
+						-LiteralPath $Path `
 						-Encoding 'UTF8' `
 						-Force `
 					;
@@ -1740,6 +1774,30 @@ Function Get-HelpXML {
 		[switch]
 		$OutDefaultFile
 	,
+		# "Заготовка" для `Path` - функционал (блок), вычисляющий `Path` - пути для xml файла справки
+		[Parameter(
+			ParameterSetName='ModuleInfo'
+			, Mandatory=$false
+		)]
+		[ScriptBlock]
+		$PathTemplate = $HelpXMLPathTemplateDefault
+	,
+		# Путь для xml файла справки
+		[Parameter(
+			ParameterSetName='ModuleInfo'
+			, Mandatory=$false
+		)]
+		[System.IO.FileInfo]
+		$Path = ( & $PathTemplate )
+	,
+		# обновлять файл модуля - добавлять в файл модуля в комментарии к функциям модуля 
+		# записей типа `.ExternalHelp ITG.Readme.psm1-help.xml`
+		[Parameter(
+			ParameterSetName='ModuleInfo'
+		)]
+		[switch]
+		$UpdateModule
+	,
 		# генерировать / обновлять или нет .cab файл
 		[Parameter(
 			ParameterSetName='ModuleInfo'
@@ -1772,28 +1830,13 @@ Function Get-HelpXML {
 			'ModuleInfo' {
 				[System.Xml.XmlDocument]$HelpContent = Get-InternalHelpXML -ModuleInfo $ModuleInfo;
 				if ( $OutDefaultFile ) {
-					$RootHelpDir = Split-Path `
-						-Path ( $ModuleInfo.Path ) `
-						-Parent `
-					;
-					$CultureHelpDir = Join-Path `
-						-Path $RootHelpDir `
-						-ChildPath ( ( Get-Culture ).Name ) `
-					;
-					$HelpFileName = "$( Split-Path -Path ($ModuleInfo.Path) -Leaf )-help.xml";
-					$HelpFilePath = Join-Path `
-						-Path $CultureHelpDir `
-						-ChildPath $HelpFileName `
-					;
-					if ( -not ( Test-Path $CultureHelpDir ) ) {
-						$res = New-Item `
-							-Path $CultureHelpDir `
-							-ItemType Directory `
-						;
+					$Dir = Split-Path -Path ( $Path.FullName ) -Parent;
+					if ( -not ( Test-Path -LiteralPath $Dir ) ) {
+						$null = New-Item -Path $Dir -ItemType Directory;
 					};
 					
 					$Writer = [System.Xml.XmlWriter]::Create(
-						$HelpFilePath `
+						$Path `
 						, ( New-Object `
 							-TypeName System.Xml.XmlWriterSettings `
 							-Property @{
@@ -1816,7 +1859,7 @@ Function Get-HelpXML {
 						};
 						$MakeCabProcess = Start-Process `
 							-FilePath 'makecab' `
-							-ArgumentList "`"$( $HelpFilePath )`"", "`"$( $CabPath.FullName )`"" `
+							-ArgumentList "`"$( $Path.FullName )`"", "`"$( $CabPath.FullName )`"" `
 							-NoNewWindow `
 							-Wait `
 							-PassThru `
@@ -1886,22 +1929,21 @@ Function New-HelpInfo {
 		[Alias('Module')]
 		$ModuleInfo
 	,
-		<#
-			"Заготовка" для `HelpContentURI` - функционал (блок), вычисляющий URI для .cab файлов справки
-		 
-			По умолчанию используется URI для github вида
-
-				{ "http://raw.github.com/IT-Service/$( $ModuleInfo.Name )/$( $ModuleInfo.Version )/help.cab" }
-				
-			Вероятнее всего, Вам потребуется переопределять "генератор" данного URI.
-		#>
+		# "Заготовка" для `HelpContentURI` - функционал (блок), вычисляющий URI для .cab файлов справки
 		[Parameter(
 			Mandatory=$false
 		)]
 		[ScriptBlock]
-		[Alias('HelpContentURI')]
-		[Alias('URI')]
-		$HelpContentURITemplate = $GitHubHelpContentURI
+		$HelpContentUriTemplate = $GitHubHelpContentURI
+	,
+		# Ссылка для загрузки обновляемой справки. Смотрите about_Updatable_Help.
+		# Значение по умолчанию - url к репозиторию проекта на github.
+		[Parameter(
+			ParameterSetName='ModuleInfo'
+			, Mandatory=$false
+		)]
+		[System.Uri]
+		$HelpContentUri = ( & $HelpContentUriTemplate )
 	)
 
 	process {
@@ -1915,7 +1957,7 @@ Function New-HelpInfo {
 					$HelpInfoContent.CreateElement( '', 'HelpInfo', ( $HelpXMLNS.HelpInfo ) )
 				);
 				DoTextElement $HelpInfoContent $HelpInfo '' 'HelpContentURI' ( $HelpXMLNS.HelpInfo ) (
-					& $HelpContentURITemplate
+					$HelpContentUri
 				);
 				$SupportedUICultures = $HelpInfo.AppendChild(
 					$HelpInfoContent.CreateElement( '', 'SupportedUICultures', ( $HelpXMLNS.HelpInfo ) )
@@ -2058,22 +2100,21 @@ Function Set-HelpInfo {
 		[Alias('Module')]
 		$ModuleInfo
 	,
-		<#
-			"Заготовка" для `HelpContentURI` - функционал (блок), вычисляющий URI для .cab файлов справки
-		 
-			По умолчанию используется URI для github вида
-
-				{ "http://raw.github.com/IT-Service/$( $ModuleInfo.Name )/$( $ModuleInfo.Version )/help.cab" }
-				
-			Вероятнее всего, Вам потребуется переопределять "генератор" данного URI.
-		#>
+		# "Заготовка" для `HelpContentURI` - функционал (блок), вычисляющий URI для .cab файлов справки
 		[Parameter(
 			Mandatory=$false
 		)]
 		[ScriptBlock]
-		[Alias('HelpContentURI')]
-		[Alias('URI')]
-		$HelpContentURITemplate = $GitHubHelpContentURI
+		$HelpContentUriTemplate = $GitHubHelpContentURI
+	,
+		# Ссылка для загрузки обновляемой справки. Смотрите about_Updatable_Help.
+		# Значение по умолчанию - url к репозиторию проекта на github.
+		[Parameter(
+			ParameterSetName='ModuleInfo'
+			, Mandatory=$false
+		)]
+		[System.Uri]
+		$HelpContentUri = ( & $HelpContentUriTemplate )
 	,
 		# Обновлять или нет манифест модуля. Речь идёт о создании / обновлении параметра 
 		# HelpInfoURI в манифесте, который как раз и должен указывать на HelpInfo.xml файл
@@ -2113,7 +2154,7 @@ Function Set-HelpInfo {
 				;
 				$NewHelpInfoContent = New-HelpInfo `
 					-ModuleInfo $ModuleInfo `
-					-HelpContentURITemplate $HelpContentURITemplate `
+					-HelpContentUri $HelpContentUri `
 				;
 
 				$HelpInfoNS = [System.Xml.XmlNamespaceManager] ($NewHelpInfoContent.NameTable);

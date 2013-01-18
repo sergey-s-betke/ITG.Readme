@@ -27,7 +27,7 @@
 
 Генерирует HelpInfo XML для переданного модуля.
 
-	New-HelpInfo [-ModuleInfo] <PSModuleInfo> [-HelpContentURITemplate <ScriptBlock>] <CommonParameters>
+	New-HelpInfo [-ModuleInfo] <PSModuleInfo> [-HelpContentUriTemplate <ScriptBlock>] [-HelpContentUri <Uri>] <CommonParameters>
 
 Подробнее - [New-HelpInfo][].
 
@@ -35,7 +35,7 @@
 
 Генерирует HelpInfo XML для указанного модуля.
 
-	Set-HelpInfo [-ModuleInfo] <PSModuleInfo> [-HelpContentURITemplate <ScriptBlock>] [-UpdateManifest] [-HelpInfoUriTemplate <ScriptBlock>] [-HelpInfoUri <Uri>] <CommonParameters>
+	Set-HelpInfo [-ModuleInfo] <PSModuleInfo> [-HelpContentUriTemplate <ScriptBlock>] [-HelpContentUri <Uri>] [-UpdateManifest] [-HelpInfoUriTemplate <ScriptBlock>] [-HelpInfoUri <Uri>] <CommonParameters>
 
 Подробнее - [Set-HelpInfo][].
 
@@ -45,7 +45,7 @@
 
 Генерирует XML справку для переданного модуля, функции, командлеты.
 
-	Get-HelpXML [-ModuleInfo] <PSModuleInfo> [-UICulture <CultureInfo>] [-OutDefaultFile] [-Cab] [-CabPathTemplate <ScriptBlock>] [-CabPath <FileInfo>] <CommonParameters>
+	Get-HelpXML [-ModuleInfo] <PSModuleInfo> [-UICulture <CultureInfo>] [-OutDefaultFile] [-PathTemplate <ScriptBlock>] [-Path <FileInfo>] [-UpdateModule] [-Cab] [-CabPathTemplate <ScriptBlock>] [-CabPath <FileInfo>] <CommonParameters>
 
 	Get-HelpXML [-FunctionInfo] <FunctionInfo> [-UICulture <CultureInfo>] <CommonParameters>
 
@@ -58,11 +58,11 @@
 Генерирует readme файл с [MarkDown][] разметкой по данным модуля и комментариям к его функциям.
 Файл предназначен, в частности, для размещения в репозиториях github.
 
-	Get-Readme [-ModuleInfo] <PSModuleInfo> [-OutDefaultFile] [-ReferencedModules <PSModuleInfo[]>] [-TranslateRules <Array>] [-ShortDescription] <CommonParameters>
+	Get-Readme [-ModuleInfo] <PSModuleInfo> [-ReferencedModules <PSModuleInfo[]>] [-UICulture <CultureInfo>] [-OutDefaultFile] [-PathTemplate <ScriptBlock>] [-Path <FileInfo>] [-TranslateRules <Array>] [-ShortDescription] <CommonParameters>
 
-	Get-Readme [-ExternalScriptInfo] <ExternalScriptInfo> [-ReferencedModules <PSModuleInfo[]>] [-TranslateRules <Array>] [-ShortDescription] <CommonParameters>
+	Get-Readme [-ExternalScriptInfo] <ExternalScriptInfo> [-ReferencedModules <PSModuleInfo[]>] [-UICulture <CultureInfo>] [-TranslateRules <Array>] [-ShortDescription] <CommonParameters>
 
-	Get-Readme [-FunctionInfo] <FunctionInfo> [-ReferencedModules <PSModuleInfo[]>] [-TranslateRules <Array>] [-ShortDescription] <CommonParameters>
+	Get-Readme [-FunctionInfo] <FunctionInfo> [-ReferencedModules <PSModuleInfo[]>] [-UICulture <CultureInfo>] [-TranslateRules <Array>] [-ShortDescription] <CommonParameters>
 
 Подробнее - [Get-Readme][].
 
@@ -136,7 +136,7 @@ HelpInfo.XML по сути является манифестом для xml сп
 
 ##### Синтаксис
 
-	New-HelpInfo [-ModuleInfo] <PSModuleInfo> [-HelpContentURITemplate <ScriptBlock>] <CommonParameters>
+	New-HelpInfo [-ModuleInfo] <PSModuleInfo> [-HelpContentUriTemplate <ScriptBlock>] [-HelpContentUri <Uri>] <CommonParameters>
 
 ##### Требуемая роль пользователя
 
@@ -165,14 +165,18 @@ HelpInfo.XML по сути является манифестом для xml сп
         Принимать входные данные конвейера?true (ByValue)
         Принимать подстановочные знаки?
 
-- `HelpContentURITemplate <ScriptBlock>`
+- `HelpContentUriTemplate <ScriptBlock>`
         "Заготовка" для `HelpContentURI` - функционал (блок), вычисляющий URI для .cab файлов справки
 
-        По умолчанию используется URI для github вида
+        Требуется? false
+        Позиция? named
+        Значение по умолчанию
+        Принимать входные данные конвейера?false
+        Принимать подстановочные знаки?
 
-            { "<http://raw.github.com/IT-Service/$>( $ModuleInfo.Name )/$( $ModuleInfo.Version )/help.cab" }
-
-        Вероятнее всего, Вам потребуется переопределять "генератор" данного URI.
+- `HelpContentUri <Uri>`
+        Ссылка для загрузки обновляемой справки. Смотрите about_Updatable_Help.
+        Значение по умолчанию - url к репозиторию проекта на github.
 
         Требуется? false
         Позиция? named
@@ -209,7 +213,7 @@ HelpInfo.xml в каталоге модуля, либо создаёт новы�
 
 ##### Синтаксис
 
-	Set-HelpInfo [-ModuleInfo] <PSModuleInfo> [-HelpContentURITemplate <ScriptBlock>] [-UpdateManifest] [-HelpInfoUriTemplate <ScriptBlock>] [-HelpInfoUri <Uri>] <CommonParameters>
+	Set-HelpInfo [-ModuleInfo] <PSModuleInfo> [-HelpContentUriTemplate <ScriptBlock>] [-HelpContentUri <Uri>] [-UpdateManifest] [-HelpInfoUriTemplate <ScriptBlock>] [-HelpInfoUri <Uri>] <CommonParameters>
 
 ##### Требуемая роль пользователя
 
@@ -237,14 +241,18 @@ HelpInfo.xml в каталоге модуля, либо создаёт новы�
         Принимать входные данные конвейера?true (ByValue)
         Принимать подстановочные знаки?
 
-- `HelpContentURITemplate <ScriptBlock>`
+- `HelpContentUriTemplate <ScriptBlock>`
         "Заготовка" для `HelpContentURI` - функционал (блок), вычисляющий URI для .cab файлов справки
 
-        По умолчанию используется URI для github вида
+        Требуется? false
+        Позиция? named
+        Значение по умолчанию
+        Принимать входные данные конвейера?false
+        Принимать подстановочные знаки?
 
-            { "<http://raw.github.com/IT-Service/$>( $ModuleInfo.Name )/$( $ModuleInfo.Version )/help.cab" }
-
-        Вероятнее всего, Вам потребуется переопределять "генератор" данного URI.
+- `HelpContentUri <Uri>`
+        Ссылка для загрузки обновляемой справки. Смотрите about_Updatable_Help.
+        Значение по умолчанию - url к репозиторию проекта на github.
 
         Требуется? false
         Позиция? named
@@ -313,7 +321,7 @@ HelpInfo.xml в каталоге модуля, либо создаёт новы�
 
 ##### Синтаксис
 
-	Get-HelpXML [-ModuleInfo] <PSModuleInfo> [-UICulture <CultureInfo>] [-OutDefaultFile] [-Cab] [-CabPathTemplate <ScriptBlock>] [-CabPath <FileInfo>] <CommonParameters>
+	Get-HelpXML [-ModuleInfo] <PSModuleInfo> [-UICulture <CultureInfo>] [-OutDefaultFile] [-PathTemplate <ScriptBlock>] [-Path <FileInfo>] [-UpdateModule] [-Cab] [-CabPathTemplate <ScriptBlock>] [-CabPath <FileInfo>] <CommonParameters>
 
 	Get-HelpXML [-FunctionInfo] <FunctionInfo> [-UICulture <CultureInfo>] <CommonParameters>
 
@@ -370,6 +378,34 @@ HelpInfo.xml в каталоге модуля, либо создаёт новы�
 
 - `OutDefaultFile [<SwitchParameter>]`
         выводить help в файл `<ModuleName>-Help.xml` в каталоге модуля
+
+        Требуется? false
+        Позиция? named
+        Значение по умолчанию
+        Принимать входные данные конвейера?false
+        Принимать подстановочные знаки?
+
+- `PathTemplate <ScriptBlock>`
+        "Заготовка" для `Path` - функционал (блок), вычисляющий `Path` - пути для xml файла справки
+
+        Требуется? false
+        Позиция? named
+        Значение по умолчанию
+        Принимать входные данные конвейера?false
+        Принимать подстановочные знаки?
+
+- `Path <FileInfo>`
+        Путь для xml файла справки
+
+        Требуется? false
+        Позиция? named
+        Значение по умолчанию
+        Принимать входные данные конвейера?false
+        Принимать подстановочные знаки?
+
+- `UpdateModule [<SwitchParameter>]`
+        обновлять файл модуля - добавлять в файл модуля в комментарии к функциям модуля
+        записей типа `.ExternalHelp ITG.Readme.psm1-help.xml`
 
         Требуется? false
         Позиция? named
@@ -434,11 +470,11 @@ HelpInfo.xml в каталоге модуля, либо создаёт новы�
 
 ##### Синтаксис
 
-	Get-Readme [-ModuleInfo] <PSModuleInfo> [-OutDefaultFile] [-ReferencedModules <PSModuleInfo[]>] [-TranslateRules <Array>] [-ShortDescription] <CommonParameters>
+	Get-Readme [-ModuleInfo] <PSModuleInfo> [-ReferencedModules <PSModuleInfo[]>] [-UICulture <CultureInfo>] [-OutDefaultFile] [-PathTemplate <ScriptBlock>] [-Path <FileInfo>] [-TranslateRules <Array>] [-ShortDescription] <CommonParameters>
 
-	Get-Readme [-ExternalScriptInfo] <ExternalScriptInfo> [-ReferencedModules <PSModuleInfo[]>] [-TranslateRules <Array>] [-ShortDescription] <CommonParameters>
+	Get-Readme [-ExternalScriptInfo] <ExternalScriptInfo> [-ReferencedModules <PSModuleInfo[]>] [-UICulture <CultureInfo>] [-TranslateRules <Array>] [-ShortDescription] <CommonParameters>
 
-	Get-Readme [-FunctionInfo] <FunctionInfo> [-ReferencedModules <PSModuleInfo[]>] [-TranslateRules <Array>] [-ShortDescription] <CommonParameters>
+	Get-Readme [-FunctionInfo] <FunctionInfo> [-ReferencedModules <PSModuleInfo[]>] [-UICulture <CultureInfo>] [-TranslateRules <Array>] [-ShortDescription] <CommonParameters>
 
 ##### Функциональность
 
@@ -479,15 +515,6 @@ Readme
         Принимать входные данные конвейера?true (ByValue)
         Принимать подстановочные знаки?
 
-- `OutDefaultFile [<SwitchParameter>]`
-        выводить readme в файл readme.md в каталоге модуля
-
-        Требуется? false
-        Позиция? named
-        Значение по умолчанию
-        Принимать входные данные конвейера?false
-        Принимать подстановочные знаки?
-
 - `ExternalScriptInfo <ExternalScriptInfo>`
         Описатель внешнего сценария
 
@@ -508,6 +535,42 @@ Readme
 
 - `ReferencedModules <PSModuleInfo[]>`
         Перечень модулей, упоминания функций которых будут заменены на ссылки
+
+        Требуется? false
+        Позиция? named
+        Значение по умолчанию
+        Принимать входные данные конвейера?false
+        Принимать подстановочные знаки?
+
+- `UICulture <CultureInfo>`
+        культура, для которой генерировать данные, на данный момент параметр задавать не следует.
+
+        Требуется? false
+        Позиция? named
+        Значение по умолчанию
+        Принимать входные данные конвейера?false
+        Принимать подстановочные знаки?
+
+- `OutDefaultFile [<SwitchParameter>]`
+        выводить readme в файл readme.md в каталоге модуля
+
+        Требуется? false
+        Позиция? named
+        Значение по умолчанию
+        Принимать входные данные конвейера?false
+        Принимать подстановочные знаки?
+
+- `PathTemplate <ScriptBlock>`
+        "Заготовка" для `Path` - функционал (блок), вычисляющий `Path` - путь для readme файла
+
+        Требуется? false
+        Позиция? named
+        Значение по умолчанию
+        Принимать входные данные конвейера?false
+        Принимать подстановочные знаки?
+
+- `Path <FileInfo>`
+        Путь для readme файла. По умолчанию - `readme.md` в каталоге модуля
 
         Требуется? false
         Позиция? named
