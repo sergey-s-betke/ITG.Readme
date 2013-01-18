@@ -128,6 +128,17 @@
 					<maml:name>OutDefaultFile</maml:name>
 				</parameter>
 				<parameter required="false" position="named" pipelineInput="false">
+					<maml:name>PathTemplate</maml:name>
+					<parameterValue required="false">ScriptBlock</parameterValue>
+				</parameter>
+				<parameter required="false" position="named" pipelineInput="false">
+					<maml:name>Path</maml:name>
+					<parameterValue required="false">FileInfo</parameterValue>
+				</parameter>
+				<parameter required="false" position="named" pipelineInput="false">
+					<maml:name>UpdateModule</maml:name>
+				</parameter>
+				<parameter required="false" position="named" pipelineInput="false">
 					<maml:name>Cab</maml:name>
 				</parameter>
 				<parameter required="false" position="named" pipelineInput="false">
@@ -177,6 +188,27 @@
 				<maml:name>OutDefaultFile</maml:name>
 				<maml:description>
 					<maml:para>выводить help в файл `&lt;ModuleName&gt;-Help.xml` в каталоге модуля</maml:para>
+				</maml:description>
+				<parameterValue required="True">SwitchParameter</parameterValue>
+			</parameter>
+			<parameter required="false" position="named" pipelineInput="false">
+				<maml:name>PathTemplate</maml:name>
+				<maml:description>
+					<maml:para>"Заготовка" для `Path` - функционал (блок), вычисляющий `Path` - пути для xml файла справки</maml:para>
+				</maml:description>
+				<parameterValue required="True">ScriptBlock</parameterValue>
+			</parameter>
+			<parameter required="false" position="named" pipelineInput="false">
+				<maml:name>Path</maml:name>
+				<maml:description>
+					<maml:para>Путь для xml файла справки</maml:para>
+				</maml:description>
+				<parameterValue required="True">FileInfo</parameterValue>
+			</parameter>
+			<parameter required="false" position="named" pipelineInput="false">
+				<maml:name>UpdateModule</maml:name>
+				<maml:description>
+					<maml:para>обновлять файл модуля - добавлять в файл модуля в комментарии к функциям модуля записей типа `.ExternalHelp ITG.Readme.psm1-help.xml`</maml:para>
 				</maml:description>
 				<parameterValue required="True">SwitchParameter</parameterValue>
 			</parameter>
@@ -308,11 +340,23 @@
 					<parameterValue required="true">PSModuleInfo</parameterValue>
 				</parameter>
 				<parameter required="false" position="named" pipelineInput="false">
+					<maml:name>ReferencedModules</maml:name>
+					<parameterValue required="false">PSModuleInfo[]</parameterValue>
+				</parameter>
+				<parameter required="false" position="named" pipelineInput="false">
+					<maml:name>UICulture</maml:name>
+					<parameterValue required="false">CultureInfo</parameterValue>
+				</parameter>
+				<parameter required="false" position="named" pipelineInput="false">
 					<maml:name>OutDefaultFile</maml:name>
 				</parameter>
 				<parameter required="false" position="named" pipelineInput="false">
-					<maml:name>ReferencedModules</maml:name>
-					<parameterValue required="false">PSModuleInfo[]</parameterValue>
+					<maml:name>PathTemplate</maml:name>
+					<parameterValue required="false">ScriptBlock</parameterValue>
+				</parameter>
+				<parameter required="false" position="named" pipelineInput="false">
+					<maml:name>Path</maml:name>
+					<parameterValue required="false">FileInfo</parameterValue>
 				</parameter>
 				<parameter required="false" position="named" pipelineInput="false">
 					<maml:name>TranslateRules</maml:name>
@@ -333,6 +377,10 @@
 					<parameterValue required="false">PSModuleInfo[]</parameterValue>
 				</parameter>
 				<parameter required="false" position="named" pipelineInput="false">
+					<maml:name>UICulture</maml:name>
+					<parameterValue required="false">CultureInfo</parameterValue>
+				</parameter>
+				<parameter required="false" position="named" pipelineInput="false">
 					<maml:name>TranslateRules</maml:name>
 					<parameterValue required="false">Array</parameterValue>
 				</parameter>
@@ -351,6 +399,10 @@
 					<parameterValue required="false">PSModuleInfo[]</parameterValue>
 				</parameter>
 				<parameter required="false" position="named" pipelineInput="false">
+					<maml:name>UICulture</maml:name>
+					<parameterValue required="false">CultureInfo</parameterValue>
+				</parameter>
+				<parameter required="false" position="named" pipelineInput="false">
 					<maml:name>TranslateRules</maml:name>
 					<parameterValue required="false">Array</parameterValue>
 				</parameter>
@@ -366,13 +418,6 @@
 					<maml:para>Описатель модуля</maml:para>
 				</maml:description>
 				<parameterValue required="True">PSModuleInfo</parameterValue>
-			</parameter>
-			<parameter required="false" position="named" pipelineInput="false">
-				<maml:name>OutDefaultFile</maml:name>
-				<maml:description>
-					<maml:para>выводить readme в файл readme.md в каталоге модуля</maml:para>
-				</maml:description>
-				<parameterValue required="True">SwitchParameter</parameterValue>
 			</parameter>
 			<parameter required="true" position="1" pipelineInput="true (ByValue)">
 				<maml:name>ExternalScriptInfo</maml:name>
@@ -394,6 +439,34 @@
 					<maml:para>Перечень модулей, упоминания функций которых будут заменены на ссылки</maml:para>
 				</maml:description>
 				<parameterValue required="True">PSModuleInfo[]</parameterValue>
+			</parameter>
+			<parameter required="false" position="named" pipelineInput="false">
+				<maml:name>UICulture</maml:name>
+				<maml:description>
+					<maml:para>культура, для которой генерировать данные, на данный момент параметр задавать не следует.</maml:para>
+				</maml:description>
+				<parameterValue required="True">CultureInfo</parameterValue>
+			</parameter>
+			<parameter required="false" position="named" pipelineInput="false">
+				<maml:name>OutDefaultFile</maml:name>
+				<maml:description>
+					<maml:para>выводить readme в файл readme.md в каталоге модуля</maml:para>
+				</maml:description>
+				<parameterValue required="True">SwitchParameter</parameterValue>
+			</parameter>
+			<parameter required="false" position="named" pipelineInput="false">
+				<maml:name>PathTemplate</maml:name>
+				<maml:description>
+					<maml:para>"Заготовка" для `Path` - функционал (блок), вычисляющий `Path` - путь для readme файла</maml:para>
+				</maml:description>
+				<parameterValue required="True">ScriptBlock</parameterValue>
+			</parameter>
+			<parameter required="false" position="named" pipelineInput="false">
+				<maml:name>Path</maml:name>
+				<maml:description>
+					<maml:para>Путь для readme файла. По умолчанию - `readme.md` в каталоге модуля</maml:para>
+				</maml:description>
+				<parameterValue required="True">FileInfo</parameterValue>
 			</parameter>
 			<parameter required="false" position="named" pipelineInput="false">
 				<maml:name>TranslateRules</maml:name>
@@ -541,8 +614,12 @@
 					<parameterValue required="true">PSModuleInfo</parameterValue>
 				</parameter>
 				<parameter required="false" position="named" pipelineInput="false">
-					<maml:name>HelpContentURITemplate</maml:name>
+					<maml:name>HelpContentUriTemplate</maml:name>
 					<parameterValue required="false">ScriptBlock</parameterValue>
+				</parameter>
+				<parameter required="false" position="named" pipelineInput="false">
+					<maml:name>HelpContentUri</maml:name>
+					<parameterValue required="false">Uri</parameterValue>
 				</parameter>
 			</syntaxItem>
 		</syntax>
@@ -555,14 +632,18 @@
 				<parameterValue required="True">PSModuleInfo</parameterValue>
 			</parameter>
 			<parameter required="false" position="named" pipelineInput="false">
-				<maml:name>HelpContentURITemplate</maml:name>
+				<maml:name>HelpContentUriTemplate</maml:name>
 				<maml:description>
 					<maml:para>"Заготовка" для `HelpContentURI` - функционал (блок), вычисляющий URI для .cab файлов справки</maml:para>
-					<maml:para>По умолчанию используется URI для github вида</maml:para>
-					<maml:para>{ "http://raw.github.com/IT-Service/$( $ModuleInfo.Name )/$( $ModuleInfo.Version )/help.cab" }</maml:para>
-					<maml:para>Вероятнее всего, Вам потребуется переопределять "генератор" данного URI.</maml:para>
 				</maml:description>
 				<parameterValue required="True">ScriptBlock</parameterValue>
+			</parameter>
+			<parameter required="false" position="named" pipelineInput="false">
+				<maml:name>HelpContentUri</maml:name>
+				<maml:description>
+					<maml:para>Ссылка для загрузки обновляемой справки. Смотрите about_Updatable_Help. Значение по умолчанию - url к репозиторию проекта на github.</maml:para>
+				</maml:description>
+				<parameterValue required="True">Uri</parameterValue>
 			</parameter>
 		</parameters>
 		<inputTypes>
@@ -648,8 +729,12 @@
 					<parameterValue required="true">PSModuleInfo</parameterValue>
 				</parameter>
 				<parameter required="false" position="named" pipelineInput="false">
-					<maml:name>HelpContentURITemplate</maml:name>
+					<maml:name>HelpContentUriTemplate</maml:name>
 					<parameterValue required="false">ScriptBlock</parameterValue>
+				</parameter>
+				<parameter required="false" position="named" pipelineInput="false">
+					<maml:name>HelpContentUri</maml:name>
+					<parameterValue required="false">Uri</parameterValue>
 				</parameter>
 				<parameter required="false" position="named" pipelineInput="false">
 					<maml:name>UpdateManifest</maml:name>
@@ -673,14 +758,18 @@
 				<parameterValue required="True">PSModuleInfo</parameterValue>
 			</parameter>
 			<parameter required="false" position="named" pipelineInput="false">
-				<maml:name>HelpContentURITemplate</maml:name>
+				<maml:name>HelpContentUriTemplate</maml:name>
 				<maml:description>
 					<maml:para>"Заготовка" для `HelpContentURI` - функционал (блок), вычисляющий URI для .cab файлов справки</maml:para>
-					<maml:para>По умолчанию используется URI для github вида</maml:para>
-					<maml:para>{ "http://raw.github.com/IT-Service/$( $ModuleInfo.Name )/$( $ModuleInfo.Version )/help.cab" }</maml:para>
-					<maml:para>Вероятнее всего, Вам потребуется переопределять "генератор" данного URI.</maml:para>
 				</maml:description>
 				<parameterValue required="True">ScriptBlock</parameterValue>
+			</parameter>
+			<parameter required="false" position="named" pipelineInput="false">
+				<maml:name>HelpContentUri</maml:name>
+				<maml:description>
+					<maml:para>Ссылка для загрузки обновляемой справки. Смотрите about_Updatable_Help. Значение по умолчанию - url к репозиторию проекта на github.</maml:para>
+				</maml:description>
+				<parameterValue required="True">Uri</parameterValue>
 			</parameter>
 			<parameter required="false" position="named" pipelineInput="false">
 				<maml:name>UpdateManifest</maml:name>
