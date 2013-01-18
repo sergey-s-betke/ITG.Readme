@@ -19,11 +19,11 @@ $CabPathTemplateDefault = {
 	| Join-Path -ChildPath ( & $HelpXMLCabFileName ) `
 };
 
-$HelpXMLFileName = { "$( $ModuleInfo.Name )-help.xml" };
+$HelpXMLFileNameTemplateDefault = { "$( $ModuleInfo.Name )-help.xml" };
 $HelpXMLPathTemplateDefault = {
 	$ModuleInfo.ModuleBase `
 	| Join-Path -ChildPath ( $UICulture.Name ) `
-	| Join-Path -ChildPath ( & $HelpXMLFileName ) `
+	| Join-Path -ChildPath ( $HelpXMLFileName ) `
 };
 
 $Translator = @{
@@ -1774,6 +1774,22 @@ Function Get-HelpXML {
 		[switch]
 		$OutDefaultFile
 	,
+		# "Заготовка" для `HelpXMLFileName` - функционал (блок), имя файла xml справки (без пути)
+		[Parameter(
+			ParameterSetName='ModuleInfo'
+			, Mandatory=$false
+		)]
+		[ScriptBlock]
+		$HelpXMLFileNameTemplate = $HelpXMLFileNameTemplateDefault
+	,
+		# Имя файла для xml файла справки
+		[Parameter(
+			ParameterSetName='ModuleInfo'
+			, Mandatory=$false
+		)]
+		[String]
+		$HelpXMLFileName = ( & $HelpXMLFileNameTemplate )
+	,
 		# "Заготовка" для `Path` - функционал (блок), вычисляющий `Path` - пути для xml файла справки
 		[Parameter(
 			ParameterSetName='ModuleInfo'
@@ -1791,7 +1807,7 @@ Function Get-HelpXML {
 		$Path = ( & $PathTemplate )
 	,
 		# обновлять файл модуля - добавлять в файл модуля в комментарии к функциям модуля 
-		# записей типа `.ExternalHelp ITG.Readme.psm1-help.xml`
+		# записи типа `.ExternalHelp ITG.Readme-help.xml`
 		[Parameter(
 			ParameterSetName='ModuleInfo'
 		)]
@@ -1851,7 +1867,7 @@ Function Get-HelpXML {
 					);
 					$HelpContent.WriteTo( $Writer );
 					$Writer.Close();
-					
+
 					if ( $Cab ) {
 						$CabDir = Split-Path -Path ( $CabPath.FullName ) -Parent;
 						if ( -not ( Test-Path -LiteralPath $CabDir ) ) {
@@ -1869,6 +1885,36 @@ Function Get-HelpXML {
 								-Message "Возникла ошибка $( $MakeCabProcess.ExitCode ) при выполнении makecab.exe." `
 							;
 						};
+					};
+
+					if ( $UpdateModule ) {
+						$reFuncHeaders = 
+							'(?m)' `
+							, '(?<=^(Function|Filter)\s+(' `
+							, (
+								(
+									$ModuleInfo.ExportedFunctions.Values `
+									| % { $_.Name } `
+								) `
+								-join '|' `
+							) `
+							, ')\s*\{)(\s*$)?' `
+							-join '' `
+						;
+						$ModulePath = $ModuleInfo.Path;
+						( Get-Content `
+							-LiteralPath $ModulePath `
+							-ReadCount 0 `
+						) `
+						-join "`r`n" `
+						-replace `
+							$reFuncHeaders `
+							, "`r`n#`t.ExternalHelp $HelpXMLFileName`r`n" `
+						| Set-Content `
+							-LiteralPath $ModulePath `
+							-Encoding 'UTF8' `
+							-Force `
+						;
 					};
 				} else {
 					return $HelpContent;
