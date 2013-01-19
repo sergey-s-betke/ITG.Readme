@@ -55,16 +55,28 @@
 
 #### Обзор [Get-Readme][]
 
+Генерирует readme с [MarkDown][] разметкой по данным модуля и комментариям к его функциям.
+
+	Get-Readme [-ModuleInfo] <PSModuleInfo> [-UICulture <CultureInfo>] [-ShortDescription] [-ReferencedModules <PSModuleInfo[]>] [-TranslateRules <Array>] <CommonParameters>
+
+	Get-Readme [-ExternalScriptInfo] <ExternalScriptInfo> [-UICulture <CultureInfo>] [-ShortDescription] [-ReferencedModules <PSModuleInfo[]>] [-TranslateRules <Array>] <CommonParameters>
+
+	Get-Readme [-FunctionInfo] <FunctionInfo> [-UICulture <CultureInfo>] [-ShortDescription] [-ReferencedModules <PSModuleInfo[]>] [-TranslateRules <Array>] <CommonParameters>
+
+Подробнее - [Get-Readme][].
+
+#### Обзор [Set-Readme][]
+
 Генерирует readme файл с [MarkDown][] разметкой по данным модуля и комментариям к его функциям.
 Файл предназначен, в частности, для размещения в репозиториях github.
 
-	Get-Readme [-ModuleInfo] <PSModuleInfo> [-ReferencedModules <PSModuleInfo[]>] [-UICulture <CultureInfo>] [-OutDefaultFile] [-PathTemplate <ScriptBlock>] [-Path <FileInfo>] [-TranslateRules <Array>] [-ShortDescription] <CommonParameters>
+	Set-Readme [-ModuleInfo] <PSModuleInfo> [-UICulture <CultureInfo>] [-PathTemplate <ScriptBlock>] [-Path <FileInfo>] [-ShortDescription] [-ReferencedModules <PSModuleInfo[]>] [-TranslateRules <Array>] <CommonParameters>
 
-	Get-Readme [-ExternalScriptInfo] <ExternalScriptInfo> [-ReferencedModules <PSModuleInfo[]>] [-UICulture <CultureInfo>] [-TranslateRules <Array>] [-ShortDescription] <CommonParameters>
+	Set-Readme [-ExternalScriptInfo] <ExternalScriptInfo> [-UICulture <CultureInfo>] [-ShortDescription] [-ReferencedModules <PSModuleInfo[]>] [-TranslateRules <Array>] <CommonParameters>
 
-	Get-Readme [-FunctionInfo] <FunctionInfo> [-ReferencedModules <PSModuleInfo[]>] [-UICulture <CultureInfo>] [-TranslateRules <Array>] [-ShortDescription] <CommonParameters>
+	Set-Readme [-FunctionInfo] <FunctionInfo> [-UICulture <CultureInfo>] [-ShortDescription] [-ReferencedModules <PSModuleInfo[]>] [-TranslateRules <Array>] <CommonParameters>
 
-Подробнее - [Get-Readme][].
+Подробнее - [Set-Readme][].
 
 Подробное описание функций модуля
 ---------------------------------
@@ -482,17 +494,18 @@ HelpInfo.xml в каталоге модуля, либо создаёт новы�
 
 #### Get-Readme
 
-Генерирует readme файл с [MarkDown][] разметкой по данным модуля и комментариям к его функциям.
-Файл предназначен, в частности, для размещения в репозиториях github.
+Генерирует readme с [MarkDown][] разметкой по данным модуля и комментариям к его функциям.
+Предназначен, в частности, для размещения в репозиториях github. Для сохранения в файл
+используйте [Set-Readme][].
 Описание может быть сгенерировано функцией [Get-Readme][] для модуля, функции, внешего сценария.
 
 ##### Синтаксис
 
-	Get-Readme [-ModuleInfo] <PSModuleInfo> [-ReferencedModules <PSModuleInfo[]>] [-UICulture <CultureInfo>] [-OutDefaultFile] [-PathTemplate <ScriptBlock>] [-Path <FileInfo>] [-TranslateRules <Array>] [-ShortDescription] <CommonParameters>
+	Get-Readme [-ModuleInfo] <PSModuleInfo> [-UICulture <CultureInfo>] [-ShortDescription] [-ReferencedModules <PSModuleInfo[]>] [-TranslateRules <Array>] <CommonParameters>
 
-	Get-Readme [-ExternalScriptInfo] <ExternalScriptInfo> [-ReferencedModules <PSModuleInfo[]>] [-UICulture <CultureInfo>] [-TranslateRules <Array>] [-ShortDescription] <CommonParameters>
+	Get-Readme [-ExternalScriptInfo] <ExternalScriptInfo> [-UICulture <CultureInfo>] [-ShortDescription] [-ReferencedModules <PSModuleInfo[]>] [-TranslateRules <Array>] <CommonParameters>
 
-	Get-Readme [-FunctionInfo] <FunctionInfo> [-ReferencedModules <PSModuleInfo[]>] [-UICulture <CultureInfo>] [-TranslateRules <Array>] [-ShortDescription] <CommonParameters>
+	Get-Readme [-FunctionInfo] <FunctionInfo> [-UICulture <CultureInfo>] [-ShortDescription] [-ReferencedModules <PSModuleInfo[]>] [-TranslateRules <Array>] <CommonParameters>
 
 ##### Функциональность
 
@@ -551,15 +564,6 @@ Readme
         Принимать входные данные конвейера?true (ByValue)
         Принимать подстановочные знаки?
 
-- `ReferencedModules <PSModuleInfo[]>`
-        Перечень модулей, упоминания функций которых будут заменены на ссылки
-
-        Требуется? false
-        Позиция? named
-        Значение по умолчанию
-        Принимать входные данные конвейера?false
-        Принимать подстановочные знаки?
-
 - `UICulture <CultureInfo>`
         культура, для которой генерировать данные, на данный момент параметр задавать не следует.
 
@@ -569,8 +573,131 @@ Readme
         Принимать входные данные конвейера?false
         Принимать подстановочные знаки?
 
-- `OutDefaultFile [<SwitchParameter>]`
-        выводить readme в файл readme.md в каталоге модуля
+- `ShortDescription [<SwitchParameter>]`
+        Генерировать только краткое описание
+
+        Требуется? false
+        Позиция? named
+        Значение по умолчанию
+        Принимать входные данные конвейера?false
+        Принимать подстановочные знаки?
+
+- `ReferencedModules <PSModuleInfo[]>`
+        Перечень модулей, упоминания функций которых будут заменены на ссылки
+
+        Требуется? false
+        Позиция? named
+        Значение по умолчанию
+        Принимать входные данные конвейера?false
+        Принимать подстановочные знаки?
+
+- `TranslateRules <Array>`
+        Правила для обработки readme регулярными выражениями
+
+        Требуется? false
+        Позиция? named
+        Значение по умолчанию
+        Принимать входные данные конвейера?false
+        Принимать подстановочные знаки?
+
+- `<CommonParameters>`
+        Данный командлет поддерживает общие параметры: Verbose, Debug,
+        ErrorAction, ErrorVariable, WarningAction, WarningVariable,
+        OutBuffer и OutVariable. Для получения дополнительных сведений введите
+        [`get-help about_CommonParameters`][about_CommonParameters].
+
+
+
+##### Примеры использования
+
+1. Генерация readme.md файла для модуля `ITG.Yandex.DnsServer`
+в текущем каталоге.
+
+		Get-Module 'ITG.Yandex.DnsServer' | Get-Readme | Out-File -Path 'readme.md' -Encoding 'UTF8' -Width 1024;
+
+2. Генерация readme для модуля `ITG.Yandex.DnsServer`, при этом все упоминания
+функций модулей `ITG.Yandex`, `ITG.Utils`, `ITG.WinAPI.UrlMon`,
+`ITG.WinAPI.User32` так же будут заменены перекрёстными ссылками
+на readme.md указанных модулей.
+
+		Get-Module 'ITG.Yandex.DnsServer' | Get-Readme -ReferencedModules @( 'ITG.Yandex', 'ITG.Utils', 'ITG.WinAPI.UrlMon', 'ITG.WinAPI.User32' | Get-Module )
+
+##### См. также
+
+- [Online версия справки](http://github.com/IT-Service/ITG.Readme#Get-Readme)
+- [MarkDown][]
+- [about_Comment_Based_Help][]
+- [Написание справки для командлетов](http://go.microsoft.com/fwlink/?LinkID=123415)
+
+#### Set-Readme
+
+Генерирует readme файл с [MarkDown][] разметкой по данным модуля и комментариям к его функциям.
+Файл предназначен, в частности, для размещения в репозиториях github.
+В дополнение к функционалу [Get-Readme][] сохраняет результат в файл, определённый параметрами
+`Path` и `PathTemplate`.
+
+##### Синтаксис
+
+	Set-Readme [-ModuleInfo] <PSModuleInfo> [-UICulture <CultureInfo>] [-PathTemplate <ScriptBlock>] [-Path <FileInfo>] [-ShortDescription] [-ReferencedModules <PSModuleInfo[]>] [-TranslateRules <Array>] <CommonParameters>
+
+	Set-Readme [-ExternalScriptInfo] <ExternalScriptInfo> [-UICulture <CultureInfo>] [-ShortDescription] [-ReferencedModules <PSModuleInfo[]>] [-TranslateRules <Array>] <CommonParameters>
+
+	Set-Readme [-FunctionInfo] <FunctionInfo> [-UICulture <CultureInfo>] [-ShortDescription] [-ReferencedModules <PSModuleInfo[]>] [-TranslateRules <Array>] <CommonParameters>
+
+##### Функциональность
+
+Readme
+
+##### Требуемая роль пользователя
+
+Для выполнения функции Set-Readme требуется роль Everyone для учётной записи,
+от имени которой будет выполнена описываемая функция.
+
+##### Принимаемые данные по конвейеру
+
+- System.Management.Automation.PSModuleInfo.
+Описатели модулей, для которых будет сгенерирован readme.md.
+Получены описатели могут быть через Get-Module.
+- System.Management.Automation.ExternalScriptInfo.
+Описатели сценариев, для которых будет сгенерирован readme.md.
+- System.Management.Automation.CmdletInfo.
+Описатели командлет, для которых будет сгенерирован readme.md.
+Получены описатели могут быть через Get-Command.
+- System.Management.Automation.FunctionInfo.
+Описатели функций, для которых будет сгенерирован readme.md.
+Получены описатели могут быть через Get-Command.
+
+##### Параметры
+
+- `ModuleInfo <PSModuleInfo>`
+        Описатель модуля
+
+        Требуется? true
+        Позиция? 1
+        Значение по умолчанию
+        Принимать входные данные конвейера?true (ByValue)
+        Принимать подстановочные знаки?
+
+- `ExternalScriptInfo <ExternalScriptInfo>`
+        Описатель внешнего сценария
+
+        Требуется? true
+        Позиция? 1
+        Значение по умолчанию
+        Принимать входные данные конвейера?true (ByValue)
+        Принимать подстановочные знаки?
+
+- `FunctionInfo <FunctionInfo>`
+        Описатель функции
+
+        Требуется? true
+        Позиция? 1
+        Значение по умолчанию
+        Принимать входные данные конвейера?true (ByValue)
+        Принимать подстановочные знаки?
+
+- `UICulture <CultureInfo>`
+        культура, для которой генерировать данные, на данный момент параметр задавать не следует.
 
         Требуется? false
         Позиция? named
@@ -596,8 +723,8 @@ Readme
         Принимать входные данные конвейера?false
         Принимать подстановочные знаки?
 
-- `TranslateRules <Array>`
-        Правила для обработки readme регулярными выражениями
+- `ShortDescription [<SwitchParameter>]`
+        Генерировать только краткое описание
 
         Требуется? false
         Позиция? named
@@ -605,8 +732,17 @@ Readme
         Принимать входные данные конвейера?false
         Принимать подстановочные знаки?
 
-- `ShortDescription [<SwitchParameter>]`
-        Генерировать только краткое описание
+- `ReferencedModules <PSModuleInfo[]>`
+        Перечень модулей, упоминания функций которых будут заменены на ссылки
+
+        Требуется? false
+        Позиция? named
+        Значение по умолчанию
+        Принимать входные данные конвейера?false
+        Принимать подстановочные знаки?
+
+- `TranslateRules <Array>`
+        Правила для обработки readme регулярными выражениями
 
         Требуется? false
         Позиция? named
@@ -625,26 +761,22 @@ Readme
 ##### Примеры использования
 
 1. Генерация readme.md файла для модуля `ITG.Yandex.DnsServer`
-в текущем каталоге.
-
-		Get-Module 'ITG.Yandex.DnsServer' | Get-Readme | Out-File -Path 'readme.md' -Encoding 'UTF8' -Width 1024;
-
-2. Генерация readme.md файла для модуля `ITG.Yandex.DnsServer`
 в каталоге модуля.
 
-		Get-Module 'ITG.Yandex.DnsServer' | Get-Readme -OutDefaultFile;
+		Get-Module 'ITG.Yandex.DnsServer' | Set-Readme;
 
-3. Генерация readme.md файла для модуля `ITG.Yandex.DnsServer`
+2. Генерация readme.md файла для модуля `ITG.Yandex.DnsServer`
 в каталоге модуля `ITG.Yandex.DnsServer`, при этом все упоминания
 функций модулей `ITG.Yandex`, `ITG.Utils`, `ITG.WinAPI.UrlMon`,
 `ITG.WinAPI.User32` так же будут заменены перекрёстными ссылками
 на readme.md файлы указанных модулей.
 
-		Get-Module 'ITG.Yandex.DnsServer' | Get-Readme -OutDefaultFile -ReferencedModules @( 'ITG.Yandex', 'ITG.Utils', 'ITG.WinAPI.UrlMon', 'ITG.WinAPI.User32' | Get-Module )
+		Get-Module 'ITG.Yandex.DnsServer' | Set-Readme -ReferencedModules @( 'ITG.Yandex', 'ITG.Utils', 'ITG.WinAPI.UrlMon', 'ITG.WinAPI.User32' | Get-Module )
 
 ##### См. также
 
-- [Online версия справки](http://github.com/IT-Service/ITG.Readme#Get-Readme)
+- [Online версия справки](http://github.com/IT-Service/ITG.Readme#Set-Readme)
+- [Get-Readme][]
 - [MarkDown][]
 - [about_Comment_Based_Help][]
 - [Написание справки для командлетов](http://go.microsoft.com/fwlink/?LinkID=123415)
@@ -654,10 +786,11 @@ Readme
 [about_CommonParameters]: http://go.microsoft.com/fwlink/?LinkID=113216 "Описание параметров, которые могут использоваться с любым командлетом."
 [Get-HelpInfo]: <ITG.Readme#Get-HelpInfo> "Возвращает HelpInfo.xml (как xml) для указанного модуля."
 [Get-HelpXML]: <ITG.Readme#Get-HelpXML> "Генерирует XML справку для переданного модуля, функции, командлеты."
-[Get-Readme]: <ITG.Readme#Get-Readme> "Генерирует readme файл с MarkDown разметкой по данным модуля и комментариям к его функциям. Файл предназначен, в частности, для размещения в репозиториях github."
+[Get-Readme]: <ITG.Readme#Get-Readme> "Генерирует readme с MarkDown разметкой по данным модуля и комментариям к его функциям."
 [MarkDown]: http://daringfireball.net/projects/markdown/syntax "MarkDown (md) Syntax"
 [New-HelpInfo]: <ITG.Readme#New-HelpInfo> "Генерирует HelpInfo XML для переданного модуля."
 [Set-HelpInfo]: <ITG.Readme#Set-HelpInfo> "Генерирует HelpInfo XML для указанного модуля."
+[Set-Readme]: <ITG.Readme#Set-Readme> "Генерирует readme файл с MarkDown разметкой по данным модуля и комментариям к его функциям. Файл предназначен, в частности, для размещения в репозиториях github."
 
 ---------------------------------------
 
