@@ -9,6 +9,6 @@ Import-Module `
 	-Force `
 	-Verbose `
 ;
-Get-Readme -Module ( Get-Module 'ITG.Readme' ) -OutDefaultFile;
-Get-HelpXML -Module ( Get-Module 'ITG.Readme' ) -OutDefaultFile -Cab -UpdateModule;
-Set-HelpInfo -Module ( Get-Module 'ITG.Readme' ) ; # -UpdateManifest;
+Set-Readme -Module ( Get-Module 'ITG.Readme' );
+Get-HelpXML -Module ( Get-Module 'ITG.Readme' ) -OutDefaultFile -Cab; # -UpdateModule;
+Set-HelpInfo -Module ( Get-Module 'ITG.Readme' ); # -UpdateManifest;

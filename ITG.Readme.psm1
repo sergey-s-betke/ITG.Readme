@@ -721,14 +721,60 @@ Function Get-TagReferenceTranslateRules {
 	}
 }
 
-Function Get-InternalReadme {
+$GetReadmeStatus = @{
+	level = 0;
+};
+
+Function Get-Readme {
 	<#
 		.Synopsis
-			Get-Readme является лишь обёрткой (proxy функцией) к данной функции, обеспечивающей
-			подготовку правил трансляции терминов, непосредственно подготовка readme выполняется
-			данной функцией.
-		.ForwardHelpTargetName
-			Get-Readme
+			Генерирует readme с MarkDown разметкой по данным модуля и комментариям к его функциям. 
+		.Description
+			Генерирует readme с MarkDown разметкой по данным модуля и комментариям к его функциям. 
+			Предназначен, в частности, для размещения в репозиториях github. Для сохранения в файл
+			используйте Set-Readme.
+			Описание может быть сгенерировано функцией Get-Readme для модуля, функции, внешего сценария.
+		.Functionality
+			Readme
+		.Role
+			Everyone
+		.Notes
+		.Inputs
+			System.Management.Automation.PSModuleInfo.
+			Описатели модулей, для которых будет сгенерирован readme.md. 
+			Получены описатели могут быть через Get-Module.
+		.Inputs
+			System.Management.Automation.ExternalScriptInfo.
+			Описатели сценариев, для которых будет сгенерирован readme.md. 
+		.Inputs
+			System.Management.Automation.CmdletInfo.
+			Описатели командлет, для которых будет сгенерирован readme.md. 
+			Получены описатели могут быть через Get-Command.
+		.Inputs
+			System.Management.Automation.FunctionInfo.
+			Описатели функций, для которых будет сгенерирован readme.md. 
+			Получены описатели могут быть через Get-Command.
+		.Outputs
+			String.
+			Содержимое readme.md.
+		.Link
+			[MarkDown]: <http://daringfireball.net/projects/markdown/syntax> "MarkDown (md) Syntax"
+		.Link
+			about_comment_based_help
+		.Link
+			[Написание справки для командлетов](http://go.microsoft.com/fwlink/?LinkID=123415)
+		.Link
+			http://github.com/IT-Service/ITG.Readme#Get-Readme
+		.Example
+			Get-Module 'ITG.Yandex.DnsServer' | Get-Readme | Out-File -Path 'readme.md' -Encoding 'UTF8' -Width 1024;
+			Генерация readme.md файла для модуля `ITG.Yandex.DnsServer` 
+			в текущем каталоге.
+		.Example
+			Get-Module 'ITG.Yandex.DnsServer' | Get-Readme -ReferencedModules @( 'ITG.Yandex', 'ITG.Utils', 'ITG.WinAPI.UrlMon', 'ITG.WinAPI.User32' | Get-Module )
+			Генерация readme для модуля `ITG.Yandex.DnsServer`, при этом все упоминания
+			функций модулей `ITG.Yandex`, `ITG.Utils`, `ITG.WinAPI.UrlMon`,
+			`ITG.WinAPI.User32` так же будут заменены перекрёстными ссылками
+			на readme.md указанных модулей.
 	#>
 	
 	[CmdletBinding(
@@ -767,6 +813,18 @@ Function Get-InternalReadme {
 		[System.Management.Automation.FunctionInfo]
 		$FunctionInfo
 	,
+		# культура, для которой генерировать данные, на данный момент параметр задавать не следует.
+		[Parameter(
+			Mandatory=$false
+		)]
+		[System.Globalization.CultureInfo]
+		$UICulture = ( Get-Culture )
+	,
+		# Генерировать только краткое описание
+		[switch]
+		[Alias('Short')]
+		$ShortDescription
+	,
 		# Перечень модулей, упоминания функций которых будут заменены на ссылки
 		[Parameter(
 			Mandatory=$false
@@ -774,13 +832,52 @@ Function Get-InternalReadme {
 		[PSModuleInfo[]]
 		$ReferencedModules = @()
 	,
-		# Генерировать только краткое описание
-		[switch]
-		[Alias('Short')]
-		$ShortDescription
+		# Правила для обработки readme регулярными выражениями
+		[Parameter(
+			Mandatory=$false
+		)]
+		[Array]
+		$TranslateRules = @()
 	)
 
 	process {
+		if ( -not $GetReadmeStatus.level ) {
+			$TranslateRules += & {
+				$ReferencedModules `
+				| % {
+					$_ | Get-FunctionsReferenceTranslateRules -AsExternalModule;
+					$_ | Get-TagReferenceTranslateRules;
+				};
+				switch ( $PsCmdlet.ParameterSetName ) {
+					'ModuleInfo' {
+						$ModuleInfo `
+						| % {
+							$_ | Get-FunctionsReferenceTranslateRules;
+							$_ | Get-TagReferenceTranslateRules;
+						};
+					}
+					'ExternalScriptInfo' {
+					}
+					'FunctionInfo' {
+					};
+				};
+			};
+			$TranslateRules = `
+				@(
+					$TranslateRules `
+					| ConvertTo-TranslateRule `
+				) `
+				+ $BasicTranslateRules `
+			;
+
+			$TranslateRules `
+			| Use-TranslateRule `
+			;
+			$res = $PSBoundParameters.Remove( 'TranslateRules' );
+			$res = $PSBoundParameters.Remove( 'ReferencedModules' );
+		};
+		$GetReadmeStatus.level++;
+		
 		switch ( $PsCmdlet.ParameterSetName ) {
 			'ModuleInfo' {
 				$ReadMeContent = & { `
@@ -815,7 +912,7 @@ $( $ModuleInfo.Description | Expand-Definitions )
 							$_.Group `
 							| % {
 								$_ `
-								| Get-InternalReadme `
+								| Get-Readme `
 									-ShortDescription `
 								;
 								if ( -not $ShortDescription ) {
@@ -837,14 +934,14 @@ $( $ModuleInfo.Description | Expand-Definitions )
 							| Sort-Object -Property `
 								@{ Expression={ ( $_.Name -split '-' )[1] } } `
 								, @{ Expression={ ( $_.Name -split '-' )[0] } } `
-							| Get-InternalReadme `
+							| Get-Readme `
 							;
 						};
 					};
 				} `
 				| Out-String `
 				;
-				return $ReadMeContent;
+				$ReadMeContent;
 			}
 			'ExternalScriptInfo' {
 			}
@@ -1087,24 +1184,28 @@ $ExNum. Пример $ExNum.
 						};
 					};
 				};
-				return $ReadMeContent;
+				$ReadMeContent;
 			};
+		};
+		$GetReadmeStatus.level--;
+		if ( -not $GetReadmeStatus.level ) {
+			Get-EndReference;
 		};
 	}
 }
 
-Function Get-Readme {
+Function Set-Readme {
 	<#
 		.Synopsis
 			Генерирует readme файл с MarkDown разметкой по данным модуля и комментариям к его функциям. 
 			Файл предназначен, в частности, для размещения в репозиториях github.
 		.Description
 			Генерирует readme файл с MarkDown разметкой по данным модуля и комментариям к его функциям. 
-			Файл предназначен, в частности, для размещения в репозиториях github. 
-			Описание может быть сгенерировано функцией Get-Readme для модуля, функции, внешего сценария.
+			Файл предназначен, в частности, для размещения в репозиториях github.
+			В дополнение к функционалу Get-Readme сохраняет результат в файл, определённый параметрами
+			`Path` и `PathTemplate`.
 		.Functionality
 			Readme
-		.Component
 		.Role
 			Everyone
 		.Notes
@@ -1123,9 +1224,8 @@ Function Get-Readme {
 			System.Management.Automation.FunctionInfo.
 			Описатели функций, для которых будет сгенерирован readme.md. 
 			Получены описатели могут быть через Get-Command.
-		.Outputs
-			String.
-			Содержимое readme.md.
+		.Link
+			Get-Readme
 		.Link
 			[MarkDown]: <http://daringfireball.net/projects/markdown/syntax> "MarkDown (md) Syntax"
 		.Link
@@ -1133,17 +1233,13 @@ Function Get-Readme {
 		.Link
 			[Написание справки для командлетов](http://go.microsoft.com/fwlink/?LinkID=123415)
 		.Link
-			http://github.com/IT-Service/ITG.Readme#Get-Readme
+			http://github.com/IT-Service/ITG.Readme#Set-Readme
 		.Example
-			Get-Module 'ITG.Yandex.DnsServer' | Get-Readme | Out-File -Path 'readme.md' -Encoding 'UTF8' -Width 1024;
-			Генерация readme.md файла для модуля `ITG.Yandex.DnsServer` 
-			в текущем каталоге.
-		.Example
-			Get-Module 'ITG.Yandex.DnsServer' | Get-Readme -OutDefaultFile;
+			Get-Module 'ITG.Yandex.DnsServer' | Set-Readme;
 			Генерация readme.md файла для модуля `ITG.Yandex.DnsServer` 
 			в каталоге модуля.
 		.Example
-			Get-Module 'ITG.Yandex.DnsServer' | Get-Readme -OutDefaultFile -ReferencedModules @( 'ITG.Yandex', 'ITG.Utils', 'ITG.WinAPI.UrlMon', 'ITG.WinAPI.User32' | Get-Module )
+			Get-Module 'ITG.Yandex.DnsServer' | Set-Readme -ReferencedModules @( 'ITG.Yandex', 'ITG.Utils', 'ITG.WinAPI.UrlMon', 'ITG.WinAPI.User32' | Get-Module )
 			Генерация readme.md файла для модуля `ITG.Yandex.DnsServer` 
 			в каталоге модуля `ITG.Yandex.DnsServer`, при этом все упоминания
 			функций модулей `ITG.Yandex`, `ITG.Utils`, `ITG.WinAPI.UrlMon`,
@@ -1187,26 +1283,12 @@ Function Get-Readme {
 		[System.Management.Automation.FunctionInfo]
 		$FunctionInfo
 	,
-		# Перечень модулей, упоминания функций которых будут заменены на ссылки
-		[Parameter(
-			Mandatory=$false
-		)]
-		[PSModuleInfo[]]
-		$ReferencedModules = @()
-	,
 		# культура, для которой генерировать данные, на данный момент параметр задавать не следует.
 		[Parameter(
 			Mandatory=$false
 		)]
 		[System.Globalization.CultureInfo]
 		$UICulture = ( Get-Culture )
-	,
-		# выводить readme в файл readme.md в каталоге модуля
-		[Parameter(
-			ParameterSetName='ModuleInfo'
-		)]
-		[switch]
-		$OutDefaultFile
 	,
 		# "Заготовка" для `Path` - функционал (блок), вычисляющий `Path` - путь для readme файла
 		[Parameter(
@@ -1224,90 +1306,51 @@ Function Get-Readme {
 		[System.IO.FileInfo]
 		$Path = ( & $PathTemplate )
 	,
+		# Генерировать только краткое описание
+		[switch]
+		[Alias('Short')]
+		$ShortDescription
+	,
+		# Перечень модулей, упоминания функций которых будут заменены на ссылки
+		[Parameter(
+			Mandatory=$false
+		)]
+		[PSModuleInfo[]]
+		$ReferencedModules = @()
+	,
 		# Правила для обработки readme регулярными выражениями
 		[Parameter(
 			Mandatory=$false
 		)]
 		[Array]
 		$TranslateRules = @()
-	,
-		# Генерировать только краткое описание
-		[switch]
-		[Alias('Short')]
-		$ShortDescription
 	)
 
 	process {
-		$TranslateRules += & {
-			$ReferencedModules `
-			| % {
-				$_ | Get-FunctionsReferenceTranslateRules -AsExternalModule;
-				$_ | Get-TagReferenceTranslateRules;
-			};
-			switch ( $PsCmdlet.ParameterSetName ) {
-				'ModuleInfo' {
-					$ModuleInfo `
-					| % {
-						$_ | Get-FunctionsReferenceTranslateRules;
-						$_ | Get-TagReferenceTranslateRules;
-					};
-				}
-				'ExternalScriptInfo' {
-				}
-				'FunctionInfo' {
-				};
-			};
-		};
-		$TranslateRules = `
-			@(
-				$TranslateRules `
-				| ConvertTo-TranslateRule `
-			) `
-			+ $BasicTranslateRules `
-		;
-
-		$TranslateRules `
-		| Use-TranslateRule `
-		;
-		
-		$res = $PSBoundParameters.Remove( 'TranslateRules' );
-		$res = $PSBoundParameters.Remove( 'OutDefaultFile' );
 		$res = $PSBoundParameters.Remove( 'PathTemplate' );
 		$res = $PSBoundParameters.Remove( 'Path' );
-		$ReadMeContent = `
-			( # генерируем собственно readme с подготовленными правилами трансляции терминов
-				Get-InternalReadme @PSBoundParameters `
-			) `
-			, (
-				Get-EndReference
-			) `
-			, ( # генерируем ссылку на репозиторий данного модуля
+
+		switch ( $PsCmdlet.ParameterSetName ) {
+			'ModuleInfo' {
+				( Get-Readme @PSBoundParameters ) `
+				, (
 @"
 
 ---------------------------------------
 
 Генератор: [ITG.Readme](http://github.com/IT-Service/ITG.Readme "Модуль PowerShell для генерации readme для модулей PowerShell").
 "@ `
-			) `
-			| Out-String `
-		;
-		switch ( $PsCmdlet.ParameterSetName ) {
-			'ModuleInfo' {
-				if ( $OutDefaultFile ) {
-					$ReadMeContent `
-					| Set-Content `
-						-LiteralPath $Path `
-						-Encoding 'UTF8' `
-						-Force `
-					;
-				} else {
-					return $ReadMeContent;
-				};
+				) `
+				| Out-String `
+				| Set-Content `
+					-LiteralPath $Path `
+					-Encoding 'UTF8' `
+					-Force `
+				;
 			}
 			'ExternalScriptInfo' {
 			}
 			default {
-				return $ReadMeContent;
 			};
 		};
 	}
@@ -2304,6 +2347,7 @@ Function Set-HelpInfo {
 
 Export-ModuleMember `
 	  Get-Readme `
+	, Set-Readme `
 	, Get-HelpXML `
 	, New-HelpInfo `
 	, Get-HelpInfo `

@@ -342,7 +342,7 @@
 			<verb>Get</verb>
 			<noun>Readme</noun>
 			<maml:description>
-				<maml:para>Генерирует readme файл с MarkDown разметкой по данным модуля и комментариям к его функциям. Файл предназначен, в частности, для размещения в репозиториях github.</maml:para>
+				<maml:para>Генерирует readme с MarkDown разметкой по данным модуля и комментариям к его функциям.</maml:para>
 			</maml:description>
 			<maml:copyright>
 				<maml:para>(c) 2012 Sergey S. Betke. All rights reserved.</maml:para>
@@ -352,7 +352,7 @@
 		<maml:functionality>Readme</maml:functionality>
 		<maml:role>Everyone</maml:role>
 		<maml:description>
-			<maml:para>Генерирует readme файл с MarkDown разметкой по данным модуля и комментариям к его функциям. Файл предназначен, в частности, для размещения в репозиториях github. Описание может быть сгенерировано функцией Get-Readme для модуля, функции, внешего сценария.</maml:para>
+			<maml:para>Генерирует readme с MarkDown разметкой по данным модуля и комментариям к его функциям. Предназначен, в частности, для размещения в репозиториях github. Для сохранения в файл используйте Set-Readme. Описание может быть сгенерировано функцией Get-Readme для модуля, функции, внешего сценария.</maml:para>
 		</maml:description>
 		<syntax>
 			<syntaxItem>
@@ -362,30 +362,19 @@
 					<parameterValue required="true">PSModuleInfo</parameterValue>
 				</parameter>
 				<parameter required="false" position="named" pipelineInput="false">
-					<maml:name>ReferencedModules</maml:name>
-					<parameterValue required="false">PSModuleInfo[]</parameterValue>
-				</parameter>
-				<parameter required="false" position="named" pipelineInput="false">
 					<maml:name>UICulture</maml:name>
 					<parameterValue required="false">CultureInfo</parameterValue>
 				</parameter>
 				<parameter required="false" position="named" pipelineInput="false">
-					<maml:name>OutDefaultFile</maml:name>
+					<maml:name>ShortDescription</maml:name>
 				</parameter>
 				<parameter required="false" position="named" pipelineInput="false">
-					<maml:name>PathTemplate</maml:name>
-					<parameterValue required="false">ScriptBlock</parameterValue>
-				</parameter>
-				<parameter required="false" position="named" pipelineInput="false">
-					<maml:name>Path</maml:name>
-					<parameterValue required="false">FileInfo</parameterValue>
+					<maml:name>ReferencedModules</maml:name>
+					<parameterValue required="false">PSModuleInfo[]</parameterValue>
 				</parameter>
 				<parameter required="false" position="named" pipelineInput="false">
 					<maml:name>TranslateRules</maml:name>
 					<parameterValue required="false">Array</parameterValue>
-				</parameter>
-				<parameter required="false" position="named" pipelineInput="false">
-					<maml:name>ShortDescription</maml:name>
 				</parameter>
 			</syntaxItem>
 			<syntaxItem>
@@ -395,19 +384,19 @@
 					<parameterValue required="true">ExternalScriptInfo</parameterValue>
 				</parameter>
 				<parameter required="false" position="named" pipelineInput="false">
-					<maml:name>ReferencedModules</maml:name>
-					<parameterValue required="false">PSModuleInfo[]</parameterValue>
-				</parameter>
-				<parameter required="false" position="named" pipelineInput="false">
 					<maml:name>UICulture</maml:name>
 					<parameterValue required="false">CultureInfo</parameterValue>
 				</parameter>
 				<parameter required="false" position="named" pipelineInput="false">
-					<maml:name>TranslateRules</maml:name>
-					<parameterValue required="false">Array</parameterValue>
+					<maml:name>ShortDescription</maml:name>
 				</parameter>
 				<parameter required="false" position="named" pipelineInput="false">
-					<maml:name>ShortDescription</maml:name>
+					<maml:name>ReferencedModules</maml:name>
+					<parameterValue required="false">PSModuleInfo[]</parameterValue>
+				</parameter>
+				<parameter required="false" position="named" pipelineInput="false">
+					<maml:name>TranslateRules</maml:name>
+					<parameterValue required="false">Array</parameterValue>
 				</parameter>
 			</syntaxItem>
 			<syntaxItem>
@@ -417,19 +406,19 @@
 					<parameterValue required="true">FunctionInfo</parameterValue>
 				</parameter>
 				<parameter required="false" position="named" pipelineInput="false">
-					<maml:name>ReferencedModules</maml:name>
-					<parameterValue required="false">PSModuleInfo[]</parameterValue>
-				</parameter>
-				<parameter required="false" position="named" pipelineInput="false">
 					<maml:name>UICulture</maml:name>
 					<parameterValue required="false">CultureInfo</parameterValue>
 				</parameter>
 				<parameter required="false" position="named" pipelineInput="false">
-					<maml:name>TranslateRules</maml:name>
-					<parameterValue required="false">Array</parameterValue>
+					<maml:name>ShortDescription</maml:name>
 				</parameter>
 				<parameter required="false" position="named" pipelineInput="false">
-					<maml:name>ShortDescription</maml:name>
+					<maml:name>ReferencedModules</maml:name>
+					<parameterValue required="false">PSModuleInfo[]</parameterValue>
+				</parameter>
+				<parameter required="false" position="named" pipelineInput="false">
+					<maml:name>TranslateRules</maml:name>
+					<parameterValue required="false">Array</parameterValue>
 				</parameter>
 			</syntaxItem>
 		</syntax>
@@ -456,13 +445,6 @@
 				<parameterValue required="True">FunctionInfo</parameterValue>
 			</parameter>
 			<parameter required="false" position="named" pipelineInput="false">
-				<maml:name>ReferencedModules</maml:name>
-				<maml:description>
-					<maml:para>Перечень модулей, упоминания функций которых будут заменены на ссылки</maml:para>
-				</maml:description>
-				<parameterValue required="True">PSModuleInfo[]</parameterValue>
-			</parameter>
-			<parameter required="false" position="named" pipelineInput="false">
 				<maml:name>UICulture</maml:name>
 				<maml:description>
 					<maml:para>культура, для которой генерировать данные, на данный момент параметр задавать не следует.</maml:para>
@@ -470,25 +452,18 @@
 				<parameterValue required="True">CultureInfo</parameterValue>
 			</parameter>
 			<parameter required="false" position="named" pipelineInput="false">
-				<maml:name>OutDefaultFile</maml:name>
+				<maml:name>ShortDescription</maml:name>
 				<maml:description>
-					<maml:para>выводить readme в файл readme.md в каталоге модуля</maml:para>
+					<maml:para>Генерировать только краткое описание</maml:para>
 				</maml:description>
 				<parameterValue required="True">SwitchParameter</parameterValue>
 			</parameter>
 			<parameter required="false" position="named" pipelineInput="false">
-				<maml:name>PathTemplate</maml:name>
+				<maml:name>ReferencedModules</maml:name>
 				<maml:description>
-					<maml:para>"Заготовка" для `Path` - функционал (блок), вычисляющий `Path` - путь для readme файла</maml:para>
+					<maml:para>Перечень модулей, упоминания функций которых будут заменены на ссылки</maml:para>
 				</maml:description>
-				<parameterValue required="True">ScriptBlock</parameterValue>
-			</parameter>
-			<parameter required="false" position="named" pipelineInput="false">
-				<maml:name>Path</maml:name>
-				<maml:description>
-					<maml:para>Путь для readme файла. По умолчанию - `readme.md` в каталоге модуля</maml:para>
-				</maml:description>
-				<parameterValue required="True">FileInfo</parameterValue>
+				<parameterValue required="True">PSModuleInfo[]</parameterValue>
 			</parameter>
 			<parameter required="false" position="named" pipelineInput="false">
 				<maml:name>TranslateRules</maml:name>
@@ -496,13 +471,6 @@
 					<maml:para>Правила для обработки readme регулярными выражениями</maml:para>
 				</maml:description>
 				<parameterValue required="True">Array</parameterValue>
-			</parameter>
-			<parameter required="false" position="named" pipelineInput="false">
-				<maml:name>ShortDescription</maml:name>
-				<maml:description>
-					<maml:para>Генерировать только краткое описание</maml:para>
-				</maml:description>
-				<parameterValue required="True">SwitchParameter</parameterValue>
 			</parameter>
 		</parameters>
 		<inputTypes>
@@ -580,19 +548,9 @@
 				<maml:introduction>
 					<maml:paragraph>C:\PS&gt;</maml:paragraph>
 				</maml:introduction>
-				<dev:code>Get-Module 'ITG.Yandex.DnsServer' | Get-Readme -OutDefaultFile;</dev:code>
+				<dev:code>Get-Module 'ITG.Yandex.DnsServer' | Get-Readme -ReferencedModules @( 'ITG.Yandex', 'ITG.Utils', 'ITG.WinAPI.UrlMon', 'ITG.WinAPI.User32' | Get-Module )</dev:code>
 				<maml:remarks>
-					<maml:para>Генерация readme.md файла для модуля `ITG.Yandex.DnsServer` в каталоге модуля.</maml:para>
-				</maml:remarks>
-			</example>
-			<example>
-				<maml:title>-------------------------- ПРИМЕР 3 --------------------------</maml:title>
-				<maml:introduction>
-					<maml:paragraph>C:\PS&gt;</maml:paragraph>
-				</maml:introduction>
-				<dev:code>Get-Module 'ITG.Yandex.DnsServer' | Get-Readme -OutDefaultFile -ReferencedModules @( 'ITG.Yandex', 'ITG.Utils', 'ITG.WinAPI.UrlMon', 'ITG.WinAPI.User32' | Get-Module )</dev:code>
-				<maml:remarks>
-					<maml:para>Генерация readme.md файла для модуля `ITG.Yandex.DnsServer` в каталоге модуля `ITG.Yandex.DnsServer`, при этом все упоминания функций модулей `ITG.Yandex`, `ITG.Utils`, `ITG.WinAPI.UrlMon`, `ITG.WinAPI.User32` так же будут заменены перекрёстными ссылками на readme.md файлы указанных модулей.</maml:para>
+					<maml:para>Генерация readme для модуля `ITG.Yandex.DnsServer`, при этом все упоминания функций модулей `ITG.Yandex`, `ITG.Utils`, `ITG.WinAPI.UrlMon`, `ITG.WinAPI.User32` так же будут заменены перекрёстными ссылками на readme.md указанных модулей.</maml:para>
 				</maml:remarks>
 			</example>
 		</examples>
@@ -856,6 +814,251 @@
 			</maml:navigationLink>
 			<maml:navigationLink>
 				<maml:linkText>[HelpInfo XML Sample File](http://msdn.microsoft.com/en-us/library/windows/desktop/hh852750.aspx)</maml:linkText>
+			</maml:navigationLink>
+		</maml:relatedLinks>
+	</command>
+	<command xmlns:msh="http://msh" xmlns="http://schemas.microsoft.com/maml/dev/command/2004/10">
+		<details>
+			<name>Set-Readme</name>
+			<verb>Set</verb>
+			<noun>Readme</noun>
+			<maml:description>
+				<maml:para>Генерирует readme файл с MarkDown разметкой по данным модуля и комментариям к его функциям. Файл предназначен, в частности, для размещения в репозиториях github.</maml:para>
+			</maml:description>
+			<maml:copyright>
+				<maml:para>(c) 2012 Sergey S. Betke. All rights reserved.</maml:para>
+			</maml:copyright>
+			<dev:version>1.6.3</dev:version>
+		</details>
+		<maml:functionality>Readme</maml:functionality>
+		<maml:role>Everyone</maml:role>
+		<maml:description>
+			<maml:para>Генерирует readme файл с MarkDown разметкой по данным модуля и комментариям к его функциям. Файл предназначен, в частности, для размещения в репозиториях github. В дополнение к функционалу Get-Readme сохраняет результат в файл, определённый параметрами `Path` и `PathTemplate`.</maml:para>
+		</maml:description>
+		<syntax>
+			<syntaxItem>
+				<maml:name>Set-Readme</maml:name>
+				<parameter required="true" position="1" pipelineInput="true (ByValue)">
+					<maml:name>ModuleInfo</maml:name>
+					<parameterValue required="true">PSModuleInfo</parameterValue>
+				</parameter>
+				<parameter required="false" position="named" pipelineInput="false">
+					<maml:name>UICulture</maml:name>
+					<parameterValue required="false">CultureInfo</parameterValue>
+				</parameter>
+				<parameter required="false" position="named" pipelineInput="false">
+					<maml:name>PathTemplate</maml:name>
+					<parameterValue required="false">ScriptBlock</parameterValue>
+				</parameter>
+				<parameter required="false" position="named" pipelineInput="false">
+					<maml:name>Path</maml:name>
+					<parameterValue required="false">FileInfo</parameterValue>
+				</parameter>
+				<parameter required="false" position="named" pipelineInput="false">
+					<maml:name>ShortDescription</maml:name>
+				</parameter>
+				<parameter required="false" position="named" pipelineInput="false">
+					<maml:name>ReferencedModules</maml:name>
+					<parameterValue required="false">PSModuleInfo[]</parameterValue>
+				</parameter>
+				<parameter required="false" position="named" pipelineInput="false">
+					<maml:name>TranslateRules</maml:name>
+					<parameterValue required="false">Array</parameterValue>
+				</parameter>
+			</syntaxItem>
+			<syntaxItem>
+				<maml:name>Set-Readme</maml:name>
+				<parameter required="true" position="1" pipelineInput="true (ByValue)">
+					<maml:name>ExternalScriptInfo</maml:name>
+					<parameterValue required="true">ExternalScriptInfo</parameterValue>
+				</parameter>
+				<parameter required="false" position="named" pipelineInput="false">
+					<maml:name>UICulture</maml:name>
+					<parameterValue required="false">CultureInfo</parameterValue>
+				</parameter>
+				<parameter required="false" position="named" pipelineInput="false">
+					<maml:name>ShortDescription</maml:name>
+				</parameter>
+				<parameter required="false" position="named" pipelineInput="false">
+					<maml:name>ReferencedModules</maml:name>
+					<parameterValue required="false">PSModuleInfo[]</parameterValue>
+				</parameter>
+				<parameter required="false" position="named" pipelineInput="false">
+					<maml:name>TranslateRules</maml:name>
+					<parameterValue required="false">Array</parameterValue>
+				</parameter>
+			</syntaxItem>
+			<syntaxItem>
+				<maml:name>Set-Readme</maml:name>
+				<parameter required="true" position="1" pipelineInput="true (ByValue)">
+					<maml:name>FunctionInfo</maml:name>
+					<parameterValue required="true">FunctionInfo</parameterValue>
+				</parameter>
+				<parameter required="false" position="named" pipelineInput="false">
+					<maml:name>UICulture</maml:name>
+					<parameterValue required="false">CultureInfo</parameterValue>
+				</parameter>
+				<parameter required="false" position="named" pipelineInput="false">
+					<maml:name>ShortDescription</maml:name>
+				</parameter>
+				<parameter required="false" position="named" pipelineInput="false">
+					<maml:name>ReferencedModules</maml:name>
+					<parameterValue required="false">PSModuleInfo[]</parameterValue>
+				</parameter>
+				<parameter required="false" position="named" pipelineInput="false">
+					<maml:name>TranslateRules</maml:name>
+					<parameterValue required="false">Array</parameterValue>
+				</parameter>
+			</syntaxItem>
+		</syntax>
+		<parameters>
+			<parameter required="true" position="1" pipelineInput="true (ByValue)">
+				<maml:name>ModuleInfo</maml:name>
+				<maml:description>
+					<maml:para>Описатель модуля</maml:para>
+				</maml:description>
+				<parameterValue required="True">PSModuleInfo</parameterValue>
+			</parameter>
+			<parameter required="true" position="1" pipelineInput="true (ByValue)">
+				<maml:name>ExternalScriptInfo</maml:name>
+				<maml:description>
+					<maml:para>Описатель внешнего сценария</maml:para>
+				</maml:description>
+				<parameterValue required="True">ExternalScriptInfo</parameterValue>
+			</parameter>
+			<parameter required="true" position="1" pipelineInput="true (ByValue)">
+				<maml:name>FunctionInfo</maml:name>
+				<maml:description>
+					<maml:para>Описатель функции</maml:para>
+				</maml:description>
+				<parameterValue required="True">FunctionInfo</parameterValue>
+			</parameter>
+			<parameter required="false" position="named" pipelineInput="false">
+				<maml:name>UICulture</maml:name>
+				<maml:description>
+					<maml:para>культура, для которой генерировать данные, на данный момент параметр задавать не следует.</maml:para>
+				</maml:description>
+				<parameterValue required="True">CultureInfo</parameterValue>
+			</parameter>
+			<parameter required="false" position="named" pipelineInput="false">
+				<maml:name>PathTemplate</maml:name>
+				<maml:description>
+					<maml:para>"Заготовка" для `Path` - функционал (блок), вычисляющий `Path` - путь для readme файла</maml:para>
+				</maml:description>
+				<parameterValue required="True">ScriptBlock</parameterValue>
+			</parameter>
+			<parameter required="false" position="named" pipelineInput="false">
+				<maml:name>Path</maml:name>
+				<maml:description>
+					<maml:para>Путь для readme файла. По умолчанию - `readme.md` в каталоге модуля</maml:para>
+				</maml:description>
+				<parameterValue required="True">FileInfo</parameterValue>
+			</parameter>
+			<parameter required="false" position="named" pipelineInput="false">
+				<maml:name>ShortDescription</maml:name>
+				<maml:description>
+					<maml:para>Генерировать только краткое описание</maml:para>
+				</maml:description>
+				<parameterValue required="True">SwitchParameter</parameterValue>
+			</parameter>
+			<parameter required="false" position="named" pipelineInput="false">
+				<maml:name>ReferencedModules</maml:name>
+				<maml:description>
+					<maml:para>Перечень модулей, упоминания функций которых будут заменены на ссылки</maml:para>
+				</maml:description>
+				<parameterValue required="True">PSModuleInfo[]</parameterValue>
+			</parameter>
+			<parameter required="false" position="named" pipelineInput="false">
+				<maml:name>TranslateRules</maml:name>
+				<maml:description>
+					<maml:para>Правила для обработки readme регулярными выражениями</maml:para>
+				</maml:description>
+				<parameterValue required="True">Array</parameterValue>
+			</parameter>
+		</parameters>
+		<inputTypes>
+			<inputType>
+				<dev:type>
+					<maml:name>System.Management.Automation.PSModuleInfo.</maml:name>
+					<maml:description>
+						<maml:para>Описатели модулей, для которых будет сгенерирован readme.md. Получены описатели могут быть через Get-Module.</maml:para>
+					</maml:description>
+				</dev:type>
+				<maml:description>
+					<maml:para>Описатели модулей, для которых будет сгенерирован readme.md. Получены описатели могут быть через Get-Module.</maml:para>
+				</maml:description>
+			</inputType>
+			<inputType>
+				<dev:type>
+					<maml:name>System.Management.Automation.ExternalScriptInfo.</maml:name>
+					<maml:description>
+						<maml:para>Описатели сценариев, для которых будет сгенерирован readme.md.</maml:para>
+					</maml:description>
+				</dev:type>
+				<maml:description>
+					<maml:para>Описатели сценариев, для которых будет сгенерирован readme.md.</maml:para>
+				</maml:description>
+			</inputType>
+			<inputType>
+				<dev:type>
+					<maml:name>System.Management.Automation.CmdletInfo.</maml:name>
+					<maml:description>
+						<maml:para>Описатели командлет, для которых будет сгенерирован readme.md. Получены описатели могут быть через Get-Command.</maml:para>
+					</maml:description>
+				</dev:type>
+				<maml:description>
+					<maml:para>Описатели командлет, для которых будет сгенерирован readme.md. Получены описатели могут быть через Get-Command.</maml:para>
+				</maml:description>
+			</inputType>
+			<inputType>
+				<dev:type>
+					<maml:name>System.Management.Automation.FunctionInfo.</maml:name>
+					<maml:description>
+						<maml:para>Описатели функций, для которых будет сгенерирован readme.md. Получены описатели могут быть через Get-Command.</maml:para>
+					</maml:description>
+				</dev:type>
+				<maml:description>
+					<maml:para>Описатели функций, для которых будет сгенерирован readme.md. Получены описатели могут быть через Get-Command.</maml:para>
+				</maml:description>
+			</inputType>
+		</inputTypes>
+		<examples>
+			<example>
+				<maml:title>-------------------------- ПРИМЕР 1 --------------------------</maml:title>
+				<maml:introduction>
+					<maml:paragraph>C:\PS&gt;</maml:paragraph>
+				</maml:introduction>
+				<dev:code>Get-Module 'ITG.Yandex.DnsServer' | Set-Readme;</dev:code>
+				<maml:remarks>
+					<maml:para>Генерация readme.md файла для модуля `ITG.Yandex.DnsServer` в каталоге модуля.</maml:para>
+				</maml:remarks>
+			</example>
+			<example>
+				<maml:title>-------------------------- ПРИМЕР 2 --------------------------</maml:title>
+				<maml:introduction>
+					<maml:paragraph>C:\PS&gt;</maml:paragraph>
+				</maml:introduction>
+				<dev:code>Get-Module 'ITG.Yandex.DnsServer' | Set-Readme -ReferencedModules @( 'ITG.Yandex', 'ITG.Utils', 'ITG.WinAPI.UrlMon', 'ITG.WinAPI.User32' | Get-Module )</dev:code>
+				<maml:remarks>
+					<maml:para>Генерация readme.md файла для модуля `ITG.Yandex.DnsServer` в каталоге модуля `ITG.Yandex.DnsServer`, при этом все упоминания функций модулей `ITG.Yandex`, `ITG.Utils`, `ITG.WinAPI.UrlMon`, `ITG.WinAPI.User32` так же будут заменены перекрёстными ссылками на readme.md файлы указанных модулей.</maml:para>
+				</maml:remarks>
+			</example>
+		</examples>
+		<maml:relatedLinks>
+			<maml:navigationLink>
+				<maml:linkText>Get-Readme</maml:linkText>
+			</maml:navigationLink>
+			<maml:navigationLink>
+				<maml:linkText>[MarkDown]: &lt;http://daringfireball.net/projects/markdown/syntax&gt; "MarkDown (md) Syntax"</maml:linkText>
+			</maml:navigationLink>
+			<maml:navigationLink>
+				<maml:linkText>about_comment_based_help</maml:linkText>
+			</maml:navigationLink>
+			<maml:navigationLink>
+				<maml:linkText>[Написание справки для командлетов](http://go.microsoft.com/fwlink/?LinkID=123415)</maml:linkText>
+			</maml:navigationLink>
+			<maml:navigationLink>
+				<maml:uri>http://github.com/IT-Service/ITG.Readme#Set-Readme</maml:uri>
 			</maml:navigationLink>
 		</maml:relatedLinks>
 	</command>
