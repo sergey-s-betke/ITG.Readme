@@ -849,6 +849,14 @@
 					<parameterValue required="false">CultureInfo</parameterValue>
 				</parameter>
 				<parameter required="false" position="named" pipelineInput="false">
+					<maml:name>HelpXMLFileNameTemplate</maml:name>
+					<parameterValue required="false">ScriptBlock</parameterValue>
+				</parameter>
+				<parameter required="false" position="named" pipelineInput="false">
+					<maml:name>HelpXMLFileName</maml:name>
+					<parameterValue required="false">String</parameterValue>
+				</parameter>
+				<parameter required="false" position="named" pipelineInput="false">
 					<maml:name>PathTemplate</maml:name>
 					<parameterValue required="false">ScriptBlock</parameterValue>
 				</parameter>
@@ -904,6 +912,20 @@
 					<maml:para>культура, для которой генерировать данные, на данный момент параметр задавать не следует.</maml:para>
 				</maml:description>
 				<parameterValue required="True">CultureInfo</parameterValue>
+			</parameter>
+			<parameter required="false" position="named" pipelineInput="false">
+				<maml:name>HelpXMLFileNameTemplate</maml:name>
+				<maml:description>
+					<maml:para>"Заготовка" для `HelpXMLFileName` - функционал (блок), имя файла xml справки (без пути)</maml:para>
+				</maml:description>
+				<parameterValue required="True">ScriptBlock</parameterValue>
+			</parameter>
+			<parameter required="false" position="named" pipelineInput="false">
+				<maml:name>HelpXMLFileName</maml:name>
+				<maml:description>
+					<maml:para>Имя файла для xml файла справки</maml:para>
+				</maml:description>
+				<parameterValue required="True">String</parameterValue>
 			</parameter>
 			<parameter required="false" position="named" pipelineInput="false">
 				<maml:name>PathTemplate</maml:name>

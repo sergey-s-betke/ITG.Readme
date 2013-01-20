@@ -63,7 +63,7 @@
 
 Генерирует XML файл справки для переданного модуля, функции, командлеты.
 
-	Set-HelpXML [-ModuleInfo] <PSModuleInfo> [-UICulture <CultureInfo>] [-PathTemplate <ScriptBlock>] [-Path <FileInfo>] [-UpdateModule] [-Cab] [-CabPathTemplate <ScriptBlock>] [-CabPath <FileInfo>] <CommonParameters>
+	Set-HelpXML [-ModuleInfo] <PSModuleInfo> [-UICulture <CultureInfo>] [-HelpXMLFileNameTemplate <ScriptBlock>] [-HelpXMLFileName <String>] [-PathTemplate <ScriptBlock>] [-Path <FileInfo>] [-UpdateModule] [-Cab] [-CabPathTemplate <ScriptBlock>] [-CabPath <FileInfo>] <CommonParameters>
 
 	Set-HelpXML [-FunctionInfo] <FunctionInfo> [-UICulture <CultureInfo>] <CommonParameters>
 
@@ -510,7 +510,7 @@ HelpInfo.xml в каталоге модуля, либо создаёт новы�
 
 ##### Синтаксис
 
-	Set-HelpXML [-ModuleInfo] <PSModuleInfo> [-UICulture <CultureInfo>] [-PathTemplate <ScriptBlock>] [-Path <FileInfo>] [-UpdateModule] [-Cab] [-CabPathTemplate <ScriptBlock>] [-CabPath <FileInfo>] <CommonParameters>
+	Set-HelpXML [-ModuleInfo] <PSModuleInfo> [-UICulture <CultureInfo>] [-HelpXMLFileNameTemplate <ScriptBlock>] [-HelpXMLFileName <String>] [-PathTemplate <ScriptBlock>] [-Path <FileInfo>] [-UpdateModule] [-Cab] [-CabPathTemplate <ScriptBlock>] [-CabPath <FileInfo>] <CommonParameters>
 
 	Set-HelpXML [-FunctionInfo] <FunctionInfo> [-UICulture <CultureInfo>] <CommonParameters>
 
@@ -553,6 +553,24 @@ HelpInfo.xml в каталоге модуля, либо создаёт новы�
 
 - `UICulture <CultureInfo>`
         культура, для которой генерировать данные, на данный момент параметр задавать не следует.
+
+        Требуется? false
+        Позиция? named
+        Значение по умолчанию
+        Принимать входные данные конвейера?false
+        Принимать подстановочные знаки?
+
+- `HelpXMLFileNameTemplate <ScriptBlock>`
+        "Заготовка" для `HelpXMLFileName` - функционал (блок), имя файла xml справки (без пути)
+
+        Требуется? false
+        Позиция? named
+        Значение по умолчанию
+        Принимать входные данные конвейера?false
+        Принимать подстановочные знаки?
+
+- `HelpXMLFileName <String>`
+        Имя файла для xml файла справки
 
         Требуется? false
         Позиция? named
