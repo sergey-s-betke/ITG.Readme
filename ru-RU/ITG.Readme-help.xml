@@ -97,247 +97,6 @@
 	</command>
 	<command xmlns:msh="http://msh" xmlns="http://schemas.microsoft.com/maml/dev/command/2004/10">
 		<details>
-			<name>Get-HelpXML</name>
-			<verb>Get</verb>
-			<noun>HelpXML</noun>
-			<maml:description>
-				<maml:para>Генерирует XML справку для переданного модуля, функции, командлеты.</maml:para>
-			</maml:description>
-			<maml:copyright>
-				<maml:para>(c) 2012 Sergey S. Betke. All rights reserved.</maml:para>
-			</maml:copyright>
-			<dev:version>1.6.3</dev:version>
-		</details>
-		<maml:role>Everyone</maml:role>
-		<maml:description>
-			<maml:para>Генерирует XML справку для переданного модуля, функции, командлеты.</maml:para>
-			<maml:para>Кроме того, для модуля при указании ключа `-OutDefaultFile` данная функция создаст XML файл справки в каталоге модуля (точнее - в подкаталоге культуры, как того и требуют командлеты PowerShell, в частности - `Get-Help`).</maml:para>
-		</maml:description>
-		<syntax>
-			<syntaxItem>
-				<maml:name>Get-HelpXML</maml:name>
-				<parameter required="true" position="1" pipelineInput="true (ByValue)">
-					<maml:name>ModuleInfo</maml:name>
-					<parameterValue required="true">PSModuleInfo</parameterValue>
-				</parameter>
-				<parameter required="false" position="named" pipelineInput="false">
-					<maml:name>UICulture</maml:name>
-					<parameterValue required="false">CultureInfo</parameterValue>
-				</parameter>
-				<parameter required="false" position="named" pipelineInput="false">
-					<maml:name>OutDefaultFile</maml:name>
-				</parameter>
-				<parameter required="false" position="named" pipelineInput="false">
-					<maml:name>HelpXMLFileNameTemplate</maml:name>
-					<parameterValue required="false">ScriptBlock</parameterValue>
-				</parameter>
-				<parameter required="false" position="named" pipelineInput="false">
-					<maml:name>HelpXMLFileName</maml:name>
-					<parameterValue required="false">String</parameterValue>
-				</parameter>
-				<parameter required="false" position="named" pipelineInput="false">
-					<maml:name>PathTemplate</maml:name>
-					<parameterValue required="false">ScriptBlock</parameterValue>
-				</parameter>
-				<parameter required="false" position="named" pipelineInput="false">
-					<maml:name>Path</maml:name>
-					<parameterValue required="false">FileInfo</parameterValue>
-				</parameter>
-				<parameter required="false" position="named" pipelineInput="false">
-					<maml:name>UpdateModule</maml:name>
-				</parameter>
-				<parameter required="false" position="named" pipelineInput="false">
-					<maml:name>Cab</maml:name>
-				</parameter>
-				<parameter required="false" position="named" pipelineInput="false">
-					<maml:name>CabPathTemplate</maml:name>
-					<parameterValue required="false">ScriptBlock</parameterValue>
-				</parameter>
-				<parameter required="false" position="named" pipelineInput="false">
-					<maml:name>CabPath</maml:name>
-					<parameterValue required="false">FileInfo</parameterValue>
-				</parameter>
-			</syntaxItem>
-			<syntaxItem>
-				<maml:name>Get-HelpXML</maml:name>
-				<parameter required="true" position="1" pipelineInput="true (ByValue)">
-					<maml:name>FunctionInfo</maml:name>
-					<parameterValue required="true">FunctionInfo</parameterValue>
-				</parameter>
-				<parameter required="false" position="named" pipelineInput="false">
-					<maml:name>UICulture</maml:name>
-					<parameterValue required="false">CultureInfo</parameterValue>
-				</parameter>
-			</syntaxItem>
-		</syntax>
-		<parameters>
-			<parameter required="true" position="1" pipelineInput="true (ByValue)">
-				<maml:name>ModuleInfo</maml:name>
-				<maml:description>
-					<maml:para>Описатель модуля</maml:para>
-				</maml:description>
-				<parameterValue required="True">PSModuleInfo</parameterValue>
-			</parameter>
-			<parameter required="true" position="1" pipelineInput="true (ByValue)">
-				<maml:name>FunctionInfo</maml:name>
-				<maml:description>
-					<maml:para>Описатель функции</maml:para>
-				</maml:description>
-				<parameterValue required="True">FunctionInfo</parameterValue>
-			</parameter>
-			<parameter required="false" position="named" pipelineInput="false">
-				<maml:name>UICulture</maml:name>
-				<maml:description>
-					<maml:para>культура, для которой генерировать данные, на данный момент параметр задавать не следует.</maml:para>
-				</maml:description>
-				<parameterValue required="True">CultureInfo</parameterValue>
-			</parameter>
-			<parameter required="false" position="named" pipelineInput="false">
-				<maml:name>OutDefaultFile</maml:name>
-				<maml:description>
-					<maml:para>выводить help в файл `&lt;ModuleName&gt;-Help.xml` в каталоге модуля</maml:para>
-				</maml:description>
-				<parameterValue required="True">SwitchParameter</parameterValue>
-			</parameter>
-			<parameter required="false" position="named" pipelineInput="false">
-				<maml:name>HelpXMLFileNameTemplate</maml:name>
-				<maml:description>
-					<maml:para>"Заготовка" для `HelpXMLFileName` - функционал (блок), имя файла xml справки (без пути)</maml:para>
-				</maml:description>
-				<parameterValue required="True">ScriptBlock</parameterValue>
-			</parameter>
-			<parameter required="false" position="named" pipelineInput="false">
-				<maml:name>HelpXMLFileName</maml:name>
-				<maml:description>
-					<maml:para>Имя файла для xml файла справки</maml:para>
-				</maml:description>
-				<parameterValue required="True">String</parameterValue>
-			</parameter>
-			<parameter required="false" position="named" pipelineInput="false">
-				<maml:name>PathTemplate</maml:name>
-				<maml:description>
-					<maml:para>"Заготовка" для `Path` - функционал (блок), вычисляющий `Path` - пути для xml файла справки</maml:para>
-				</maml:description>
-				<parameterValue required="True">ScriptBlock</parameterValue>
-			</parameter>
-			<parameter required="false" position="named" pipelineInput="false">
-				<maml:name>Path</maml:name>
-				<maml:description>
-					<maml:para>Путь для xml файла справки</maml:para>
-				</maml:description>
-				<parameterValue required="True">FileInfo</parameterValue>
-			</parameter>
-			<parameter required="false" position="named" pipelineInput="false">
-				<maml:name>UpdateModule</maml:name>
-				<maml:description>
-					<maml:para>обновлять файл модуля - добавлять в файл модуля в комментарии к функциям модуля записи типа `.ExternalHelp ITG.Readme-help.xml`</maml:para>
-				</maml:description>
-				<parameterValue required="True">SwitchParameter</parameterValue>
-			</parameter>
-			<parameter required="false" position="named" pipelineInput="false">
-				<maml:name>Cab</maml:name>
-				<maml:description>
-					<maml:para>генерировать / обновлять или нет .cab файл</maml:para>
-				</maml:description>
-				<parameterValue required="True">SwitchParameter</parameterValue>
-			</parameter>
-			<parameter required="false" position="named" pipelineInput="false">
-				<maml:name>CabPathTemplate</maml:name>
-				<maml:description>
-					<maml:para>функционал (`[ScriptBlock]`), вычисляющий полный путь к .cab файлу</maml:para>
-				</maml:description>
-				<parameterValue required="True">ScriptBlock</parameterValue>
-			</parameter>
-			<parameter required="false" position="named" pipelineInput="false">
-				<maml:name>CabPath</maml:name>
-				<maml:description>
-					<maml:para>Путь к .cab файлу</maml:para>
-				</maml:description>
-				<parameterValue required="True">FileInfo</parameterValue>
-			</parameter>
-		</parameters>
-		<inputTypes>
-			<inputType>
-				<dev:type>
-					<maml:name>System.Management.Automation.PSModuleInfo</maml:name>
-					<maml:description>
-						<maml:para>Описатели модулей. Именно для них и будет сгенерирована XML справка. Получены описатели могут быть через `Get-Module`.</maml:para>
-					</maml:description>
-				</dev:type>
-				<maml:description>
-					<maml:para>Описатели модулей. Именно для них и будет сгенерирована XML справка. Получены описатели могут быть через `Get-Module`.</maml:para>
-				</maml:description>
-			</inputType>
-			<inputType>
-				<dev:type>
-					<maml:name>System.Management.Automation.FunctionInfo</maml:name>
-					<maml:description>
-						<maml:para>Описатели функций. Именно для них и будет сгенерирована XML справка. Получены описатели могут быть через `Get-Command`.</maml:para>
-					</maml:description>
-				</dev:type>
-				<maml:description>
-					<maml:para>Описатели функций. Именно для них и будет сгенерирована XML справка. Получены описатели могут быть через `Get-Command`.</maml:para>
-				</maml:description>
-			</inputType>
-			<inputType>
-				<dev:type>
-					<maml:name>System.Management.Automation.CmdletInfo</maml:name>
-					<maml:description>
-						<maml:para>Описатели командлет. Именно для них и будет сгенерирована XML справка. Получены описатели могут быть через `Get-Command`.</maml:para>
-					</maml:description>
-				</dev:type>
-				<maml:description>
-					<maml:para>Описатели командлет. Именно для них и будет сгенерирована XML справка. Получены описатели могут быть через `Get-Command`.</maml:para>
-				</maml:description>
-			</inputType>
-		</inputTypes>
-		<returnValues>
-			<returnValue>
-				<dev:type>
-					<maml:name>System.Xml.XmlDocument</maml:name>
-					<maml:description>
-						<maml:para>Содержимое XML справки.</maml:para>
-					</maml:description>
-				</dev:type>
-				<maml:description>
-					<maml:para>Содержимое XML справки.</maml:para>
-				</maml:description>
-			</returnValue>
-		</returnValues>
-		<maml:alertSet>
-			<maml:alert>
-				<maml:para>Необходимо дополнительное тестирование на PowerShell 3.</maml:para>
-			</maml:alert>
-		</maml:alertSet>
-		<examples>
-			<example>
-				<maml:title>-------------------------- ПРИМЕР 1 --------------------------</maml:title>
-				<maml:introduction>
-					<maml:paragraph>C:\PS&gt;</maml:paragraph>
-				</maml:introduction>
-				<dev:code>Get-Module 'ITG.Yandex.DnsServer' | Get-HelpXML -OutDefaultFile;</dev:code>
-				<maml:remarks>
-					<maml:para>Генерация xml файла справки для модуля `ITG.Yandex.DnsServer` в каталоге модуля.</maml:para>
-				</maml:remarks>
-			</example>
-		</examples>
-		<maml:relatedLinks>
-			<maml:navigationLink>
-				<maml:linkText>about_Comment_Based_Help</maml:linkText>
-			</maml:navigationLink>
-			<maml:navigationLink>
-				<maml:linkText>about_Updatable_Help</maml:linkText>
-			</maml:navigationLink>
-			<maml:navigationLink>
-				<maml:linkText>[Creating the Cmdlet Help File](http://msdn.microsoft.com/en-us/library/bb525433.aspx)</maml:linkText>
-			</maml:navigationLink>
-			<maml:navigationLink>
-				<maml:uri>http://github.com/IT-Service/ITG.Readme#Get-HelpXML</maml:uri>
-			</maml:navigationLink>
-		</maml:relatedLinks>
-	</command>
-	<command xmlns:msh="http://msh" xmlns="http://schemas.microsoft.com/maml/dev/command/2004/10">
-		<details>
 			<name>Get-Readme</name>
 			<verb>Get</verb>
 			<noun>Readme</noun>
@@ -686,6 +445,131 @@
 	</command>
 	<command xmlns:msh="http://msh" xmlns="http://schemas.microsoft.com/maml/dev/command/2004/10">
 		<details>
+			<name>New-HelpXML</name>
+			<verb>New</verb>
+			<noun>HelpXML</noun>
+			<maml:description>
+				<maml:para>Генерирует XML справку для переданного модуля, функции, командлеты.</maml:para>
+			</maml:description>
+			<maml:copyright>
+				<maml:para>(c) 2012 Sergey S. Betke. All rights reserved.</maml:para>
+			</maml:copyright>
+			<dev:version>1.6.3</dev:version>
+		</details>
+		<maml:role>Everyone</maml:role>
+		<maml:description>
+			<maml:para>Генерирует XML справку для переданного модуля, функции, командлеты.</maml:para>
+			<maml:para>Для генерации / обновления .xml файла справки в каталоге модуля используйте Set-HelpXML.</maml:para>
+		</maml:description>
+		<syntax>
+			<syntaxItem>
+				<maml:name>New-HelpXML</maml:name>
+				<parameter required="true" position="1" pipelineInput="true (ByValue)">
+					<maml:name>ModuleInfo</maml:name>
+					<parameterValue required="true">PSModuleInfo</parameterValue>
+				</parameter>
+			</syntaxItem>
+			<syntaxItem>
+				<maml:name>New-HelpXML</maml:name>
+				<parameter required="true" position="1" pipelineInput="true (ByValue)">
+					<maml:name>FunctionInfo</maml:name>
+					<parameterValue required="true">FunctionInfo</parameterValue>
+				</parameter>
+			</syntaxItem>
+		</syntax>
+		<parameters>
+			<parameter required="true" position="1" pipelineInput="true (ByValue)">
+				<maml:name>ModuleInfo</maml:name>
+				<maml:description>
+					<maml:para>Описатель модуля</maml:para>
+				</maml:description>
+				<parameterValue required="True">PSModuleInfo</parameterValue>
+			</parameter>
+			<parameter required="true" position="1" pipelineInput="true (ByValue)">
+				<maml:name>FunctionInfo</maml:name>
+				<maml:description>
+					<maml:para>Описатель функции</maml:para>
+				</maml:description>
+				<parameterValue required="True">FunctionInfo</parameterValue>
+			</parameter>
+		</parameters>
+		<inputTypes>
+			<inputType>
+				<dev:type>
+					<maml:name>System.Management.Automation.PSModuleInfo</maml:name>
+					<maml:description>
+						<maml:para>Описатели модулей. Именно для них и будет сгенерирована XML справка. Получены описатели могут быть через `Get-Module`.</maml:para>
+					</maml:description>
+				</dev:type>
+				<maml:description>
+					<maml:para>Описатели модулей. Именно для них и будет сгенерирована XML справка. Получены описатели могут быть через `Get-Module`.</maml:para>
+				</maml:description>
+			</inputType>
+			<inputType>
+				<dev:type>
+					<maml:name>System.Management.Automation.FunctionInfo</maml:name>
+					<maml:description>
+						<maml:para>Описатели функций. Именно для них и будет сгенерирована XML справка. Получены описатели могут быть через `Get-Command`.</maml:para>
+					</maml:description>
+				</dev:type>
+				<maml:description>
+					<maml:para>Описатели функций. Именно для них и будет сгенерирована XML справка. Получены описатели могут быть через `Get-Command`.</maml:para>
+				</maml:description>
+			</inputType>
+			<inputType>
+				<dev:type>
+					<maml:name>System.Management.Automation.CmdletInfo</maml:name>
+					<maml:description>
+						<maml:para>Описатели командлет. Именно для них и будет сгенерирована XML справка. Получены описатели могут быть через `Get-Command`.</maml:para>
+					</maml:description>
+				</dev:type>
+				<maml:description>
+					<maml:para>Описатели командлет. Именно для них и будет сгенерирована XML справка. Получены описатели могут быть через `Get-Command`.</maml:para>
+				</maml:description>
+			</inputType>
+		</inputTypes>
+		<returnValues>
+			<returnValue>
+				<dev:type>
+					<maml:name>System.Xml.XmlDocument</maml:name>
+					<maml:description>
+						<maml:para>Содержимое XML справки.</maml:para>
+					</maml:description>
+				</dev:type>
+				<maml:description>
+					<maml:para>Содержимое XML справки.</maml:para>
+				</maml:description>
+			</returnValue>
+		</returnValues>
+		<examples>
+			<example>
+				<maml:title>-------------------------- ПРИМЕР 1 --------------------------</maml:title>
+				<maml:introduction>
+					<maml:paragraph>C:\PS&gt;</maml:paragraph>
+				</maml:introduction>
+				<dev:code>Get-Module 'ITG.Yandex.DnsServer' | New-HelpXML;</dev:code>
+				<maml:remarks>
+					<maml:para>Генерация xml справки для модуля `ITG.Yandex.DnsServer`.</maml:para>
+				</maml:remarks>
+			</example>
+		</examples>
+		<maml:relatedLinks>
+			<maml:navigationLink>
+				<maml:linkText>about_Comment_Based_Help</maml:linkText>
+			</maml:navigationLink>
+			<maml:navigationLink>
+				<maml:linkText>about_Updatable_Help</maml:linkText>
+			</maml:navigationLink>
+			<maml:navigationLink>
+				<maml:linkText>[Creating the Cmdlet Help File](http://msdn.microsoft.com/en-us/library/bb525433.aspx)</maml:linkText>
+			</maml:navigationLink>
+			<maml:navigationLink>
+				<maml:uri>http://github.com/IT-Service/ITG.Readme#New-HelpXML</maml:uri>
+			</maml:navigationLink>
+		</maml:relatedLinks>
+	</command>
+	<command xmlns:msh="http://msh" xmlns="http://schemas.microsoft.com/maml/dev/command/2004/10">
+		<details>
 			<name>Set-HelpInfo</name>
 			<verb>Set</verb>
 			<noun>HelpInfo</noun>
@@ -814,6 +698,202 @@
 			</maml:navigationLink>
 			<maml:navigationLink>
 				<maml:linkText>[HelpInfo XML Sample File](http://msdn.microsoft.com/en-us/library/windows/desktop/hh852750.aspx)</maml:linkText>
+			</maml:navigationLink>
+		</maml:relatedLinks>
+	</command>
+	<command xmlns:msh="http://msh" xmlns="http://schemas.microsoft.com/maml/dev/command/2004/10">
+		<details>
+			<name>Set-HelpXML</name>
+			<verb>Set</verb>
+			<noun>HelpXML</noun>
+			<maml:description>
+				<maml:para>Генерирует XML файл справки для переданного модуля, функции, командлеты.</maml:para>
+			</maml:description>
+			<maml:copyright>
+				<maml:para>(c) 2012 Sergey S. Betke. All rights reserved.</maml:para>
+			</maml:copyright>
+			<dev:version>1.6.3</dev:version>
+		</details>
+		<maml:role>Everyone</maml:role>
+		<maml:description>
+			<maml:para>Генерирует XML файл справки для переданного модуля, функции, командлеты.</maml:para>
+			<maml:para>Кроме того, данная функция создаст XML файл справки в каталоге модуля (точнее - в подкаталоге культуры, как того и требуют командлеты PowerShell, в частности - `Get-Help`).</maml:para>
+		</maml:description>
+		<syntax>
+			<syntaxItem>
+				<maml:name>Set-HelpXML</maml:name>
+				<parameter required="true" position="1" pipelineInput="true (ByValue)">
+					<maml:name>ModuleInfo</maml:name>
+					<parameterValue required="true">PSModuleInfo</parameterValue>
+				</parameter>
+				<parameter required="false" position="named" pipelineInput="false">
+					<maml:name>UICulture</maml:name>
+					<parameterValue required="false">CultureInfo</parameterValue>
+				</parameter>
+				<parameter required="false" position="named" pipelineInput="false">
+					<maml:name>PathTemplate</maml:name>
+					<parameterValue required="false">ScriptBlock</parameterValue>
+				</parameter>
+				<parameter required="false" position="named" pipelineInput="false">
+					<maml:name>Path</maml:name>
+					<parameterValue required="false">FileInfo</parameterValue>
+				</parameter>
+				<parameter required="false" position="named" pipelineInput="false">
+					<maml:name>UpdateModule</maml:name>
+				</parameter>
+				<parameter required="false" position="named" pipelineInput="false">
+					<maml:name>Cab</maml:name>
+				</parameter>
+				<parameter required="false" position="named" pipelineInput="false">
+					<maml:name>CabPathTemplate</maml:name>
+					<parameterValue required="false">ScriptBlock</parameterValue>
+				</parameter>
+				<parameter required="false" position="named" pipelineInput="false">
+					<maml:name>CabPath</maml:name>
+					<parameterValue required="false">FileInfo</parameterValue>
+				</parameter>
+			</syntaxItem>
+			<syntaxItem>
+				<maml:name>Set-HelpXML</maml:name>
+				<parameter required="true" position="1" pipelineInput="true (ByValue)">
+					<maml:name>FunctionInfo</maml:name>
+					<parameterValue required="true">FunctionInfo</parameterValue>
+				</parameter>
+				<parameter required="false" position="named" pipelineInput="false">
+					<maml:name>UICulture</maml:name>
+					<parameterValue required="false">CultureInfo</parameterValue>
+				</parameter>
+			</syntaxItem>
+		</syntax>
+		<parameters>
+			<parameter required="true" position="1" pipelineInput="true (ByValue)">
+				<maml:name>ModuleInfo</maml:name>
+				<maml:description>
+					<maml:para>Описатель модуля</maml:para>
+				</maml:description>
+				<parameterValue required="True">PSModuleInfo</parameterValue>
+			</parameter>
+			<parameter required="true" position="1" pipelineInput="true (ByValue)">
+				<maml:name>FunctionInfo</maml:name>
+				<maml:description>
+					<maml:para>Описатель функции</maml:para>
+				</maml:description>
+				<parameterValue required="True">FunctionInfo</parameterValue>
+			</parameter>
+			<parameter required="false" position="named" pipelineInput="false">
+				<maml:name>UICulture</maml:name>
+				<maml:description>
+					<maml:para>культура, для которой генерировать данные, на данный момент параметр задавать не следует.</maml:para>
+				</maml:description>
+				<parameterValue required="True">CultureInfo</parameterValue>
+			</parameter>
+			<parameter required="false" position="named" pipelineInput="false">
+				<maml:name>PathTemplate</maml:name>
+				<maml:description>
+					<maml:para>"Заготовка" для `Path` - функционал (блок), вычисляющий `Path` - пути для xml файла справки</maml:para>
+				</maml:description>
+				<parameterValue required="True">ScriptBlock</parameterValue>
+			</parameter>
+			<parameter required="false" position="named" pipelineInput="false">
+				<maml:name>Path</maml:name>
+				<maml:description>
+					<maml:para>Путь для xml файла справки</maml:para>
+				</maml:description>
+				<parameterValue required="True">FileInfo</parameterValue>
+			</parameter>
+			<parameter required="false" position="named" pipelineInput="false">
+				<maml:name>UpdateModule</maml:name>
+				<maml:description>
+					<maml:para>обновлять файл модуля - добавлять в файл модуля в комментарии к функциям модуля записи типа `.ExternalHelp ITG.Readme-help.xml`</maml:para>
+				</maml:description>
+				<parameterValue required="True">SwitchParameter</parameterValue>
+			</parameter>
+			<parameter required="false" position="named" pipelineInput="false">
+				<maml:name>Cab</maml:name>
+				<maml:description>
+					<maml:para>генерировать / обновлять или нет .cab файл</maml:para>
+				</maml:description>
+				<parameterValue required="True">SwitchParameter</parameterValue>
+			</parameter>
+			<parameter required="false" position="named" pipelineInput="false">
+				<maml:name>CabPathTemplate</maml:name>
+				<maml:description>
+					<maml:para>функционал (`[ScriptBlock]`), вычисляющий полный путь к .cab файлу</maml:para>
+				</maml:description>
+				<parameterValue required="True">ScriptBlock</parameterValue>
+			</parameter>
+			<parameter required="false" position="named" pipelineInput="false">
+				<maml:name>CabPath</maml:name>
+				<maml:description>
+					<maml:para>Путь к .cab файлу</maml:para>
+				</maml:description>
+				<parameterValue required="True">FileInfo</parameterValue>
+			</parameter>
+		</parameters>
+		<inputTypes>
+			<inputType>
+				<dev:type>
+					<maml:name>System.Management.Automation.PSModuleInfo</maml:name>
+					<maml:description>
+						<maml:para>Описатели модулей. Именно для них и будет сгенерирована XML справка. Получены описатели могут быть через `Get-Module`.</maml:para>
+					</maml:description>
+				</dev:type>
+				<maml:description>
+					<maml:para>Описатели модулей. Именно для них и будет сгенерирована XML справка. Получены описатели могут быть через `Get-Module`.</maml:para>
+				</maml:description>
+			</inputType>
+			<inputType>
+				<dev:type>
+					<maml:name>System.Management.Automation.FunctionInfo</maml:name>
+					<maml:description>
+						<maml:para>Описатели функций. Именно для них и будет сгенерирована XML справка. Получены описатели могут быть через `Get-Command`.</maml:para>
+					</maml:description>
+				</dev:type>
+				<maml:description>
+					<maml:para>Описатели функций. Именно для них и будет сгенерирована XML справка. Получены описатели могут быть через `Get-Command`.</maml:para>
+				</maml:description>
+			</inputType>
+			<inputType>
+				<dev:type>
+					<maml:name>System.Management.Automation.CmdletInfo</maml:name>
+					<maml:description>
+						<maml:para>Описатели командлет. Именно для них и будет сгенерирована XML справка. Получены описатели могут быть через `Get-Command`.</maml:para>
+					</maml:description>
+				</dev:type>
+				<maml:description>
+					<maml:para>Описатели командлет. Именно для них и будет сгенерирована XML справка. Получены описатели могут быть через `Get-Command`.</maml:para>
+				</maml:description>
+			</inputType>
+		</inputTypes>
+		<maml:alertSet>
+			<maml:alert>
+				<maml:para>Необходимо дополнительное тестирование на PowerShell 3.</maml:para>
+			</maml:alert>
+		</maml:alertSet>
+		<examples>
+			<example>
+				<maml:title>-------------------------- ПРИМЕР 1 --------------------------</maml:title>
+				<maml:introduction>
+					<maml:paragraph>C:\PS&gt;</maml:paragraph>
+				</maml:introduction>
+				<dev:code>Get-Module 'ITG.Yandex.DnsServer' | Set-HelpXML;</dev:code>
+				<maml:remarks>
+					<maml:para>Генерация xml файла справки для модуля `ITG.Yandex.DnsServer` в каталоге модуля.</maml:para>
+				</maml:remarks>
+			</example>
+		</examples>
+		<maml:relatedLinks>
+			<maml:navigationLink>
+				<maml:linkText>about_Comment_Based_Help</maml:linkText>
+			</maml:navigationLink>
+			<maml:navigationLink>
+				<maml:linkText>about_Updatable_Help</maml:linkText>
+			</maml:navigationLink>
+			<maml:navigationLink>
+				<maml:linkText>[Creating the Cmdlet Help File](http://msdn.microsoft.com/en-us/library/bb525433.aspx)</maml:linkText>
+			</maml:navigationLink>
+			<maml:navigationLink>
+				<maml:uri>http://github.com/IT-Service/ITG.Readme#Set-HelpXML</maml:uri>
 			</maml:navigationLink>
 		</maml:relatedLinks>
 	</command>

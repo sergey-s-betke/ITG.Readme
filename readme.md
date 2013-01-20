@@ -41,15 +41,25 @@
 
 ### HelpXML
 
-#### Обзор [Get-HelpXML][]
+#### Обзор [New-HelpXML][]
 
 Генерирует XML справку для переданного модуля, функции, командлеты.
 
-	Get-HelpXML [-ModuleInfo] <PSModuleInfo> [-UICulture <CultureInfo>] [-OutDefaultFile] [-HelpXMLFileNameTemplate <ScriptBlock>] [-HelpXMLFileName <String>] [-PathTemplate <ScriptBlock>] [-Path <FileInfo>] [-UpdateModule] [-Cab] [-CabPathTemplate <ScriptBlock>] [-CabPath <FileInfo>] <CommonParameters>
+	New-HelpXML [-ModuleInfo] <PSModuleInfo> <CommonParameters>
 
-	Get-HelpXML [-FunctionInfo] <FunctionInfo> [-UICulture <CultureInfo>] <CommonParameters>
+	New-HelpXML [-FunctionInfo] <FunctionInfo> <CommonParameters>
 
-Подробнее - [Get-HelpXML][].
+Подробнее - [New-HelpXML][].
+
+#### Обзор [Set-HelpXML][]
+
+Генерирует XML файл справки для переданного модуля, функции, командлеты.
+
+	Set-HelpXML [-ModuleInfo] <PSModuleInfo> [-UICulture <CultureInfo>] [-PathTemplate <ScriptBlock>] [-Path <FileInfo>] [-UpdateModule] [-Cab] [-CabPathTemplate <ScriptBlock>] [-CabPath <FileInfo>] <CommonParameters>
+
+	Set-HelpXML [-FunctionInfo] <FunctionInfo> [-UICulture <CultureInfo>] <CommonParameters>
+
+Подробнее - [Set-HelpXML][].
 
 ### Readme
 
@@ -322,24 +332,22 @@ HelpInfo.xml в каталоге модуля, либо создаёт новы�
 - about_Updatable_Help
 - [HelpInfo XML Sample File](http://msdn.microsoft.com/en-us/library/windows/desktop/hh852750.aspx)
 
-#### Get-HelpXML
+#### New-HelpXML
 
 Генерирует XML справку для переданного модуля, функции, командлеты.
 
-Кроме того, для модуля при указании ключа `-OutDefaultFile` данная
-функция создаст XML файл справки в каталоге модуля (точнее - в
-подкаталоге культуры, как того и требуют командлеты PowerShell, в
-частности - `Get-Help`).
+Для генерации / обновления .xml файла справки в каталоге модуля
+используйте [Set-HelpXML][].
 
 ##### Синтаксис
 
-	Get-HelpXML [-ModuleInfo] <PSModuleInfo> [-UICulture <CultureInfo>] [-OutDefaultFile] [-HelpXMLFileNameTemplate <ScriptBlock>] [-HelpXMLFileName <String>] [-PathTemplate <ScriptBlock>] [-Path <FileInfo>] [-UpdateModule] [-Cab] [-CabPathTemplate <ScriptBlock>] [-CabPath <FileInfo>] <CommonParameters>
+	New-HelpXML [-ModuleInfo] <PSModuleInfo> <CommonParameters>
 
-	Get-HelpXML [-FunctionInfo] <FunctionInfo> [-UICulture <CultureInfo>] <CommonParameters>
+	New-HelpXML [-FunctionInfo] <FunctionInfo> <CommonParameters>
 
 ##### Требуемая роль пользователя
 
-Для выполнения функции Get-HelpXML требуется роль Everyone для учётной записи,
+Для выполнения функции New-HelpXML требуется роль Everyone для учётной записи,
 от имени которой будет выполнена описываемая функция.
 
 ##### Принимаемые данные по конвейеру
@@ -379,35 +387,81 @@ HelpInfo.xml в каталоге модуля, либо создаёт новы�
         Принимать входные данные конвейера?true (ByValue)
         Принимать подстановочные знаки?
 
+- `<CommonParameters>`
+        Данный командлет поддерживает общие параметры: Verbose, Debug,
+        ErrorAction, ErrorVariable, WarningAction, WarningVariable,
+        OutBuffer и OutVariable. Для получения дополнительных сведений введите
+        [`get-help about_CommonParameters`][about_CommonParameters].
+
+
+
+##### Примеры использования
+
+1. Генерация xml справки для модуля `ITG.Yandex.DnsServer`.
+
+		Get-Module 'ITG.Yandex.DnsServer' | New-HelpXML;
+
+##### См. также
+
+- [Online версия справки](http://github.com/IT-Service/ITG.Readme#New-HelpXML)
+- [about_Comment_Based_Help][]
+- about_Updatable_Help
+- [Creating the Cmdlet Help File](http://msdn.microsoft.com/en-us/library/bb525433.aspx)
+
+#### Set-HelpXML
+
+Генерирует XML файл справки для переданного модуля, функции, командлеты.
+
+Кроме того, данная
+функция создаст XML файл справки в каталоге модуля (точнее - в
+подкаталоге культуры, как того и требуют командлеты PowerShell, в
+частности - `Get-Help`).
+
+##### Синтаксис
+
+	Set-HelpXML [-ModuleInfo] <PSModuleInfo> [-UICulture <CultureInfo>] [-PathTemplate <ScriptBlock>] [-Path <FileInfo>] [-UpdateModule] [-Cab] [-CabPathTemplate <ScriptBlock>] [-CabPath <FileInfo>] <CommonParameters>
+
+	Set-HelpXML [-FunctionInfo] <FunctionInfo> [-UICulture <CultureInfo>] <CommonParameters>
+
+##### Требуемая роль пользователя
+
+Для выполнения функции Set-HelpXML требуется роль Everyone для учётной записи,
+от имени которой будет выполнена описываемая функция.
+
+##### Принимаемые данные по конвейеру
+
+- System.Management.Automation.PSModuleInfo
+Описатели модулей. Именно для них и будет сгенерирована XML справка.
+Получены описатели могут быть через `Get-Module`.
+- System.Management.Automation.FunctionInfo
+Описатели функций. Именно для них и будет сгенерирована XML справка.
+Получены описатели могут быть через `Get-Command`.
+- System.Management.Automation.CmdletInfo
+Описатели командлет. Именно для них и будет сгенерирована XML справка.
+Получены описатели могут быть через `Get-Command`.
+
+##### Параметры
+
+- `ModuleInfo <PSModuleInfo>`
+        Описатель модуля
+
+        Требуется? true
+        Позиция? 1
+        Значение по умолчанию
+        Принимать входные данные конвейера?true (ByValue)
+        Принимать подстановочные знаки?
+
+- `FunctionInfo <FunctionInfo>`
+        Описатель функции
+
+        Требуется? true
+        Позиция? 1
+        Значение по умолчанию
+        Принимать входные данные конвейера?true (ByValue)
+        Принимать подстановочные знаки?
+
 - `UICulture <CultureInfo>`
         культура, для которой генерировать данные, на данный момент параметр задавать не следует.
-
-        Требуется? false
-        Позиция? named
-        Значение по умолчанию
-        Принимать входные данные конвейера?false
-        Принимать подстановочные знаки?
-
-- `OutDefaultFile [<SwitchParameter>]`
-        выводить help в файл `<ModuleName>-Help.xml` в каталоге модуля
-
-        Требуется? false
-        Позиция? named
-        Значение по умолчанию
-        Принимать входные данные конвейера?false
-        Принимать подстановочные знаки?
-
-- `HelpXMLFileNameTemplate <ScriptBlock>`
-        "Заготовка" для `HelpXMLFileName` - функционал (блок), имя файла xml справки (без пути)
-
-        Требуется? false
-        Позиция? named
-        Значение по умолчанию
-        Принимать входные данные конвейера?false
-        Принимать подстановочные знаки?
-
-- `HelpXMLFileName <String>`
-        Имя файла для xml файла справки
 
         Требуется? false
         Позиция? named
@@ -483,11 +537,11 @@ HelpInfo.xml в каталоге модуля, либо создаёт новы�
 1. Генерация xml файла справки для модуля `ITG.Yandex.DnsServer`
 в каталоге модуля.
 
-		Get-Module 'ITG.Yandex.DnsServer' | Get-HelpXML -OutDefaultFile;
+		Get-Module 'ITG.Yandex.DnsServer' | Set-HelpXML;
 
 ##### См. также
 
-- [Online версия справки](http://github.com/IT-Service/ITG.Readme#Get-HelpXML)
+- [Online версия справки](http://github.com/IT-Service/ITG.Readme#Set-HelpXML)
 - [about_Comment_Based_Help][]
 - about_Updatable_Help
 - [Creating the Cmdlet Help File](http://msdn.microsoft.com/en-us/library/bb525433.aspx)
@@ -785,11 +839,12 @@ Readme
 [about_Comment_Based_Help]: http://go.microsoft.com/fwlink/?LinkID=144309 "Описание написания разделов справки на основе комментариев для..."
 [about_CommonParameters]: http://go.microsoft.com/fwlink/?LinkID=113216 "Описание параметров, которые могут использоваться с любым командлетом."
 [Get-HelpInfo]: <ITG.Readme#Get-HelpInfo> "Возвращает HelpInfo.xml (как xml) для указанного модуля."
-[Get-HelpXML]: <ITG.Readme#Get-HelpXML> "Генерирует XML справку для переданного модуля, функции, командлеты."
 [Get-Readme]: <ITG.Readme#Get-Readme> "Генерирует readme с MarkDown разметкой по данным модуля и комментариям к его функциям."
 [MarkDown]: http://daringfireball.net/projects/markdown/syntax "MarkDown (md) Syntax"
 [New-HelpInfo]: <ITG.Readme#New-HelpInfo> "Генерирует HelpInfo XML для переданного модуля."
+[New-HelpXML]: <ITG.Readme#New-HelpXML> "Генерирует XML справку для переданного модуля, функции, командлеты."
 [Set-HelpInfo]: <ITG.Readme#Set-HelpInfo> "Генерирует HelpInfo XML для указанного модуля."
+[Set-HelpXML]: <ITG.Readme#Set-HelpXML> "Генерирует XML файл справки для переданного модуля, функции, командлеты."
 [Set-Readme]: <ITG.Readme#Set-Readme> "Генерирует readme файл с MarkDown разметкой по данным модуля и комментариям к его функциям. Файл предназначен, в частности, для размещения в репозиториях github."
 
 ---------------------------------------

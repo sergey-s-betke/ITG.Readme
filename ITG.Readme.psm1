@@ -19,11 +19,11 @@ $CabPathTemplateDefault = {
 	| Join-Path -ChildPath ( & $HelpXMLCabFileName ) `
 };
 
-$HelpXMLFileNameTemplateDefault = { "$( $ModuleInfo.Name )-help.xml" };
+$HelpXMLFileName = { "$( $ModuleInfo.Name )-help.xml" };
 $HelpXMLPathTemplateDefault = {
 	$ModuleInfo.ModuleBase `
 	| Join-Path -ChildPath ( $UICulture.Name ) `
-	| Join-Path -ChildPath ( $HelpXMLFileName ) `
+	| Join-Path -ChildPath ( & $HelpXMLFileName ) `
 };
 
 $Translator = @{
@@ -1472,15 +1472,45 @@ Function DoParaList( $HelpContent, $Root, $Help, $ListId, $ListItemId ) {
 	};
 };
 
-Function Get-InternalHelpXML {
+Function New-HelpXML {
 	<#
 		.Synopsis
-			Get-HelpXML является лишь обёрткой (proxy функцией) к данной функции, 
-			непосредственно подготовка help.xml выполняется данной функцией.
-		.ForwardHelpTargetName
-			Get-HelpXML
+			Генерирует XML справку для переданного модуля, функции, командлеты.
+		.Description
+			Генерирует XML справку для переданного модуля, функции, командлеты.
+			
+			Для генерации / обновления .xml файла справки в каталоге модуля
+			используйте Set-HelpXML.
+		.Role
+			Everyone
+		.Inputs
+			System.Management.Automation.PSModuleInfo
+			Описатели модулей. Именно для них и будет сгенерирована XML справка. 
+			Получены описатели могут быть через `Get-Module`.
+		.Inputs
+			System.Management.Automation.FunctionInfo
+			Описатели функций. Именно для них и будет сгенерирована XML справка. 
+			Получены описатели могут быть через `Get-Command`.
+		.Inputs
+			System.Management.Automation.CmdletInfo
+			Описатели командлет. Именно для них и будет сгенерирована XML справка. 
+			Получены описатели могут быть через `Get-Command`.
+		.Outputs
+			System.Xml.XmlDocument
+			Содержимое XML справки.
+		.Link
+			about_Comment_Based_Help
+		.Link
+			about_Updatable_Help
+		.Link
+			[Creating the Cmdlet Help File](http://msdn.microsoft.com/en-us/library/bb525433.aspx)
+		.Link
+			http://github.com/IT-Service/ITG.Readme#New-HelpXML
+		.Example
+			Get-Module 'ITG.Yandex.DnsServer' | New-HelpXML;
+			Генерация xml справки для модуля `ITG.Yandex.DnsServer`.
 	#>
-	
+
 	[CmdletBinding(
 		DefaultParametersetName='ModuleInfo'
 	)]
@@ -1527,7 +1557,7 @@ Function Get-InternalHelpXML {
 "@
 				if ( $ModuleInfo.ExportedFunctions ) {
 					$ModuleInfo.ExportedFunctions.Values `
-					| Get-InternalHelpXML `
+					| New-HelpXML `
 					| % {
 						$null = $HelpContent.DocumentElement.AppendChild( $HelpContent.ImportNode( $_.DocumentElement, $true ) );
 					};
@@ -1733,14 +1763,14 @@ Function Get-InternalHelpXML {
 	};
 }
 
-Function Get-HelpXML {
+Function Set-HelpXML {
 	<#
 		.Synopsis
-			Генерирует XML справку для переданного модуля, функции, командлеты.
+			Генерирует XML файл справки для переданного модуля, функции, командлеты.
 		.Description
-			Генерирует XML справку для переданного модуля, функции, командлеты.
+			Генерирует XML файл справки для переданного модуля, функции, командлеты.
 			
-			Кроме того, для модуля при указании ключа `-OutDefaultFile` данная
+			Кроме того, данная
 			функция создаст XML файл справки в каталоге модуля (точнее - в
 			подкаталоге культуры, как того и требуют командлеты PowerShell, в
 			частности - `Get-Help`).
@@ -1760,9 +1790,6 @@ Function Get-HelpXML {
 			System.Management.Automation.CmdletInfo
 			Описатели командлет. Именно для них и будет сгенерирована XML справка. 
 			Получены описатели могут быть через `Get-Command`.
-		.Outputs
-			System.Xml.XmlDocument
-			Содержимое XML справки.
 		.Link
 			about_Comment_Based_Help
 		.Link
@@ -1770,9 +1797,9 @@ Function Get-HelpXML {
 		.Link
 			[Creating the Cmdlet Help File](http://msdn.microsoft.com/en-us/library/bb525433.aspx)
 		.Link
-			http://github.com/IT-Service/ITG.Readme#Get-HelpXML
+			http://github.com/IT-Service/ITG.Readme#Set-HelpXML
 		.Example
-			Get-Module 'ITG.Yandex.DnsServer' | Get-HelpXML -OutDefaultFile;
+			Get-Module 'ITG.Yandex.DnsServer' | Set-HelpXML;
 			Генерация xml файла справки для модуля `ITG.Yandex.DnsServer` 
 			в каталоге модуля.
 	#>
@@ -1809,29 +1836,6 @@ Function Get-HelpXML {
 		)]
 		[System.Globalization.CultureInfo]
 		$UICulture = ( Get-Culture )
-	,
-		# выводить help в файл `<ModuleName>-Help.xml` в каталоге модуля
-		[Parameter(
-			ParameterSetName='ModuleInfo'
-		)]
-		[switch]
-		$OutDefaultFile
-	,
-		# "Заготовка" для `HelpXMLFileName` - функционал (блок), имя файла xml справки (без пути)
-		[Parameter(
-			ParameterSetName='ModuleInfo'
-			, Mandatory=$false
-		)]
-		[ScriptBlock]
-		$HelpXMLFileNameTemplate = $HelpXMLFileNameTemplateDefault
-	,
-		# Имя файла для xml файла справки
-		[Parameter(
-			ParameterSetName='ModuleInfo'
-			, Mandatory=$false
-		)]
-		[String]
-		$HelpXMLFileName = ( & $HelpXMLFileNameTemplate )
 	,
 		# "Заготовка" для `Path` - функционал (блок), вычисляющий `Path` - пути для xml файла справки
 		[Parameter(
@@ -1887,86 +1891,79 @@ Function Get-HelpXML {
 		};
 		switch ( $PsCmdlet.ParameterSetName ) {
 			'ModuleInfo' {
-				[System.Xml.XmlDocument]$HelpContent = Get-InternalHelpXML -ModuleInfo $ModuleInfo;
-				if ( $OutDefaultFile ) {
-					$Dir = Split-Path -Path ( $Path.FullName ) -Parent;
-					if ( -not ( Test-Path -LiteralPath $Dir ) ) {
-						$null = New-Item -Path $Dir -ItemType Directory;
-					};
-					
-					$Writer = [System.Xml.XmlWriter]::Create(
-						$Path `
-						, ( New-Object `
-							-TypeName System.Xml.XmlWriterSettings `
-							-Property @{
-								Indent = $true;
-								OmitXmlDeclaration = $false;
-								NamespaceHandling = [System.Xml.NamespaceHandling]::OmitDuplicates;
-								NewLineOnAttributes = $false;
-								CloseOutput = $true;
-								IndentChars = "`t";
-							} `
-						) `
-					);
-					$HelpContent.WriteTo( $Writer );
-					$Writer.Close();
+				[System.Xml.XmlDocument]$HelpContent = New-HelpXML -ModuleInfo $ModuleInfo;
 
-					if ( $Cab ) {
-						$CabDir = Split-Path -Path ( $CabPath.FullName ) -Parent;
-						if ( -not ( Test-Path -LiteralPath $CabDir ) ) {
-							$null = New-Item -Path $CabDir -ItemType Directory;
-						};
-						$MakeCabProcess = Start-Process `
-							-FilePath 'makecab' `
-							-ArgumentList "`"$( $Path.FullName )`"", "`"$( $CabPath.FullName )`"" `
-							-NoNewWindow `
-							-Wait `
-							-PassThru `
+				$Dir = Split-Path -Path ( $Path.FullName ) -Parent;
+				if ( -not ( Test-Path -LiteralPath $Dir ) ) {
+					$null = New-Item -Path $Dir -ItemType Directory;
+				};
+				
+				$Writer = [System.Xml.XmlWriter]::Create(
+					$Path `
+					, ( New-Object `
+						-TypeName System.Xml.XmlWriterSettings `
+						-Property @{
+							Indent = $true;
+							OmitXmlDeclaration = $false;
+							NamespaceHandling = [System.Xml.NamespaceHandling]::OmitDuplicates;
+							NewLineOnAttributes = $false;
+							CloseOutput = $true;
+							IndentChars = "`t";
+						} `
+					) `
+				);
+				$HelpContent.WriteTo( $Writer );
+				$Writer.Close();
+
+				if ( $Cab ) {
+					$CabDir = Split-Path -Path ( $CabPath.FullName ) -Parent;
+					if ( -not ( Test-Path -LiteralPath $CabDir ) ) {
+						$null = New-Item -Path $CabDir -ItemType Directory;
+					};
+					$MakeCabProcess = Start-Process `
+						-FilePath 'makecab' `
+						-ArgumentList "`"$( $Path.FullName )`"", "`"$( $CabPath.FullName )`"" `
+						-NoNewWindow `
+						-Wait `
+						-PassThru `
+					;
+					if ( $MakeCabProcess.ExitCode ) {
+						Write-Error `
+							-Message "Возникла ошибка $( $MakeCabProcess.ExitCode ) при выполнении makecab.exe." `
 						;
-						if ( $MakeCabProcess.ExitCode ) {
-							Write-Error `
-								-Message "Возникла ошибка $( $MakeCabProcess.ExitCode ) при выполнении makecab.exe." `
-							;
-						};
 					};
+				};
 
-					if ( $UpdateModule ) {
-						$reFuncHeaders = 
-							'(?m)' `
-							, '(?<=^(Function|Filter)\s+(' `
-							, (
-								(
-									$ModuleInfo.ExportedFunctions.Values `
-									| % { $_.Name } `
-								) `
-								-join '|' `
+				if ( $UpdateModule ) {
+					$reFuncHeaders = 
+						'(?m)' `
+						, '(?<=^(Function|Filter)\s+(' `
+						, (
+							(
+								$ModuleInfo.ExportedFunctions.Values `
+								| % { $_.Name } `
 							) `
-							, ')\s*\{)(\s*$)?' `
-							-join '' `
-						;
-						$ModulePath = $ModuleInfo.Path;
-						( Get-Content `
-							-LiteralPath $ModulePath `
-							-ReadCount 0 `
+							-join '|' `
 						) `
-						-join "`r`n" `
-						-replace `
-							$reFuncHeaders `
-							, "`r`n#`t.ExternalHelp $HelpXMLFileName`r`n" `
-						| Set-Content `
-							-LiteralPath $ModulePath `
-							-Encoding 'UTF8' `
-							-Force `
-						;
-					};
-				} else {
-					return $HelpContent;
+						, ')\s*\{)(\s*$)?' `
+						-join '' `
+					;
+					$ModulePath = $ModuleInfo.Path;
+					( Get-Content `
+						-LiteralPath $ModulePath `
+						-ReadCount 0 `
+					) `
+					-join "`r`n" `
+					-replace `
+						$reFuncHeaders `
+						, "`r`n#`t.ExternalHelp $HelpXMLFileName`r`n" `
+					| Set-Content `
+						-LiteralPath $ModulePath `
+						-Encoding 'UTF8' `
+						-Force `
+					;
 				};
 			}
-			default {
-				[System.Xml.XmlDocument]$HelpContent = Get-InternalHelpXML -FunctionInfo $FunctionInfo;
-				return $HelpContent;
-			};
 		};
 	}
 }
@@ -2348,7 +2345,8 @@ Function Set-HelpInfo {
 Export-ModuleMember `
 	  Get-Readme `
 	, Set-Readme `
-	, Get-HelpXML `
+	, New-HelpXML `
+	, Set-HelpXML `
 	, New-HelpInfo `
 	, Get-HelpInfo `
 	, Set-HelpInfo `
