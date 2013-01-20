@@ -19,11 +19,11 @@ $CabPathTemplateDefault = {
 	| Join-Path -ChildPath ( & $HelpXMLCabFileName ) `
 };
 
-$HelpXMLFileName = { "$( $ModuleInfo.Name )-help.xml" };
+$HelpXMLFileNameTemplateDefault = { "$( $ModuleInfo.Name )-help.xml" };
 $HelpXMLPathTemplateDefault = {
 	$ModuleInfo.ModuleBase `
 	| Join-Path -ChildPath ( $UICulture.Name ) `
-	| Join-Path -ChildPath ( & $HelpXMLFileName ) `
+	| Join-Path -ChildPath ( $HelpXMLFileName ) `
 };
 
 $Translator = @{
@@ -1931,6 +1931,22 @@ Function Set-HelpXML {
 		)]
 		[System.Globalization.CultureInfo]
 		$UICulture = ( Get-Culture )
+	,
+		# "Заготовка" для `HelpXMLFileName` - функционал (блок), имя файла xml справки (без пути)
+		[Parameter(
+			ParameterSetName='ModuleInfo'
+			, Mandatory=$false
+		)]
+		[ScriptBlock]
+		$HelpXMLFileNameTemplate = $HelpXMLFileNameTemplateDefault
+	,
+		# Имя файла для xml файла справки
+		[Parameter(
+			ParameterSetName='ModuleInfo'
+			, Mandatory=$false
+		)]
+		[String]
+		$HelpXMLFileName = ( & $HelpXMLFileNameTemplate )
 	,
 		# "Заготовка" для `Path` - функционал (блок), вычисляющий `Path` - пути для xml файла справки
 		[Parameter(
