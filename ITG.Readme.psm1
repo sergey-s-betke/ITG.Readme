@@ -1763,6 +1763,103 @@ Function New-HelpXML {
 	};
 }
 
+Function Get-HelpXML {
+	<#
+		.Synopsis
+			Возващает XML содержимое xml файла справки для переданного модуля.
+		.Description
+			Возващает XML содержимое xml файла справки для переданного модуля.
+		.Role
+			Everyone
+		.Inputs
+			System.Management.Automation.PSModuleInfo
+			Описатели модулей. Именно для них и будет сгенерирована XML справка. 
+			Получены описатели могут быть через `Get-Module`.
+		.Outputs
+			System.Xml.XmlDocument
+			Содержимое XML справки.
+		.Link
+			about_Updatable_Help
+		.Link
+			[Creating the Cmdlet Help File](http://msdn.microsoft.com/en-us/library/bb525433.aspx)
+		.Link
+			http://github.com/IT-Service/ITG.Readme#Get-HelpXML
+		.Example
+			Get-Module 'ITG.Yandex.DnsServer' | Get-HelpXML;
+			Возвращает содержимое xml файла справки для модуля `ITG.Yandex.DnsServer` 
+			в виде XML документа.
+	#>
+	
+	[CmdletBinding(
+		DefaultParametersetName='ModuleInfo'
+	)]
+
+	param (
+		# Описатель модуля
+		[Parameter(
+			Mandatory=$true
+			, Position=0
+			, ValueFromPipeline=$true
+			, ParameterSetName='ModuleInfo'
+		)]
+		[PSModuleInfo]
+		[Alias('Module')]
+		$ModuleInfo
+	,
+		# культура, для которой вернуть данные, на данный момент параметр задавать не следует.
+		[Parameter(
+			Mandatory=$false
+		)]
+		[System.Globalization.CultureInfo]
+		$UICulture = ( Get-Culture )
+	,
+		# "Заготовка" для `Path` - функционал (блок), вычисляющий `Path` - пути для xml файла справки
+		[Parameter(
+			ParameterSetName='ModuleInfo'
+			, Mandatory=$false
+		)]
+		[ScriptBlock]
+		$PathTemplate = $HelpXMLPathTemplateDefault
+	,
+		# Путь для xml файла справки
+		[Parameter(
+			ParameterSetName='ModuleInfo'
+			, Mandatory=$false
+		)]
+		[System.IO.FileInfo]
+		$Path = ( & $PathTemplate )
+	)
+
+	process {
+		trap {
+			break;
+		};
+		switch ( $PsCmdlet.ParameterSetName ) {
+			'ModuleInfo' {
+				if ( Test-Path $Path ) {
+					return ( [xml](
+						Get-Content `
+							-LiteralPath $Path `
+							-ReadCount 0 `
+					));
+				} else {
+					return [xml] @"
+<!-- Генератор: ITG.Readme (http://github.com/IT-Service/ITG.Readme). -->
+<helpItems
+	xmlns="$( $HelpXMLNS.msh )"
+	xmlns:maml="$( $HelpXMLNS.maml )"
+	xmlns:command="$( $HelpXMLNS.command )" 
+	xmlns:dev="$( $HelpXMLNS.dev )"
+	xmlns:MSHelp="$( $HelpXMLNS.MSHelp )"
+	schema="maml"
+/>
+"@
+				};
+			}
+		};
+	}
+}
+
 Function Set-HelpXML {
 	<#
 		.Synopsis
@@ -1790,8 +1887,6 @@ Function Set-HelpXML {
 			System.Management.Automation.CmdletInfo
 			Описатели командлет. Именно для них и будет сгенерирована XML справка. 
 			Получены описатели могут быть через `Get-Command`.
-		.Link
-			about_Comment_Based_Help
 		.Link
 			about_Updatable_Help
 		.Link
@@ -2130,13 +2225,11 @@ Function Get-HelpInfo {
 							-ReadCount 0 `
 					));
 				} else {
-					$HelpInfoContent = New-Object -TypeName System.Xml.XmlDocument;
-					$null = $HelpInfoContent.AppendChild(
-						$HelpInfoContent.CreateElement( '', 'HelpInfo', ( $HelpXMLNS.HelpInfo ) )
-					).AppendChild(
-						$HelpInfoContent.CreateElement( '', 'SupportedUICultures', ( $HelpXMLNS.HelpInfo ) )
-					);
-					return $HelpInfoContent;
+					return [xml] @"
+<HelpInfo xmlns="$( $HelpXMLNS.HelpInfo )">
+	<SupportedUICultures/>
+</HelpInfo>
+"@
 				};
 			}
 		};
@@ -2346,6 +2439,7 @@ Export-ModuleMember `
 	  Get-Readme `
 	, Set-Readme `
 	, New-HelpXML `
+	, Get-HelpXML `
 	, Set-HelpXML `
 	, New-HelpInfo `
 	, Get-HelpInfo `
