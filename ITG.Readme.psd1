@@ -11,10 +11,10 @@
 @{
 
 # Файл модуля скрипта или двоичного модуля, связанный с данным манифестом
-ModuleToProcess = 'ITG.Readme.psm1'
+RootModule = 'ITG.Readme.psm1'
 
 # Номер версии данного модуля.
-ModuleVersion = '1.6.3'
+ModuleVersion = '2.0.0'
 
 # Уникальный идентификатор данного модуля
 GUID = '826e836c-d10c-4d4d-b86b-8b4a41829b00'
@@ -39,7 +39,7 @@ Description = @"
 "@
 
 # Минимальный номер версии обработчика Windows PowerShell, необходимой для работы данного модуля
-PowerShellVersion = '2.0'
+PowerShellVersion = '3.0'
 
 # Имя узла Windows PowerShell, необходимого для работы данного модуля
 PowerShellHostName = ''
@@ -58,15 +58,14 @@ ProcessorArchitecture = ''
 
 # Модули, которые необходимо импортировать в глобальную среду перед импортированием данного модуля
 RequiredModules = @(
+    @{ModuleName = 'ITG.RegExps'; ModuleVersion = '1.1'} `
 )
 
 # Сборки, которые должны быть загружены перед импортированием данного модуля
 RequiredAssemblies = @()
 
 # Файлы скрипта (.ps1), которые запускаются в среде вызывающей стороны перед импортированием данного модуля
-ScriptsToProcess = @(
-	'ITG.PrepareModulesEnv.ps1'
-)
+ScriptsToProcess = @()
 
 # Файлы типа (.ps1xml), которые загружаются при импорте данного модуля
 TypesToProcess = @()
@@ -93,10 +92,10 @@ AliasesToExport = '*'
 ModuleList = @()
 
 # Список всех файлов, входящих в пакет данного модуля
-FileList = @(
-	  'ITG.Readme.psm1'
-	, 'ITG.PrepareModulesEnv.ps1'
-)
+FileList = `
+	'ITG.Readme.psm1' `
+,   'ITG.Readme.psd1' `
+,   'readme.md'
 
 # Личные данные, передаваемые в модуль, указанный в параметре ModuleToProcess
 PrivateData = ''
