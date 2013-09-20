@@ -140,7 +140,7 @@ xml "заготовку" HelpInfo.xml, но валидную.
         Этот командлет поддерживает общие параметры: Verbose, Debug,
         ErrorAction, ErrorVariable, WarningAction, WarningVariable,
         OutBuffer и OutVariable. Для получения дополнительных сведений см. раздел
-        [about_CommonParameters][] (http://go.microsoft.com/fwlink/?LinkID=113216).
+        [about_CommonParameters][].
 
 
 
@@ -218,7 +218,7 @@ HelpInfo.XML по сути является манифестом для xml сп
         Этот командлет поддерживает общие параметры: Verbose, Debug,
         ErrorAction, ErrorVariable, WarningAction, WarningVariable,
         OutBuffer и OutVariable. Для получения дополнительных сведений см. раздел
-        [about_CommonParameters][] (http://go.microsoft.com/fwlink/?LinkID=113216).
+        [about_CommonParameters][].
 
 
 
@@ -324,7 +324,7 @@ HelpInfo.xml в каталоге модуля, либо создаёт новы�
         Этот командлет поддерживает общие параметры: Verbose, Debug,
         ErrorAction, ErrorVariable, WarningAction, WarningVariable,
         OutBuffer и OutVariable. Для получения дополнительных сведений см. раздел
-        [about_CommonParameters][] (http://go.microsoft.com/fwlink/?LinkID=113216).
+        [about_CommonParameters][].
 
 
 
@@ -406,7 +406,7 @@ HelpInfo.xml в каталоге модуля, либо создаёт новы�
         Этот командлет поддерживает общие параметры: Verbose, Debug,
         ErrorAction, ErrorVariable, WarningAction, WarningVariable,
         OutBuffer и OutVariable. Для получения дополнительных сведений см. раздел
-        [about_CommonParameters][] (http://go.microsoft.com/fwlink/?LinkID=113216).
+        [about_CommonParameters][].
 
 
 
@@ -482,7 +482,7 @@ HelpInfo.xml в каталоге модуля, либо создаёт новы�
         Этот командлет поддерживает общие параметры: Verbose, Debug,
         ErrorAction, ErrorVariable, WarningAction, WarningVariable,
         OutBuffer и OutVariable. Для получения дополнительных сведений см. раздел
-        [about_CommonParameters][] (http://go.microsoft.com/fwlink/?LinkID=113216).
+        [about_CommonParameters][].
 
 
 
@@ -637,7 +637,7 @@ HelpInfo.xml в каталоге модуля, либо создаёт новы�
         Этот командлет поддерживает общие параметры: Verbose, Debug,
         ErrorAction, ErrorVariable, WarningAction, WarningVariable,
         OutBuffer и OutVariable. Для получения дополнительных сведений см. раздел
-        [about_CommonParameters][] (http://go.microsoft.com/fwlink/?LinkID=113216).
+        [about_CommonParameters][].
 
 
 
@@ -766,7 +766,7 @@ Readme
         Этот командлет поддерживает общие параметры: Verbose, Debug,
         ErrorAction, ErrorVariable, WarningAction, WarningVariable,
         OutBuffer и OutVariable. Для получения дополнительных сведений см. раздел
-        [about_CommonParameters][] (http://go.microsoft.com/fwlink/?LinkID=113216).
+        [about_CommonParameters][].
 
 
 
@@ -916,7 +916,7 @@ Readme
         Этот командлет поддерживает общие параметры: Verbose, Debug,
         ErrorAction, ErrorVariable, WarningAction, WarningVariable,
         OutBuffer и OutVariable. Для получения дополнительных сведений см. раздел
-        [about_CommonParameters][] (http://go.microsoft.com/fwlink/?LinkID=113216).
+        [about_CommonParameters][].
 
 
 
