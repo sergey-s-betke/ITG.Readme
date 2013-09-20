@@ -1,32 +1,4 @@
-﻿'ITG.RegExps' `
-| Import-Module `
-;
-
-$ReadmePathTemplateDefault = {
-	$ModuleInfo.ModuleBase `
-	| Join-Path -ChildPath 'readme.md' `
-};
-
-$HelpInfoFileName = { "$( $ModuleInfo.Name )_$( $ModuleInfo.GUID )_HelpInfo.xml"; };
-$GitHubHelpInfoURI = { "http://raw.github.com/IT-Service/$( $ModuleInfo.Name )/$( $ModuleInfo.Version )/$( & $HelpInfoFileName )"; };
-
-$HelpXMLCabFileName = { "$( $ModuleInfo.Name )_$( $ModuleInfo.GUID )_$( $UICulture )_HelpContent.cab"; };
-$CabFolderName = 'help.cab';
-$GitHubHelpContentURI = { "http://raw.github.com/IT-Service/$( $ModuleInfo.Name )/$( $ModuleInfo.Version )/$CabFolderName"; };
-$CabPathTemplateDefault = {
-	$ModuleInfo.ModuleBase `
-	| Join-Path -ChildPath $CabFolderName `
-	| Join-Path -ChildPath ( & $HelpXMLCabFileName ) `
-};
-
-$HelpXMLFileNameTemplateDefault = { "$( $ModuleInfo.Name )-help.xml" };
-$HelpXMLPathTemplateDefault = {
-	$ModuleInfo.ModuleBase `
-	| Join-Path -ChildPath ( $UICulture.Name ) `
-	| Join-Path -ChildPath ( $HelpXMLFileName ) `
-};
-
-$Translator = @{
+﻿$Translator = @{
 	RegExp = $null;
 	RuleType = @();
 	RegExpResults = @{};
@@ -1203,8 +1175,8 @@ Function Set-Readme {
 		.Description
 			Генерирует readme файл с MarkDown разметкой по данным модуля и комментариям к его функциям. 
 			Файл предназначен, в частности, для размещения в репозиториях github.
-			В дополнение к функционалу Get-Readme сохраняет результат в файл, определённый параметрами
-			`Path` и `PathTemplate`.
+			В дополнение к функционалу Get-Readme сохраняет результат в файл, определённый параметра
+			`Path`.
 		.Functionality
 			Readme
 		.Role
@@ -1291,21 +1263,13 @@ Function Set-Readme {
 		[System.Globalization.CultureInfo]
 		$UICulture = ( Get-Culture )
 	,
-		# "Заготовка" для `Path` - функционал (блок), вычисляющий `Path` - путь для readme файла
-		[Parameter(
-			ParameterSetName='ModuleInfo'
-			, Mandatory=$false
-		)]
-		[ScriptBlock]
-		$PathTemplate = $ReadmePathTemplateDefault
-	,
 		# Путь для readme файла. По умолчанию - `readme.md` в каталоге модуля
 		[Parameter(
 			ParameterSetName='ModuleInfo'
 			, Mandatory=$false
 		)]
 		[System.IO.FileInfo]
-		$Path = ( & $PathTemplate )
+		$Path = $null
 	,
 		# Генерировать только краткое описание
 		[switch]
@@ -1328,7 +1292,12 @@ Function Set-Readme {
 	)
 
 	process {
-		$res = $PSBoundParameters.Remove( 'PathTemplate' );
+        if ( -not $Path ) {
+            $Path = `
+	            $ModuleInfo.ModuleBase `
+	            | Join-Path -ChildPath 'readme.md' `
+            ;
+        };
 		$res = $PSBoundParameters.Remove( 'Path' );
 
 		switch ( $PsCmdlet.ParameterSetName ) {
@@ -1814,21 +1783,13 @@ Function Get-HelpXML {
 		[System.Globalization.CultureInfo]
 		$UICulture = ( Get-Culture )
 	,
-		# "Заготовка" для `Path` - функционал (блок), вычисляющий `Path` - пути для xml файла справки
-		[Parameter(
-			ParameterSetName='ModuleInfo'
-			, Mandatory=$false
-		)]
-		[ScriptBlock]
-		$PathTemplate = $HelpXMLPathTemplateDefault
-	,
 		# Путь для xml файла справки
 		[Parameter(
 			ParameterSetName='ModuleInfo'
 			, Mandatory=$false
 		)]
 		[System.IO.FileInfo]
-		$Path = ( & $PathTemplate )
+		$Path = $null
 	)
 
 	process {
@@ -1837,6 +1798,13 @@ Function Get-HelpXML {
 		};
 		switch ( $PsCmdlet.ParameterSetName ) {
 			'ModuleInfo' {
+                if ( -not $Path ) {
+                    $Path = `
+	                    $ModuleInfo.ModuleBase `
+	                    | Join-Path -ChildPath ( $UICulture.Name ) `
+	                    | Join-Path -ChildPath "$( $ModuleInfo.Name )-help.xml" `
+                    ;
+                };
 				if ( Test-Path $Path ) {
 					return ( [xml](
 						Get-Content `
@@ -1933,37 +1901,13 @@ Function Set-HelpXML {
 		[System.Globalization.CultureInfo]
 		$UICulture = ( Get-Culture )
 	,
-		# "Заготовка" для `HelpXMLFileName` - функционал (блок), имя файла xml справки (без пути)
-		[Parameter(
-			ParameterSetName='ModuleInfo'
-			, Mandatory=$false
-		)]
-		[ScriptBlock]
-		$HelpXMLFileNameTemplate = $HelpXMLFileNameTemplateDefault
-	,
-		# Имя файла для xml файла справки
-		[Parameter(
-			ParameterSetName='ModuleInfo'
-			, Mandatory=$false
-		)]
-		[String]
-		$HelpXMLFileName = ( & $HelpXMLFileNameTemplate )
-	,
-		# "Заготовка" для `Path` - функционал (блок), вычисляющий `Path` - пути для xml файла справки
-		[Parameter(
-			ParameterSetName='ModuleInfo'
-			, Mandatory=$false
-		)]
-		[ScriptBlock]
-		$PathTemplate = $HelpXMLPathTemplateDefault
-	,
 		# Путь для xml файла справки
 		[Parameter(
 			ParameterSetName='ModuleInfo'
 			, Mandatory=$false
 		)]
 		[System.IO.FileInfo]
-		$Path = ( & $PathTemplate )
+		$Path = $null
 	,
 		# обновлять файл модуля - добавлять в файл модуля в комментарии к функциям модуля 
 		# записи типа `.ExternalHelp ITG.Readme-help.xml`
@@ -1980,21 +1924,13 @@ Function Set-HelpXML {
 		[switch]
 		$Cab
 	,
-		# функционал (`[ScriptBlock]`), вычисляющий полный путь к .cab файлу
-		[Parameter(
-			ParameterSetName='ModuleInfo'
-			, Mandatory=$false
-		)]
-		[ScriptBlock]
-		$CabPathTemplate = $CabPathTemplateDefault
-	,
 		# Путь к .cab файлу
 		[Parameter(
 			ParameterSetName='ModuleInfo'
 			, Mandatory=$false
 		)]
 		[System.IO.FileInfo]
-		$CabPath = ( & $CabPathTemplate )
+		$CabPath = $null
 	)
 
 	process {
@@ -2003,6 +1939,21 @@ Function Set-HelpXML {
 		};
 		switch ( $PsCmdlet.ParameterSetName ) {
 			'ModuleInfo' {
+                if ( -not $Path ) {
+                    $Path = `
+	                    $ModuleInfo.ModuleBase `
+	                    | Join-Path -ChildPath ( $UICulture.Name ) `
+	                    | Join-Path -ChildPath "$( $ModuleInfo.Name )-help.xml" `
+                    ;
+                };
+                if ( -not $CabPath ) {
+                    $CabPath = `
+	                    $ModuleInfo.ModuleBase `
+	                    | Join-Path -ChildPath 'help.cab' `
+	                    | Join-Path -ChildPath "$( $ModuleInfo.Name )_$( $ModuleInfo.GUID )_$( $UICulture )_HelpContent.cab" `
+                    ;
+                };
+
 				[System.Xml.XmlDocument]$HelpContent = New-HelpXML -ModuleInfo $ModuleInfo;
 
 				$Dir = Split-Path -Path ( $Path.FullName ) -Parent;
@@ -2233,7 +2184,7 @@ Function Get-HelpInfo {
 			'ModuleInfo' {
 				$HelpInfoPath = ( Join-Path `
 					-Path ( Split-Path -Path ( $ModuleInfo.Path ) -Parent ) `
-					-ChildPath ( & $HelpInfoFileName ) `
+					-ChildPath "$( $ModuleInfo.Name )_$( $ModuleInfo.GUID )_HelpInfo.xml" `
 				);
 				if ( Test-Path $HelpInfoPath ) {
 					return ( [xml](
@@ -2296,13 +2247,6 @@ Function Set-HelpInfo {
 		[Alias('Module')]
 		$ModuleInfo
 	,
-		# "Заготовка" для `HelpContentURI` - функционал (блок), вычисляющий URI для .cab файлов справки
-		[Parameter(
-			Mandatory=$false
-		)]
-		[ScriptBlock]
-		$HelpContentUriTemplate = $GitHubHelpContentURI
-	,
 		# Ссылка для загрузки обновляемой справки. Смотрите about_Updatable_Help.
 		# Значение по умолчанию - url к репозиторию проекта на github.
 		[Parameter(
@@ -2310,7 +2254,7 @@ Function Set-HelpInfo {
 			, Mandatory=$false
 		)]
 		[System.Uri]
-		$HelpContentUri = ( & $HelpContentUriTemplate )
+		$HelpContentUri = $null
 	,
 		# Обновлять или нет манифест модуля. Речь идёт о создании / обновлении параметра 
 		# HelpInfoURI в манифесте, который как раз и должен указывать на HelpInfo.xml файл
@@ -2320,15 +2264,6 @@ Function Set-HelpInfo {
 		[switch]
 		$UpdateManifest
 	,
-		# Функционал (`[ScriptBlock]`), вычисляющий `HelpInfoUri`. Используется только совместно
-		# с `UpdateManifest`. Значение по умолчанию генерирует url к репозиторию проекта на github.
-		[Parameter(
-			ParameterSetName='ModuleInfo'
-			, Mandatory=$false
-		)]
-		[ScriptBlock]
-		$HelpInfoUriTemplate = $GitHubHelpInfoURI
-	,
 		# Используется только совместно
 		# с `UpdateManifest`. Значение по умолчанию - url к репозиторию проекта на github.
 		[Parameter(
@@ -2336,7 +2271,7 @@ Function Set-HelpInfo {
 			, Mandatory=$false
 		)]
 		[System.Uri]
-		$HelpInfoUri = ( & $HelpInfoUriTemplate )
+		$HelpInfoUri = $null
 	)
 
 	process {
@@ -2345,6 +2280,12 @@ Function Set-HelpInfo {
 		};
 		switch ( $PsCmdlet.ParameterSetName ) {
 			'ModuleInfo' {
+                if ( -not $HelpContentUri ) {
+                    $HelpContentURI = "http://raw.github.com/IT-Service/$( $ModuleInfo.Name )/$( $ModuleInfo.Version )/help.cab";
+                };
+                if ( -not $HelpInfoUri ) {
+                    $GitHubHelpInfoURI = "http://raw.github.com/IT-Service/$( $ModuleInfo.Name )/$( $ModuleInfo.Version )/$( $ModuleInfo.Name )_$( $ModuleInfo.GUID )_HelpInfo.xml";
+                };
 				$HelpInfoContent = Get-HelpInfo `
 					-ModuleInfo $ModuleInfo `
 				;
@@ -2397,7 +2338,7 @@ Function Set-HelpInfo {
 
 				$HelpInfoPath = ( Join-Path `
 					-Path ( Split-Path -Path ( $ModuleInfo.Path ) -Parent ) `
-					-ChildPath ( & $HelpInfoFileName ) `
+					-ChildPath "$( $ModuleInfo.Name )_$( $ModuleInfo.GUID )_HelpInfo.xml" `
 				);
 				$Writer = [System.Xml.XmlWriter]::Create(
 					$HelpInfoPath `

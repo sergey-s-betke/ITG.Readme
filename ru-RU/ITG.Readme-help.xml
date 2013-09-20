@@ -12,7 +12,7 @@
 			<maml:copyright>
 				<maml:para>(c) 2012 Sergey S. Betke. All rights reserved.</maml:para>
 			</maml:copyright>
-			<dev:version>1.6.3</dev:version>
+			<dev:version>2.0.0</dev:version>
 		</details>
 		<maml:role>Everyone</maml:role>
 		<maml:description>
@@ -21,14 +21,14 @@
 		<syntax>
 			<syntaxItem>
 				<maml:name>Get-HelpInfo</maml:name>
-				<parameter required="true" position="1" pipelineInput="true (ByValue)">
+				<parameter required="true" position="1" pipelineInput="true (ByValue)" globbing="false">
 					<maml:name>ModuleInfo</maml:name>
 					<parameterValue required="true">PSModuleInfo</parameterValue>
 				</parameter>
 			</syntaxItem>
 		</syntax>
 		<parameters>
-			<parameter required="true" position="1" pipelineInput="true (ByValue)">
+			<parameter required="true" position="1" pipelineInput="true (ByValue)" globbing="false">
 				<maml:name>ModuleInfo</maml:name>
 				<maml:description>
 					<maml:para>Описатель модуля</maml:para>
@@ -106,7 +106,7 @@
 			<maml:copyright>
 				<maml:para>(c) 2012 Sergey S. Betke. All rights reserved.</maml:para>
 			</maml:copyright>
-			<dev:version>1.6.3</dev:version>
+			<dev:version>2.0.0</dev:version>
 		</details>
 		<maml:role>Everyone</maml:role>
 		<maml:description>
@@ -115,47 +115,37 @@
 		<syntax>
 			<syntaxItem>
 				<maml:name>Get-HelpXML</maml:name>
-				<parameter required="true" position="1" pipelineInput="true (ByValue)">
+				<parameter required="true" position="1" pipelineInput="true (ByValue)" globbing="false">
 					<maml:name>ModuleInfo</maml:name>
 					<parameterValue required="true">PSModuleInfo</parameterValue>
 				</parameter>
-				<parameter required="false" position="named" pipelineInput="false">
+				<parameter required="false" position="named" pipelineInput="false" globbing="false">
 					<maml:name>UICulture</maml:name>
 					<parameterValue required="false">CultureInfo</parameterValue>
 				</parameter>
-				<parameter required="false" position="named" pipelineInput="false">
-					<maml:name>PathTemplate</maml:name>
-					<parameterValue required="false">ScriptBlock</parameterValue>
-				</parameter>
-				<parameter required="false" position="named" pipelineInput="false">
+				<parameter required="false" position="named" pipelineInput="false" globbing="false">
 					<maml:name>Path</maml:name>
 					<parameterValue required="false">FileInfo</parameterValue>
 				</parameter>
 			</syntaxItem>
 		</syntax>
 		<parameters>
-			<parameter required="true" position="1" pipelineInput="true (ByValue)">
+			<parameter required="true" position="1" pipelineInput="true (ByValue)" globbing="false">
 				<maml:name>ModuleInfo</maml:name>
 				<maml:description>
 					<maml:para>Описатель модуля</maml:para>
 				</maml:description>
 				<parameterValue required="True">PSModuleInfo</parameterValue>
 			</parameter>
-			<parameter required="false" position="named" pipelineInput="false">
+			<parameter required="false" position="named" pipelineInput="false" globbing="false">
 				<maml:name>UICulture</maml:name>
 				<maml:description>
 					<maml:para>культура, для которой вернуть данные, на данный момент параметр задавать не следует.</maml:para>
 				</maml:description>
 				<parameterValue required="True">CultureInfo</parameterValue>
+				<defaultValue>( Get-Culture )</defaultValue>
 			</parameter>
-			<parameter required="false" position="named" pipelineInput="false">
-				<maml:name>PathTemplate</maml:name>
-				<maml:description>
-					<maml:para>"Заготовка" для `Path` - функционал (блок), вычисляющий `Path` - пути для xml файла справки</maml:para>
-				</maml:description>
-				<parameterValue required="True">ScriptBlock</parameterValue>
-			</parameter>
-			<parameter required="false" position="named" pipelineInput="false">
+			<parameter required="false" position="named" pipelineInput="false" globbing="false">
 				<maml:name>Path</maml:name>
 				<maml:description>
 					<maml:para>Путь для xml файла справки</maml:para>
@@ -224,7 +214,7 @@
 			<maml:copyright>
 				<maml:para>(c) 2012 Sergey S. Betke. All rights reserved.</maml:para>
 			</maml:copyright>
-			<dev:version>1.6.3</dev:version>
+			<dev:version>2.0.0</dev:version>
 		</details>
 		<maml:functionality>Readme</maml:functionality>
 		<maml:role>Everyone</maml:role>
@@ -234,120 +224,124 @@
 		<syntax>
 			<syntaxItem>
 				<maml:name>Get-Readme</maml:name>
-				<parameter required="true" position="1" pipelineInput="true (ByValue)">
+				<parameter required="true" position="1" pipelineInput="true (ByValue)" globbing="false">
 					<maml:name>ModuleInfo</maml:name>
 					<parameterValue required="true">PSModuleInfo</parameterValue>
 				</parameter>
-				<parameter required="false" position="named" pipelineInput="false">
+				<parameter required="false" position="named" pipelineInput="false" globbing="false">
 					<maml:name>UICulture</maml:name>
 					<parameterValue required="false">CultureInfo</parameterValue>
 				</parameter>
-				<parameter required="false" position="named" pipelineInput="false">
+				<parameter required="false" position="named" pipelineInput="false" globbing="false">
 					<maml:name>ShortDescription</maml:name>
 				</parameter>
-				<parameter required="false" position="named" pipelineInput="false">
+				<parameter required="false" position="named" pipelineInput="false" globbing="false">
 					<maml:name>ReferencedModules</maml:name>
 					<parameterValue required="false">PSModuleInfo[]</parameterValue>
 				</parameter>
-				<parameter required="false" position="named" pipelineInput="false">
+				<parameter required="false" position="named" pipelineInput="false" globbing="false">
 					<maml:name>TranslateRules</maml:name>
 					<parameterValue required="false">Array</parameterValue>
 				</parameter>
 			</syntaxItem>
 			<syntaxItem>
 				<maml:name>Get-Readme</maml:name>
-				<parameter required="true" position="1" pipelineInput="true (ByValue)">
+				<parameter required="true" position="1" pipelineInput="true (ByValue)" globbing="false">
 					<maml:name>ExternalScriptInfo</maml:name>
 					<parameterValue required="true">ExternalScriptInfo</parameterValue>
 				</parameter>
-				<parameter required="false" position="named" pipelineInput="false">
+				<parameter required="false" position="named" pipelineInput="false" globbing="false">
 					<maml:name>UICulture</maml:name>
 					<parameterValue required="false">CultureInfo</parameterValue>
 				</parameter>
-				<parameter required="false" position="named" pipelineInput="false">
+				<parameter required="false" position="named" pipelineInput="false" globbing="false">
 					<maml:name>ShortDescription</maml:name>
 				</parameter>
-				<parameter required="false" position="named" pipelineInput="false">
+				<parameter required="false" position="named" pipelineInput="false" globbing="false">
 					<maml:name>ReferencedModules</maml:name>
 					<parameterValue required="false">PSModuleInfo[]</parameterValue>
 				</parameter>
-				<parameter required="false" position="named" pipelineInput="false">
+				<parameter required="false" position="named" pipelineInput="false" globbing="false">
 					<maml:name>TranslateRules</maml:name>
 					<parameterValue required="false">Array</parameterValue>
 				</parameter>
 			</syntaxItem>
 			<syntaxItem>
 				<maml:name>Get-Readme</maml:name>
-				<parameter required="true" position="1" pipelineInput="true (ByValue)">
+				<parameter required="true" position="1" pipelineInput="true (ByValue)" globbing="false">
 					<maml:name>FunctionInfo</maml:name>
 					<parameterValue required="true">FunctionInfo</parameterValue>
 				</parameter>
-				<parameter required="false" position="named" pipelineInput="false">
+				<parameter required="false" position="named" pipelineInput="false" globbing="false">
 					<maml:name>UICulture</maml:name>
 					<parameterValue required="false">CultureInfo</parameterValue>
 				</parameter>
-				<parameter required="false" position="named" pipelineInput="false">
+				<parameter required="false" position="named" pipelineInput="false" globbing="false">
 					<maml:name>ShortDescription</maml:name>
 				</parameter>
-				<parameter required="false" position="named" pipelineInput="false">
+				<parameter required="false" position="named" pipelineInput="false" globbing="false">
 					<maml:name>ReferencedModules</maml:name>
 					<parameterValue required="false">PSModuleInfo[]</parameterValue>
 				</parameter>
-				<parameter required="false" position="named" pipelineInput="false">
+				<parameter required="false" position="named" pipelineInput="false" globbing="false">
 					<maml:name>TranslateRules</maml:name>
 					<parameterValue required="false">Array</parameterValue>
 				</parameter>
 			</syntaxItem>
 		</syntax>
 		<parameters>
-			<parameter required="true" position="1" pipelineInput="true (ByValue)">
+			<parameter required="true" position="1" pipelineInput="true (ByValue)" globbing="false">
 				<maml:name>ModuleInfo</maml:name>
 				<maml:description>
 					<maml:para>Описатель модуля</maml:para>
 				</maml:description>
 				<parameterValue required="True">PSModuleInfo</parameterValue>
 			</parameter>
-			<parameter required="true" position="1" pipelineInput="true (ByValue)">
+			<parameter required="true" position="1" pipelineInput="true (ByValue)" globbing="false">
 				<maml:name>ExternalScriptInfo</maml:name>
 				<maml:description>
 					<maml:para>Описатель внешнего сценария</maml:para>
 				</maml:description>
 				<parameterValue required="True">ExternalScriptInfo</parameterValue>
 			</parameter>
-			<parameter required="true" position="1" pipelineInput="true (ByValue)">
+			<parameter required="true" position="1" pipelineInput="true (ByValue)" globbing="false">
 				<maml:name>FunctionInfo</maml:name>
 				<maml:description>
 					<maml:para>Описатель функции</maml:para>
 				</maml:description>
 				<parameterValue required="True">FunctionInfo</parameterValue>
 			</parameter>
-			<parameter required="false" position="named" pipelineInput="false">
+			<parameter required="false" position="named" pipelineInput="false" globbing="false">
 				<maml:name>UICulture</maml:name>
 				<maml:description>
 					<maml:para>культура, для которой генерировать данные, на данный момент параметр задавать не следует.</maml:para>
 				</maml:description>
 				<parameterValue required="True">CultureInfo</parameterValue>
+				<defaultValue>( Get-Culture )</defaultValue>
 			</parameter>
-			<parameter required="false" position="named" pipelineInput="false">
+			<parameter required="false" position="named" pipelineInput="false" globbing="false">
 				<maml:name>ShortDescription</maml:name>
 				<maml:description>
 					<maml:para>Генерировать только краткое описание</maml:para>
 				</maml:description>
 				<parameterValue required="True">SwitchParameter</parameterValue>
+				<defaultValue>False</defaultValue>
 			</parameter>
-			<parameter required="false" position="named" pipelineInput="false">
+			<parameter required="false" position="named" pipelineInput="false" globbing="false">
 				<maml:name>ReferencedModules</maml:name>
 				<maml:description>
 					<maml:para>Перечень модулей, упоминания функций которых будут заменены на ссылки</maml:para>
 				</maml:description>
 				<parameterValue required="True">PSModuleInfo[]</parameterValue>
+				<defaultValue>@()</defaultValue>
 			</parameter>
-			<parameter required="false" position="named" pipelineInput="false">
+			<parameter required="false" position="named" pipelineInput="false" globbing="false">
 				<maml:name>TranslateRules</maml:name>
 				<maml:description>
 					<maml:para>Правила для обработки readme регулярными выражениями</maml:para>
 				</maml:description>
 				<parameterValue required="True">Array</parameterValue>
+				<defaultValue>@()</defaultValue>
 			</parameter>
 		</parameters>
 		<inputTypes>
@@ -457,7 +451,7 @@
 			<maml:copyright>
 				<maml:para>(c) 2012 Sergey S. Betke. All rights reserved.</maml:para>
 			</maml:copyright>
-			<dev:version>1.6.3</dev:version>
+			<dev:version>2.0.0</dev:version>
 		</details>
 		<maml:role>Everyone</maml:role>
 		<maml:description>
@@ -466,41 +460,43 @@
 		<syntax>
 			<syntaxItem>
 				<maml:name>New-HelpInfo</maml:name>
-				<parameter required="true" position="1" pipelineInput="true (ByValue)">
+				<parameter required="true" position="1" pipelineInput="true (ByValue)" globbing="false">
 					<maml:name>ModuleInfo</maml:name>
 					<parameterValue required="true">PSModuleInfo</parameterValue>
 				</parameter>
-				<parameter required="false" position="named" pipelineInput="false">
+				<parameter required="false" position="named" pipelineInput="false" globbing="false">
 					<maml:name>HelpContentUriTemplate</maml:name>
 					<parameterValue required="false">ScriptBlock</parameterValue>
 				</parameter>
-				<parameter required="false" position="named" pipelineInput="false">
+				<parameter required="false" position="named" pipelineInput="false" globbing="false">
 					<maml:name>HelpContentUri</maml:name>
 					<parameterValue required="false">Uri</parameterValue>
 				</parameter>
 			</syntaxItem>
 		</syntax>
 		<parameters>
-			<parameter required="true" position="1" pipelineInput="true (ByValue)">
+			<parameter required="true" position="1" pipelineInput="true (ByValue)" globbing="false">
 				<maml:name>ModuleInfo</maml:name>
 				<maml:description>
 					<maml:para>Описатель модуля</maml:para>
 				</maml:description>
 				<parameterValue required="True">PSModuleInfo</parameterValue>
 			</parameter>
-			<parameter required="false" position="named" pipelineInput="false">
+			<parameter required="false" position="named" pipelineInput="false" globbing="false">
 				<maml:name>HelpContentUriTemplate</maml:name>
 				<maml:description>
 					<maml:para>"Заготовка" для `HelpContentURI` - функционал (блок), вычисляющий URI для .cab файлов справки</maml:para>
 				</maml:description>
 				<parameterValue required="True">ScriptBlock</parameterValue>
+				<defaultValue>$GitHubHelpContentURI</defaultValue>
 			</parameter>
-			<parameter required="false" position="named" pipelineInput="false">
+			<parameter required="false" position="named" pipelineInput="false" globbing="false">
 				<maml:name>HelpContentUri</maml:name>
 				<maml:description>
 					<maml:para>Ссылка для загрузки обновляемой справки. Смотрите about_Updatable_Help. Значение по умолчанию - url к репозиторию проекта на github.</maml:para>
 				</maml:description>
 				<parameterValue required="True">Uri</parameterValue>
+				<defaultValue>( &amp; $HelpContentUriTemplate )</defaultValue>
 			</parameter>
 		</parameters>
 		<inputTypes>
@@ -572,7 +568,7 @@
 			<maml:copyright>
 				<maml:para>(c) 2012 Sergey S. Betke. All rights reserved.</maml:para>
 			</maml:copyright>
-			<dev:version>1.6.3</dev:version>
+			<dev:version>2.0.0</dev:version>
 		</details>
 		<maml:role>Everyone</maml:role>
 		<maml:description>
@@ -582,28 +578,28 @@
 		<syntax>
 			<syntaxItem>
 				<maml:name>New-HelpXML</maml:name>
-				<parameter required="true" position="1" pipelineInput="true (ByValue)">
+				<parameter required="true" position="1" pipelineInput="true (ByValue)" globbing="false">
 					<maml:name>ModuleInfo</maml:name>
 					<parameterValue required="true">PSModuleInfo</parameterValue>
 				</parameter>
 			</syntaxItem>
 			<syntaxItem>
 				<maml:name>New-HelpXML</maml:name>
-				<parameter required="true" position="1" pipelineInput="true (ByValue)">
+				<parameter required="true" position="1" pipelineInput="true (ByValue)" globbing="false">
 					<maml:name>FunctionInfo</maml:name>
 					<parameterValue required="true">FunctionInfo</parameterValue>
 				</parameter>
 			</syntaxItem>
 		</syntax>
 		<parameters>
-			<parameter required="true" position="1" pipelineInput="true (ByValue)">
+			<parameter required="true" position="1" pipelineInput="true (ByValue)" globbing="false">
 				<maml:name>ModuleInfo</maml:name>
 				<maml:description>
 					<maml:para>Описатель модуля</maml:para>
 				</maml:description>
 				<parameterValue required="True">PSModuleInfo</parameterValue>
 			</parameter>
-			<parameter required="true" position="1" pipelineInput="true (ByValue)">
+			<parameter required="true" position="1" pipelineInput="true (ByValue)" globbing="false">
 				<maml:name>FunctionInfo</maml:name>
 				<maml:description>
 					<maml:para>Описатель функции</maml:para>
@@ -697,7 +693,7 @@
 			<maml:copyright>
 				<maml:para>(c) 2012 Sergey S. Betke. All rights reserved.</maml:para>
 			</maml:copyright>
-			<dev:version>1.6.3</dev:version>
+			<dev:version>2.0.0</dev:version>
 		</details>
 		<maml:role>Everyone</maml:role>
 		<maml:description>
@@ -706,68 +702,47 @@
 		<syntax>
 			<syntaxItem>
 				<maml:name>Set-HelpInfo</maml:name>
-				<parameter required="true" position="1" pipelineInput="true (ByValue)">
+				<parameter required="true" position="1" pipelineInput="true (ByValue)" globbing="false">
 					<maml:name>ModuleInfo</maml:name>
 					<parameterValue required="true">PSModuleInfo</parameterValue>
 				</parameter>
-				<parameter required="false" position="named" pipelineInput="false">
-					<maml:name>HelpContentUriTemplate</maml:name>
-					<parameterValue required="false">ScriptBlock</parameterValue>
-				</parameter>
-				<parameter required="false" position="named" pipelineInput="false">
+				<parameter required="false" position="named" pipelineInput="false" globbing="false">
 					<maml:name>HelpContentUri</maml:name>
 					<parameterValue required="false">Uri</parameterValue>
 				</parameter>
-				<parameter required="false" position="named" pipelineInput="false">
+				<parameter required="false" position="named" pipelineInput="false" globbing="false">
 					<maml:name>UpdateManifest</maml:name>
 				</parameter>
-				<parameter required="false" position="named" pipelineInput="false">
-					<maml:name>HelpInfoUriTemplate</maml:name>
-					<parameterValue required="false">ScriptBlock</parameterValue>
-				</parameter>
-				<parameter required="false" position="named" pipelineInput="false">
+				<parameter required="false" position="named" pipelineInput="false" globbing="false">
 					<maml:name>HelpInfoUri</maml:name>
 					<parameterValue required="false">Uri</parameterValue>
 				</parameter>
 			</syntaxItem>
 		</syntax>
 		<parameters>
-			<parameter required="true" position="1" pipelineInput="true (ByValue)">
+			<parameter required="true" position="1" pipelineInput="true (ByValue)" globbing="false">
 				<maml:name>ModuleInfo</maml:name>
 				<maml:description>
 					<maml:para>Описатель модуля</maml:para>
 				</maml:description>
 				<parameterValue required="True">PSModuleInfo</parameterValue>
 			</parameter>
-			<parameter required="false" position="named" pipelineInput="false">
-				<maml:name>HelpContentUriTemplate</maml:name>
-				<maml:description>
-					<maml:para>"Заготовка" для `HelpContentURI` - функционал (блок), вычисляющий URI для .cab файлов справки</maml:para>
-				</maml:description>
-				<parameterValue required="True">ScriptBlock</parameterValue>
-			</parameter>
-			<parameter required="false" position="named" pipelineInput="false">
+			<parameter required="false" position="named" pipelineInput="false" globbing="false">
 				<maml:name>HelpContentUri</maml:name>
 				<maml:description>
 					<maml:para>Ссылка для загрузки обновляемой справки. Смотрите about_Updatable_Help. Значение по умолчанию - url к репозиторию проекта на github.</maml:para>
 				</maml:description>
 				<parameterValue required="True">Uri</parameterValue>
 			</parameter>
-			<parameter required="false" position="named" pipelineInput="false">
+			<parameter required="false" position="named" pipelineInput="false" globbing="false">
 				<maml:name>UpdateManifest</maml:name>
 				<maml:description>
 					<maml:para>Обновлять или нет манифест модуля. Речь идёт о создании / обновлении параметра HelpInfoURI в манифесте, который как раз и должен указывать на HelpInfo.xml файл</maml:para>
 				</maml:description>
 				<parameterValue required="True">SwitchParameter</parameterValue>
+				<defaultValue>False</defaultValue>
 			</parameter>
-			<parameter required="false" position="named" pipelineInput="false">
-				<maml:name>HelpInfoUriTemplate</maml:name>
-				<maml:description>
-					<maml:para>Функционал (`[ScriptBlock]`), вычисляющий `HelpInfoUri`. Используется только совместно с `UpdateManifest`. Значение по умолчанию генерирует url к репозиторию проекта на github.</maml:para>
-				</maml:description>
-				<parameterValue required="True">ScriptBlock</parameterValue>
-			</parameter>
-			<parameter required="false" position="named" pipelineInput="false">
+			<parameter required="false" position="named" pipelineInput="false" globbing="false">
 				<maml:name>HelpInfoUri</maml:name>
 				<maml:description>
 					<maml:para>Используется только совместно с `UpdateManifest`. Значение по умолчанию - url к репозиторию проекта на github.</maml:para>
@@ -830,7 +805,7 @@
 			<maml:copyright>
 				<maml:para>(c) 2012 Sergey S. Betke. All rights reserved.</maml:para>
 			</maml:copyright>
-			<dev:version>1.6.3</dev:version>
+			<dev:version>2.0.0</dev:version>
 		</details>
 		<maml:role>Everyone</maml:role>
 		<maml:description>
@@ -840,129 +815,88 @@
 		<syntax>
 			<syntaxItem>
 				<maml:name>Set-HelpXML</maml:name>
-				<parameter required="true" position="1" pipelineInput="true (ByValue)">
+				<parameter required="true" position="1" pipelineInput="true (ByValue)" globbing="false">
 					<maml:name>ModuleInfo</maml:name>
 					<parameterValue required="true">PSModuleInfo</parameterValue>
 				</parameter>
-				<parameter required="false" position="named" pipelineInput="false">
+				<parameter required="false" position="named" pipelineInput="false" globbing="false">
 					<maml:name>UICulture</maml:name>
 					<parameterValue required="false">CultureInfo</parameterValue>
 				</parameter>
-				<parameter required="false" position="named" pipelineInput="false">
-					<maml:name>HelpXMLFileNameTemplate</maml:name>
-					<parameterValue required="false">ScriptBlock</parameterValue>
-				</parameter>
-				<parameter required="false" position="named" pipelineInput="false">
-					<maml:name>HelpXMLFileName</maml:name>
-					<parameterValue required="false">String</parameterValue>
-				</parameter>
-				<parameter required="false" position="named" pipelineInput="false">
-					<maml:name>PathTemplate</maml:name>
-					<parameterValue required="false">ScriptBlock</parameterValue>
-				</parameter>
-				<parameter required="false" position="named" pipelineInput="false">
+				<parameter required="false" position="named" pipelineInput="false" globbing="false">
 					<maml:name>Path</maml:name>
 					<parameterValue required="false">FileInfo</parameterValue>
 				</parameter>
-				<parameter required="false" position="named" pipelineInput="false">
+				<parameter required="false" position="named" pipelineInput="false" globbing="false">
 					<maml:name>UpdateModule</maml:name>
 				</parameter>
-				<parameter required="false" position="named" pipelineInput="false">
+				<parameter required="false" position="named" pipelineInput="false" globbing="false">
 					<maml:name>Cab</maml:name>
 				</parameter>
-				<parameter required="false" position="named" pipelineInput="false">
-					<maml:name>CabPathTemplate</maml:name>
-					<parameterValue required="false">ScriptBlock</parameterValue>
-				</parameter>
-				<parameter required="false" position="named" pipelineInput="false">
+				<parameter required="false" position="named" pipelineInput="false" globbing="false">
 					<maml:name>CabPath</maml:name>
 					<parameterValue required="false">FileInfo</parameterValue>
 				</parameter>
 			</syntaxItem>
 			<syntaxItem>
 				<maml:name>Set-HelpXML</maml:name>
-				<parameter required="true" position="1" pipelineInput="true (ByValue)">
+				<parameter required="true" position="1" pipelineInput="true (ByValue)" globbing="false">
 					<maml:name>FunctionInfo</maml:name>
 					<parameterValue required="true">FunctionInfo</parameterValue>
 				</parameter>
-				<parameter required="false" position="named" pipelineInput="false">
+				<parameter required="false" position="named" pipelineInput="false" globbing="false">
 					<maml:name>UICulture</maml:name>
 					<parameterValue required="false">CultureInfo</parameterValue>
 				</parameter>
 			</syntaxItem>
 		</syntax>
 		<parameters>
-			<parameter required="true" position="1" pipelineInput="true (ByValue)">
+			<parameter required="true" position="1" pipelineInput="true (ByValue)" globbing="false">
 				<maml:name>ModuleInfo</maml:name>
 				<maml:description>
 					<maml:para>Описатель модуля</maml:para>
 				</maml:description>
 				<parameterValue required="True">PSModuleInfo</parameterValue>
 			</parameter>
-			<parameter required="true" position="1" pipelineInput="true (ByValue)">
+			<parameter required="true" position="1" pipelineInput="true (ByValue)" globbing="false">
 				<maml:name>FunctionInfo</maml:name>
 				<maml:description>
 					<maml:para>Описатель функции</maml:para>
 				</maml:description>
 				<parameterValue required="True">FunctionInfo</parameterValue>
 			</parameter>
-			<parameter required="false" position="named" pipelineInput="false">
+			<parameter required="false" position="named" pipelineInput="false" globbing="false">
 				<maml:name>UICulture</maml:name>
 				<maml:description>
 					<maml:para>культура, для которой генерировать данные, на данный момент параметр задавать не следует.</maml:para>
 				</maml:description>
 				<parameterValue required="True">CultureInfo</parameterValue>
+				<defaultValue>( Get-Culture )</defaultValue>
 			</parameter>
-			<parameter required="false" position="named" pipelineInput="false">
-				<maml:name>HelpXMLFileNameTemplate</maml:name>
-				<maml:description>
-					<maml:para>"Заготовка" для `HelpXMLFileName` - функционал (блок), имя файла xml справки (без пути)</maml:para>
-				</maml:description>
-				<parameterValue required="True">ScriptBlock</parameterValue>
-			</parameter>
-			<parameter required="false" position="named" pipelineInput="false">
-				<maml:name>HelpXMLFileName</maml:name>
-				<maml:description>
-					<maml:para>Имя файла для xml файла справки</maml:para>
-				</maml:description>
-				<parameterValue required="True">String</parameterValue>
-			</parameter>
-			<parameter required="false" position="named" pipelineInput="false">
-				<maml:name>PathTemplate</maml:name>
-				<maml:description>
-					<maml:para>"Заготовка" для `Path` - функционал (блок), вычисляющий `Path` - пути для xml файла справки</maml:para>
-				</maml:description>
-				<parameterValue required="True">ScriptBlock</parameterValue>
-			</parameter>
-			<parameter required="false" position="named" pipelineInput="false">
+			<parameter required="false" position="named" pipelineInput="false" globbing="false">
 				<maml:name>Path</maml:name>
 				<maml:description>
 					<maml:para>Путь для xml файла справки</maml:para>
 				</maml:description>
 				<parameterValue required="True">FileInfo</parameterValue>
 			</parameter>
-			<parameter required="false" position="named" pipelineInput="false">
+			<parameter required="false" position="named" pipelineInput="false" globbing="false">
 				<maml:name>UpdateModule</maml:name>
 				<maml:description>
 					<maml:para>обновлять файл модуля - добавлять в файл модуля в комментарии к функциям модуля записи типа `.ExternalHelp ITG.Readme-help.xml`</maml:para>
 				</maml:description>
 				<parameterValue required="True">SwitchParameter</parameterValue>
+				<defaultValue>False</defaultValue>
 			</parameter>
-			<parameter required="false" position="named" pipelineInput="false">
+			<parameter required="false" position="named" pipelineInput="false" globbing="false">
 				<maml:name>Cab</maml:name>
 				<maml:description>
 					<maml:para>генерировать / обновлять или нет .cab файл</maml:para>
 				</maml:description>
 				<parameterValue required="True">SwitchParameter</parameterValue>
+				<defaultValue>False</defaultValue>
 			</parameter>
-			<parameter required="false" position="named" pipelineInput="false">
-				<maml:name>CabPathTemplate</maml:name>
-				<maml:description>
-					<maml:para>функционал (`[ScriptBlock]`), вычисляющий полный путь к .cab файлу</maml:para>
-				</maml:description>
-				<parameterValue required="True">ScriptBlock</parameterValue>
-			</parameter>
-			<parameter required="false" position="named" pipelineInput="false">
+			<parameter required="false" position="named" pipelineInput="false" globbing="false">
 				<maml:name>CabPath</maml:name>
 				<maml:description>
 					<maml:para>Путь к .cab файлу</maml:para>
@@ -1045,152 +979,145 @@
 			<maml:copyright>
 				<maml:para>(c) 2012 Sergey S. Betke. All rights reserved.</maml:para>
 			</maml:copyright>
-			<dev:version>1.6.3</dev:version>
+			<dev:version>2.0.0</dev:version>
 		</details>
 		<maml:functionality>Readme</maml:functionality>
 		<maml:role>Everyone</maml:role>
 		<maml:description>
-			<maml:para>Генерирует readme файл с MarkDown разметкой по данным модуля и комментариям к его функциям. Файл предназначен, в частности, для размещения в репозиториях github. В дополнение к функционалу Get-Readme сохраняет результат в файл, определённый параметрами `Path` и `PathTemplate`.</maml:para>
+			<maml:para>Генерирует readme файл с MarkDown разметкой по данным модуля и комментариям к его функциям. Файл предназначен, в частности, для размещения в репозиториях github. В дополнение к функционалу Get-Readme сохраняет результат в файл, определённый параметра `Path`.</maml:para>
 		</maml:description>
 		<syntax>
 			<syntaxItem>
 				<maml:name>Set-Readme</maml:name>
-				<parameter required="true" position="1" pipelineInput="true (ByValue)">
+				<parameter required="true" position="1" pipelineInput="true (ByValue)" globbing="false">
 					<maml:name>ModuleInfo</maml:name>
 					<parameterValue required="true">PSModuleInfo</parameterValue>
 				</parameter>
-				<parameter required="false" position="named" pipelineInput="false">
+				<parameter required="false" position="named" pipelineInput="false" globbing="false">
 					<maml:name>UICulture</maml:name>
 					<parameterValue required="false">CultureInfo</parameterValue>
 				</parameter>
-				<parameter required="false" position="named" pipelineInput="false">
-					<maml:name>PathTemplate</maml:name>
-					<parameterValue required="false">ScriptBlock</parameterValue>
-				</parameter>
-				<parameter required="false" position="named" pipelineInput="false">
+				<parameter required="false" position="named" pipelineInput="false" globbing="false">
 					<maml:name>Path</maml:name>
 					<parameterValue required="false">FileInfo</parameterValue>
 				</parameter>
-				<parameter required="false" position="named" pipelineInput="false">
+				<parameter required="false" position="named" pipelineInput="false" globbing="false">
 					<maml:name>ShortDescription</maml:name>
 				</parameter>
-				<parameter required="false" position="named" pipelineInput="false">
+				<parameter required="false" position="named" pipelineInput="false" globbing="false">
 					<maml:name>ReferencedModules</maml:name>
 					<parameterValue required="false">PSModuleInfo[]</parameterValue>
 				</parameter>
-				<parameter required="false" position="named" pipelineInput="false">
+				<parameter required="false" position="named" pipelineInput="false" globbing="false">
 					<maml:name>TranslateRules</maml:name>
 					<parameterValue required="false">Array</parameterValue>
 				</parameter>
 			</syntaxItem>
 			<syntaxItem>
 				<maml:name>Set-Readme</maml:name>
-				<parameter required="true" position="1" pipelineInput="true (ByValue)">
+				<parameter required="true" position="1" pipelineInput="true (ByValue)" globbing="false">
 					<maml:name>ExternalScriptInfo</maml:name>
 					<parameterValue required="true">ExternalScriptInfo</parameterValue>
 				</parameter>
-				<parameter required="false" position="named" pipelineInput="false">
+				<parameter required="false" position="named" pipelineInput="false" globbing="false">
 					<maml:name>UICulture</maml:name>
 					<parameterValue required="false">CultureInfo</parameterValue>
 				</parameter>
-				<parameter required="false" position="named" pipelineInput="false">
+				<parameter required="false" position="named" pipelineInput="false" globbing="false">
 					<maml:name>ShortDescription</maml:name>
 				</parameter>
-				<parameter required="false" position="named" pipelineInput="false">
+				<parameter required="false" position="named" pipelineInput="false" globbing="false">
 					<maml:name>ReferencedModules</maml:name>
 					<parameterValue required="false">PSModuleInfo[]</parameterValue>
 				</parameter>
-				<parameter required="false" position="named" pipelineInput="false">
+				<parameter required="false" position="named" pipelineInput="false" globbing="false">
 					<maml:name>TranslateRules</maml:name>
 					<parameterValue required="false">Array</parameterValue>
 				</parameter>
 			</syntaxItem>
 			<syntaxItem>
 				<maml:name>Set-Readme</maml:name>
-				<parameter required="true" position="1" pipelineInput="true (ByValue)">
+				<parameter required="true" position="1" pipelineInput="true (ByValue)" globbing="false">
 					<maml:name>FunctionInfo</maml:name>
 					<parameterValue required="true">FunctionInfo</parameterValue>
 				</parameter>
-				<parameter required="false" position="named" pipelineInput="false">
+				<parameter required="false" position="named" pipelineInput="false" globbing="false">
 					<maml:name>UICulture</maml:name>
 					<parameterValue required="false">CultureInfo</parameterValue>
 				</parameter>
-				<parameter required="false" position="named" pipelineInput="false">
+				<parameter required="false" position="named" pipelineInput="false" globbing="false">
 					<maml:name>ShortDescription</maml:name>
 				</parameter>
-				<parameter required="false" position="named" pipelineInput="false">
+				<parameter required="false" position="named" pipelineInput="false" globbing="false">
 					<maml:name>ReferencedModules</maml:name>
 					<parameterValue required="false">PSModuleInfo[]</parameterValue>
 				</parameter>
-				<parameter required="false" position="named" pipelineInput="false">
+				<parameter required="false" position="named" pipelineInput="false" globbing="false">
 					<maml:name>TranslateRules</maml:name>
 					<parameterValue required="false">Array</parameterValue>
 				</parameter>
 			</syntaxItem>
 		</syntax>
 		<parameters>
-			<parameter required="true" position="1" pipelineInput="true (ByValue)">
+			<parameter required="true" position="1" pipelineInput="true (ByValue)" globbing="false">
 				<maml:name>ModuleInfo</maml:name>
 				<maml:description>
 					<maml:para>Описатель модуля</maml:para>
 				</maml:description>
 				<parameterValue required="True">PSModuleInfo</parameterValue>
 			</parameter>
-			<parameter required="true" position="1" pipelineInput="true (ByValue)">
+			<parameter required="true" position="1" pipelineInput="true (ByValue)" globbing="false">
 				<maml:name>ExternalScriptInfo</maml:name>
 				<maml:description>
 					<maml:para>Описатель внешнего сценария</maml:para>
 				</maml:description>
 				<parameterValue required="True">ExternalScriptInfo</parameterValue>
 			</parameter>
-			<parameter required="true" position="1" pipelineInput="true (ByValue)">
+			<parameter required="true" position="1" pipelineInput="true (ByValue)" globbing="false">
 				<maml:name>FunctionInfo</maml:name>
 				<maml:description>
 					<maml:para>Описатель функции</maml:para>
 				</maml:description>
 				<parameterValue required="True">FunctionInfo</parameterValue>
 			</parameter>
-			<parameter required="false" position="named" pipelineInput="false">
+			<parameter required="false" position="named" pipelineInput="false" globbing="false">
 				<maml:name>UICulture</maml:name>
 				<maml:description>
 					<maml:para>культура, для которой генерировать данные, на данный момент параметр задавать не следует.</maml:para>
 				</maml:description>
 				<parameterValue required="True">CultureInfo</parameterValue>
+				<defaultValue>( Get-Culture )</defaultValue>
 			</parameter>
-			<parameter required="false" position="named" pipelineInput="false">
-				<maml:name>PathTemplate</maml:name>
-				<maml:description>
-					<maml:para>"Заготовка" для `Path` - функционал (блок), вычисляющий `Path` - путь для readme файла</maml:para>
-				</maml:description>
-				<parameterValue required="True">ScriptBlock</parameterValue>
-			</parameter>
-			<parameter required="false" position="named" pipelineInput="false">
+			<parameter required="false" position="named" pipelineInput="false" globbing="false">
 				<maml:name>Path</maml:name>
 				<maml:description>
 					<maml:para>Путь для readme файла. По умолчанию - `readme.md` в каталоге модуля</maml:para>
 				</maml:description>
 				<parameterValue required="True">FileInfo</parameterValue>
 			</parameter>
-			<parameter required="false" position="named" pipelineInput="false">
+			<parameter required="false" position="named" pipelineInput="false" globbing="false">
 				<maml:name>ShortDescription</maml:name>
 				<maml:description>
 					<maml:para>Генерировать только краткое описание</maml:para>
 				</maml:description>
 				<parameterValue required="True">SwitchParameter</parameterValue>
+				<defaultValue>False</defaultValue>
 			</parameter>
-			<parameter required="false" position="named" pipelineInput="false">
+			<parameter required="false" position="named" pipelineInput="false" globbing="false">
 				<maml:name>ReferencedModules</maml:name>
 				<maml:description>
 					<maml:para>Перечень модулей, упоминания функций которых будут заменены на ссылки</maml:para>
 				</maml:description>
 				<parameterValue required="True">PSModuleInfo[]</parameterValue>
+				<defaultValue>@()</defaultValue>
 			</parameter>
-			<parameter required="false" position="named" pipelineInput="false">
+			<parameter required="false" position="named" pipelineInput="false" globbing="false">
 				<maml:name>TranslateRules</maml:name>
 				<maml:description>
 					<maml:para>Правила для обработки readme регулярными выражениями</maml:para>
 				</maml:description>
 				<parameterValue required="True">Array</parameterValue>
+				<defaultValue>@()</defaultValue>
 			</parameter>
 		</parameters>
 		<inputTypes>

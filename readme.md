@@ -35,7 +35,7 @@
 
 Генерирует HelpInfo XML для указанного модуля.
 
-	Set-HelpInfo [-ModuleInfo] <PSModuleInfo> [-HelpContentUriTemplate <ScriptBlock>] [-HelpContentUri <Uri>] [-UpdateManifest] [-HelpInfoUriTemplate <ScriptBlock>] [-HelpInfoUri <Uri>] <CommonParameters>
+	Set-HelpInfo [-ModuleInfo] <PSModuleInfo> [-HelpContentUri <Uri>] [-UpdateManifest] [-HelpInfoUri <Uri>] <CommonParameters>
 
 Подробнее - [Set-HelpInfo][].
 
@@ -45,7 +45,7 @@
 
 Возващает XML содержимое xml файла справки для переданного модуля.
 
-	Get-HelpXML [-ModuleInfo] <PSModuleInfo> [-UICulture <CultureInfo>] [-PathTemplate <ScriptBlock>] [-Path <FileInfo>] <CommonParameters>
+	Get-HelpXML [-ModuleInfo] <PSModuleInfo> [-UICulture <CultureInfo>] [-Path <FileInfo>] <CommonParameters>
 
 Подробнее - [Get-HelpXML][].
 
@@ -63,7 +63,7 @@
 
 Генерирует XML файл справки для переданного модуля, функции, командлеты.
 
-	Set-HelpXML [-ModuleInfo] <PSModuleInfo> [-UICulture <CultureInfo>] [-HelpXMLFileNameTemplate <ScriptBlock>] [-HelpXMLFileName <String>] [-PathTemplate <ScriptBlock>] [-Path <FileInfo>] [-UpdateModule] [-Cab] [-CabPathTemplate <ScriptBlock>] [-CabPath <FileInfo>] <CommonParameters>
+	Set-HelpXML [-ModuleInfo] <PSModuleInfo> [-UICulture <CultureInfo>] [-Path <FileInfo>] [-UpdateModule] [-Cab] [-CabPath <FileInfo>] <CommonParameters>
 
 	Set-HelpXML [-FunctionInfo] <FunctionInfo> [-UICulture <CultureInfo>] <CommonParameters>
 
@@ -88,7 +88,7 @@
 Генерирует readme файл с [MarkDown][] разметкой по данным модуля и комментариям к его функциям.
 Файл предназначен, в частности, для размещения в репозиториях github.
 
-	Set-Readme [-ModuleInfo] <PSModuleInfo> [-UICulture <CultureInfo>] [-PathTemplate <ScriptBlock>] [-Path <FileInfo>] [-ShortDescription] [-ReferencedModules <PSModuleInfo[]>] [-TranslateRules <Array>] <CommonParameters>
+	Set-Readme [-ModuleInfo] <PSModuleInfo> [-UICulture <CultureInfo>] [-Path <FileInfo>] [-ShortDescription] [-ReferencedModules <PSModuleInfo[]>] [-TranslateRules <Array>] <CommonParameters>
 
 	Set-Readme [-ExternalScriptInfo] <ExternalScriptInfo> [-UICulture <CultureInfo>] [-ShortDescription] [-ReferencedModules <PSModuleInfo[]>] [-TranslateRules <Array>] <CommonParameters>
 
@@ -243,7 +243,7 @@ HelpInfo.xml в каталоге модуля, либо создаёт новы�
 
 ##### Синтаксис
 
-	Set-HelpInfo [-ModuleInfo] <PSModuleInfo> [-HelpContentUriTemplate <ScriptBlock>] [-HelpContentUri <Uri>] [-UpdateManifest] [-HelpInfoUriTemplate <ScriptBlock>] [-HelpInfoUri <Uri>] <CommonParameters>
+	Set-HelpInfo [-ModuleInfo] <PSModuleInfo> [-HelpContentUri <Uri>] [-UpdateManifest] [-HelpInfoUri <Uri>] <CommonParameters>
 
 ##### Требуемая роль пользователя
 
@@ -271,22 +271,13 @@ HelpInfo.xml в каталоге модуля, либо создаёт новы�
         Принимать входные данные конвейера?true (ByValue)
         Принимать подстановочные знаки?false
 
-- `HelpContentUriTemplate <ScriptBlock>`
-        "Заготовка" для `HelpContentURI` - функционал (блок), вычисляющий URI для .cab файлов справки
-
-        Требуется? false
-        Позиция? named
-        Значение по умолчанию $GitHubHelpContentURI
-        Принимать входные данные конвейера?false
-        Принимать подстановочные знаки?false
-
 - `HelpContentUri <Uri>`
         Ссылка для загрузки обновляемой справки. Смотрите about_Updatable_Help.
         Значение по умолчанию - url к репозиторию проекта на github.
 
         Требуется? false
         Позиция? named
-        Значение по умолчанию ( & $HelpContentUriTemplate )
+        Значение по умолчанию
         Принимать входные данные конвейера?false
         Принимать подстановочные знаки?false
 
@@ -300,23 +291,13 @@ HelpInfo.xml в каталоге модуля, либо создаёт новы�
         Принимать входные данные конвейера?false
         Принимать подстановочные знаки?false
 
-- `HelpInfoUriTemplate <ScriptBlock>`
-        Функционал (`[ScriptBlock]`), вычисляющий `HelpInfoUri`. Используется только совместно
-        с `UpdateManifest`. Значение по умолчанию генерирует url к репозиторию проекта на github.
-
-        Требуется? false
-        Позиция? named
-        Значение по умолчанию $GitHubHelpInfoURI
-        Принимать входные данные конвейера?false
-        Принимать подстановочные знаки?false
-
 - `HelpInfoUri <Uri>`
         Используется только совместно
         с `UpdateManifest`. Значение по умолчанию - url к репозиторию проекта на github.
 
         Требуется? false
         Позиция? named
-        Значение по умолчанию ( & $HelpInfoUriTemplate )
+        Значение по умолчанию
         Принимать входные данные конвейера?false
         Принимать подстановочные знаки?false
 
@@ -346,7 +327,7 @@ HelpInfo.xml в каталоге модуля, либо создаёт новы�
 
 ##### Синтаксис
 
-	Get-HelpXML [-ModuleInfo] <PSModuleInfo> [-UICulture <CultureInfo>] [-PathTemplate <ScriptBlock>] [-Path <FileInfo>] <CommonParameters>
+	Get-HelpXML [-ModuleInfo] <PSModuleInfo> [-UICulture <CultureInfo>] [-Path <FileInfo>] <CommonParameters>
 
 ##### Требуемая роль пользователя
 
@@ -384,21 +365,12 @@ HelpInfo.xml в каталоге модуля, либо создаёт новы�
         Принимать входные данные конвейера?false
         Принимать подстановочные знаки?false
 
-- `PathTemplate <ScriptBlock>`
-        "Заготовка" для `Path` - функционал (блок), вычисляющий `Path` - пути для xml файла справки
-
-        Требуется? false
-        Позиция? named
-        Значение по умолчанию $HelpXMLPathTemplateDefault
-        Принимать входные данные конвейера?false
-        Принимать подстановочные знаки?false
-
 - `Path <FileInfo>`
         Путь для xml файла справки
 
         Требуется? false
         Позиция? named
-        Значение по умолчанию ( & $PathTemplate )
+        Значение по умолчанию
         Принимать входные данные конвейера?false
         Принимать подстановочные знаки?false
 
@@ -510,7 +482,7 @@ HelpInfo.xml в каталоге модуля, либо создаёт новы�
 
 ##### Синтаксис
 
-	Set-HelpXML [-ModuleInfo] <PSModuleInfo> [-UICulture <CultureInfo>] [-HelpXMLFileNameTemplate <ScriptBlock>] [-HelpXMLFileName <String>] [-PathTemplate <ScriptBlock>] [-Path <FileInfo>] [-UpdateModule] [-Cab] [-CabPathTemplate <ScriptBlock>] [-CabPath <FileInfo>] <CommonParameters>
+	Set-HelpXML [-ModuleInfo] <PSModuleInfo> [-UICulture <CultureInfo>] [-Path <FileInfo>] [-UpdateModule] [-Cab] [-CabPath <FileInfo>] <CommonParameters>
 
 	Set-HelpXML [-FunctionInfo] <FunctionInfo> [-UICulture <CultureInfo>] <CommonParameters>
 
@@ -560,39 +532,12 @@ HelpInfo.xml в каталоге модуля, либо создаёт новы�
         Принимать входные данные конвейера?false
         Принимать подстановочные знаки?false
 
-- `HelpXMLFileNameTemplate <ScriptBlock>`
-        "Заготовка" для `HelpXMLFileName` - функционал (блок), имя файла xml справки (без пути)
-
-        Требуется? false
-        Позиция? named
-        Значение по умолчанию $HelpXMLFileNameTemplateDefault
-        Принимать входные данные конвейера?false
-        Принимать подстановочные знаки?false
-
-- `HelpXMLFileName <String>`
-        Имя файла для xml файла справки
-
-        Требуется? false
-        Позиция? named
-        Значение по умолчанию ( & $HelpXMLFileNameTemplate )
-        Принимать входные данные конвейера?false
-        Принимать подстановочные знаки?false
-
-- `PathTemplate <ScriptBlock>`
-        "Заготовка" для `Path` - функционал (блок), вычисляющий `Path` - пути для xml файла справки
-
-        Требуется? false
-        Позиция? named
-        Значение по умолчанию $HelpXMLPathTemplateDefault
-        Принимать входные данные конвейера?false
-        Принимать подстановочные знаки?false
-
 - `Path <FileInfo>`
         Путь для xml файла справки
 
         Требуется? false
         Позиция? named
-        Значение по умолчанию ( & $PathTemplate )
+        Значение по умолчанию
         Принимать входные данные конвейера?false
         Принимать подстановочные знаки?false
 
@@ -615,21 +560,12 @@ HelpInfo.xml в каталоге модуля, либо создаёт новы�
         Принимать входные данные конвейера?false
         Принимать подстановочные знаки?false
 
-- `CabPathTemplate <ScriptBlock>`
-        функционал (`[ScriptBlock]`), вычисляющий полный путь к .cab файлу
-
-        Требуется? false
-        Позиция? named
-        Значение по умолчанию $CabPathTemplateDefault
-        Принимать входные данные конвейера?false
-        Принимать подстановочные знаки?false
-
 - `CabPath <FileInfo>`
         Путь к .cab файлу
 
         Требуется? false
         Позиция? named
-        Значение по умолчанию ( & $CabPathTemplate )
+        Значение по умолчанию
         Принимать входные данные конвейера?false
         Принимать подстановочные знаки?false
 
@@ -795,12 +731,12 @@ Readme
 
 Генерирует readme файл с [MarkDown][] разметкой по данным модуля и комментариям к его функциям.
 Файл предназначен, в частности, для размещения в репозиториях github.
-В дополнение к функционалу [Get-Readme][] сохраняет результат в файл, определённый параметрами
-`Path` и `PathTemplate`.
+В дополнение к функционалу [Get-Readme][] сохраняет результат в файл, определённый параметра
+`Path`.
 
 ##### Синтаксис
 
-	Set-Readme [-ModuleInfo] <PSModuleInfo> [-UICulture <CultureInfo>] [-PathTemplate <ScriptBlock>] [-Path <FileInfo>] [-ShortDescription] [-ReferencedModules <PSModuleInfo[]>] [-TranslateRules <Array>] <CommonParameters>
+	Set-Readme [-ModuleInfo] <PSModuleInfo> [-UICulture <CultureInfo>] [-Path <FileInfo>] [-ShortDescription] [-ReferencedModules <PSModuleInfo[]>] [-TranslateRules <Array>] <CommonParameters>
 
 	Set-Readme [-ExternalScriptInfo] <ExternalScriptInfo> [-UICulture <CultureInfo>] [-ShortDescription] [-ReferencedModules <PSModuleInfo[]>] [-TranslateRules <Array>] <CommonParameters>
 
@@ -867,21 +803,12 @@ Readme
         Принимать входные данные конвейера?false
         Принимать подстановочные знаки?false
 
-- `PathTemplate <ScriptBlock>`
-        "Заготовка" для `Path` - функционал (блок), вычисляющий `Path` - путь для readme файла
-
-        Требуется? false
-        Позиция? named
-        Значение по умолчанию $ReadmePathTemplateDefault
-        Принимать входные данные конвейера?false
-        Принимать подстановочные знаки?false
-
 - `Path <FileInfo>`
         Путь для readme файла. По умолчанию - `readme.md` в каталоге модуля
 
         Требуется? false
         Позиция? named
-        Значение по умолчанию ( & $PathTemplate )
+        Значение по умолчанию
         Принимать входные данные конвейера?false
         Принимать подстановочные знаки?false
 
