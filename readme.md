@@ -45,7 +45,7 @@
 
 Возващает XML содержимое xml файла справки для переданного модуля.
 
-	Get-HelpXML [-ModuleInfo] <PSModuleInfo> [-UICulture <CultureInfo>] [-Path <FileInfo>] <CommonParameters>
+	Get-HelpXML [-ModuleInfo] <PSModuleInfo> [-UICulture <CultureInfo>] [-PSPath <String>] <CommonParameters>
 
 Подробнее - [Get-HelpXML][].
 
@@ -63,7 +63,7 @@
 
 Генерирует XML файл справки для переданного модуля, функции, командлеты.
 
-	Set-HelpXML [-ModuleInfo] <PSModuleInfo> [-UICulture <CultureInfo>] [-Path <FileInfo>] [-UpdateModule] [-Cab] [-CabPath <FileInfo>] <CommonParameters>
+	Set-HelpXML [-ModuleInfo] <PSModuleInfo> [-UICulture <CultureInfo>] [-PSPath <String>] [-UpdateModule] [-Cab] [-PSCabPath <String>] <CommonParameters>
 
 	Set-HelpXML [-FunctionInfo] <FunctionInfo> [-UICulture <CultureInfo>] <CommonParameters>
 
@@ -88,7 +88,7 @@
 Генерирует readme файл с [MarkDown][] разметкой по данным модуля и комментариям к его функциям.
 Файл предназначен, в частности, для размещения в репозиториях github.
 
-	Set-Readme [-ModuleInfo] <PSModuleInfo> [-UICulture <CultureInfo>] [-Path <FileInfo>] [-ShortDescription] [-ReferencedModules <PSModuleInfo[]>] [-TranslateRules <Array>] <CommonParameters>
+	Set-Readme [-ModuleInfo] <PSModuleInfo> [-UICulture <CultureInfo>] [-PSPath <String>] [-ShortDescription] [-ReferencedModules <PSModuleInfo[]>] [-TranslateRules <Array>] <CommonParameters>
 
 	Set-Readme [-ExternalScriptInfo] <ExternalScriptInfo> [-UICulture <CultureInfo>] [-ShortDescription] [-ReferencedModules <PSModuleInfo[]>] [-TranslateRules <Array>] <CommonParameters>
 
@@ -327,7 +327,7 @@ HelpInfo.xml в каталоге модуля, либо создаёт новы�
 
 ##### Синтаксис
 
-	Get-HelpXML [-ModuleInfo] <PSModuleInfo> [-UICulture <CultureInfo>] [-Path <FileInfo>] <CommonParameters>
+	Get-HelpXML [-ModuleInfo] <PSModuleInfo> [-UICulture <CultureInfo>] [-PSPath <String>] <CommonParameters>
 
 ##### Требуемая роль пользователя
 
@@ -365,7 +365,7 @@ HelpInfo.xml в каталоге модуля, либо создаёт новы�
         Принимать входные данные конвейера?false
         Принимать подстановочные знаки?false
 
-- `Path <FileInfo>`
+- `PSPath <String>`
         Путь для xml файла справки
 
         Требуется? false
@@ -482,7 +482,7 @@ HelpInfo.xml в каталоге модуля, либо создаёт новы�
 
 ##### Синтаксис
 
-	Set-HelpXML [-ModuleInfo] <PSModuleInfo> [-UICulture <CultureInfo>] [-Path <FileInfo>] [-UpdateModule] [-Cab] [-CabPath <FileInfo>] <CommonParameters>
+	Set-HelpXML [-ModuleInfo] <PSModuleInfo> [-UICulture <CultureInfo>] [-PSPath <String>] [-UpdateModule] [-Cab] [-PSCabPath <String>] <CommonParameters>
 
 	Set-HelpXML [-FunctionInfo] <FunctionInfo> [-UICulture <CultureInfo>] <CommonParameters>
 
@@ -532,7 +532,7 @@ HelpInfo.xml в каталоге модуля, либо создаёт новы�
         Принимать входные данные конвейера?false
         Принимать подстановочные знаки?false
 
-- `Path <FileInfo>`
+- `PSPath <String>`
         Путь для xml файла справки
 
         Требуется? false
@@ -560,7 +560,7 @@ HelpInfo.xml в каталоге модуля, либо создаёт новы�
         Принимать входные данные конвейера?false
         Принимать подстановочные знаки?false
 
-- `CabPath <FileInfo>`
+- `PSCabPath <String>`
         Путь к .cab файлу
 
         Требуется? false
@@ -736,7 +736,7 @@ Readme
 
 ##### Синтаксис
 
-	Set-Readme [-ModuleInfo] <PSModuleInfo> [-UICulture <CultureInfo>] [-Path <FileInfo>] [-ShortDescription] [-ReferencedModules <PSModuleInfo[]>] [-TranslateRules <Array>] <CommonParameters>
+	Set-Readme [-ModuleInfo] <PSModuleInfo> [-UICulture <CultureInfo>] [-PSPath <String>] [-ShortDescription] [-ReferencedModules <PSModuleInfo[]>] [-TranslateRules <Array>] <CommonParameters>
 
 	Set-Readme [-ExternalScriptInfo] <ExternalScriptInfo> [-UICulture <CultureInfo>] [-ShortDescription] [-ReferencedModules <PSModuleInfo[]>] [-TranslateRules <Array>] <CommonParameters>
 
@@ -803,7 +803,7 @@ Readme
         Принимать входные данные конвейера?false
         Принимать подстановочные знаки?false
 
-- `Path <FileInfo>`
+- `PSPath <String>`
         Путь для readme файла. По умолчанию - `readme.md` в каталоге модуля
 
         Требуется? false
