@@ -546,7 +546,7 @@ Function Add-EndReferenceForAbout( [String] $Id ) {
 
 Function MatchEvaluatorForAboutCP( [System.Text.RegularExpressions.Match] $Match ) {
 	Add-EndReferenceForAbout( 'about_CommonParameters' );
-	return '[`get-help about_CommonParameters`][about_CommonParameters]';
+	return '[about_CommonParameters][]';
 };
 
 $PowerShellAboutTopicsTranslateRules = @(
@@ -574,6 +574,7 @@ $BasicTranslateRules = `
 		  @{ template='(?<ts>[ \t]+)(?=\r?$)'; expression='' } `
 		, @{ template='(?<=(\r?\n))(?<eol>(?:[ \t]*\r?\n)+)'; expression="`r`n" } `
 		, @{ template='(?<aboutCP>"get-help about_CommonParameters")' } `
+		, @{ template='(?<aboutCP>about_CommonParameters(?:\s+[(].*?[)])?)' } `
 		, @{ template="${reMDRef}"; expression='[${id}][]' } `
 		, @{ template="${reMDLink}"; expression='[${id}](${url})' } `
 		, @{ template="${reBeforeURL}(?<fullUrl>${reURL})"; expression='<${fullUrl}>' } `
