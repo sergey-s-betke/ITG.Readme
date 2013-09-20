@@ -1,8 +1,4 @@
-﻿'ITG.RegExps' `
-| Import-Module `
-;
-
-$Translator = @{
+﻿$Translator = @{
 	RegExp = $null;
 	RuleType = @();
 	RegExpResults = @{};
