@@ -946,15 +946,15 @@ Readme
 
 [about_Comment_Based_Help]: http://go.microsoft.com/fwlink/?LinkID=144309 "Describes how to write comment-based help topics for functions and scripts."
 [about_CommonParameters]: http://go.microsoft.com/fwlink/?LinkID=113216 "Describes the parameters that can be used with any cmdlet."
-[Get-HelpInfo]: <ITG.Readme#Get-HelpInfo> "Возвращает HelpInfo.xml (как xml) для указанного модуля."
-[Get-HelpXML]: <ITG.Readme#Get-HelpXML> "Возващает XML содержимое xml файла справки для переданного модуля."
-[Get-Readme]: <ITG.Readme#Get-Readme> "Генерирует readme с MarkDown разметкой по данным модуля и комментариям к его функциям."
+[Get-HelpInfo]: <#get-helpinfo> "Возвращает HelpInfo.xml (как xml) для указанного модуля."
+[Get-HelpXML]: <#get-helpxml> "Возващает XML содержимое xml файла справки для переданного модуля."
+[Get-Readme]: <#get-readme> "Генерирует readme с MarkDown разметкой по данным модуля и комментариям к его функциям."
 [MarkDown]: http://daringfireball.net/projects/markdown/syntax "MarkDown (md) Syntax"
-[New-HelpInfo]: <ITG.Readme#New-HelpInfo> "Генерирует HelpInfo XML для переданного модуля."
-[New-HelpXML]: <ITG.Readme#New-HelpXML> "Генерирует XML справку для переданного модуля, функции, командлеты."
-[Set-HelpInfo]: <ITG.Readme#Set-HelpInfo> "Генерирует HelpInfo XML для указанного модуля."
-[Set-HelpXML]: <ITG.Readme#Set-HelpXML> "Генерирует XML файл справки для переданного модуля, функции, командлеты."
-[Set-Readme]: <ITG.Readme#Set-Readme> "Генерирует readme файл с MarkDown разметкой по данным модуля и комментариям к его функциям. Файл предназначен, в частности, для размещения в репозиториях github."
+[New-HelpInfo]: <#new-helpinfo> "Генерирует HelpInfo XML для переданного модуля."
+[New-HelpXML]: <#new-helpxml> "Генерирует XML справку для переданного модуля, функции, командлеты."
+[Set-HelpInfo]: <#set-helpinfo> "Генерирует HelpInfo XML для указанного модуля."
+[Set-HelpXML]: <#set-helpxml> "Генерирует XML файл справки для переданного модуля, функции, командлеты."
+[Set-Readme]: <#set-readme> "Генерирует readme файл с MarkDown разметкой по данным модуля и комментариям к его функциям. Файл предназначен, в частности, для размещения в репозиториях github."
 
 ---------------------------------------
 

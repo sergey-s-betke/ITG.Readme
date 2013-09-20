@@ -589,7 +589,7 @@ Function MatchEvaluatorForFunc( [System.Text.RegularExpressions.Match] $Match ) 
 	$title = ( ( Get-Help $id ).Synopsis -split '\s*\r?\n' ) -join ' ';
 	Add-EndReference `
 		-id $id `
-		-url "<$( $Translator.TokenRules.func.$id.moduleName )#${id}>" `
+		-url "<#$( $id.ToLower() )>" `
 		-title $title `
 	;
 	return "[${id}][]";
