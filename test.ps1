@@ -29,8 +29,17 @@ $m | Set-Readme `
 ;
 #>
 
+Get-Module 'ITG.Readme' `
+| Set-Readme -PassThru `
+| Set-AboutModule -PassThru `
+| Set-HelpXML -PassThru `
+| Set-HelpInfo `
+;
+
+<#
 Set-Readme -Module ( Get-Module 'ITG.Readme' );
 Set-AboutModule -Module ( Get-Module 'ITG.Readme' );
 Set-HelpXML -Module ( Get-Module 'ITG.Readme' ); # -Cab; # -UpdateModule;
 Set-HelpInfo -Module ( Get-Module 'ITG.Readme' ); # -UpdateManifest;
 # ( Get-HelpXML -Module ( Get-Module 'ITG.Readme' ) ).OuterXml;
+#>

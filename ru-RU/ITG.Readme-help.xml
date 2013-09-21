@@ -832,6 +832,9 @@
 					<maml:name>ReferencedModules</maml:name>
 					<parameterValue required="false">PSModuleInfo[]</parameterValue>
 				</parameter>
+				<parameter required="false" position="named" pipelineInput="false" globbing="false">
+					<maml:name>PassThru</maml:name>
+				</parameter>
 			</syntaxItem>
 		</syntax>
 		<parameters>
@@ -864,6 +867,14 @@
 				</maml:description>
 				<parameterValue required="True">PSModuleInfo[]</parameterValue>
 				<defaultValue>@()</defaultValue>
+			</parameter>
+			<parameter required="false" position="named" pipelineInput="false" globbing="false">
+				<maml:name>PassThru</maml:name>
+				<maml:description>
+					<maml:para>Передавать полученный по конвейеру описатель дальше</maml:para>
+				</maml:description>
+				<parameterValue required="True">SwitchParameter</parameterValue>
+				<defaultValue>False</defaultValue>
 			</parameter>
 		</parameters>
 		<inputTypes>
@@ -944,6 +955,9 @@
 					<maml:name>HelpInfoUri</maml:name>
 					<parameterValue required="false">Uri</parameterValue>
 				</parameter>
+				<parameter required="false" position="named" pipelineInput="false" globbing="false">
+					<maml:name>PassThru</maml:name>
+				</parameter>
 			</syntaxItem>
 		</syntax>
 		<parameters>
@@ -975,6 +989,14 @@
 					<maml:para>Используется только совместно с `UpdateManifest`. Значение по умолчанию - url к репозиторию проекта на github.</maml:para>
 				</maml:description>
 				<parameterValue required="True">Uri</parameterValue>
+			</parameter>
+			<parameter required="false" position="named" pipelineInput="false" globbing="false">
+				<maml:name>PassThru</maml:name>
+				<maml:description>
+					<maml:para>Передавать полученный по конвейеру описатель дальше</maml:para>
+				</maml:description>
+				<parameterValue required="True">SwitchParameter</parameterValue>
+				<defaultValue>False</defaultValue>
 			</parameter>
 		</parameters>
 		<inputTypes>
@@ -1064,6 +1086,9 @@
 					<maml:name>PSCabPath</maml:name>
 					<parameterValue required="false">String</parameterValue>
 				</parameter>
+				<parameter required="false" position="named" pipelineInput="false" globbing="false">
+					<maml:name>PassThru</maml:name>
+				</parameter>
 			</syntaxItem>
 			<syntaxItem>
 				<maml:name>Set-HelpXML</maml:name>
@@ -1074,6 +1099,9 @@
 				<parameter required="false" position="named" pipelineInput="false" globbing="false">
 					<maml:name>UICulture</maml:name>
 					<parameterValue required="false">CultureInfo</parameterValue>
+				</parameter>
+				<parameter required="false" position="named" pipelineInput="false" globbing="false">
+					<maml:name>PassThru</maml:name>
 				</parameter>
 			</syntaxItem>
 		</syntax>
@@ -1129,6 +1157,14 @@
 					<maml:para>Путь к .cab файлу</maml:para>
 				</maml:description>
 				<parameterValue required="True">String</parameterValue>
+			</parameter>
+			<parameter required="false" position="named" pipelineInput="false" globbing="false">
+				<maml:name>PassThru</maml:name>
+				<maml:description>
+					<maml:para>Передавать полученный по конвейеру описатель дальше</maml:para>
+				</maml:description>
+				<parameterValue required="True">SwitchParameter</parameterValue>
+				<defaultValue>False</defaultValue>
 			</parameter>
 		</parameters>
 		<inputTypes>
@@ -1239,6 +1275,9 @@
 					<maml:name>TranslateRules</maml:name>
 					<parameterValue required="false">Array</parameterValue>
 				</parameter>
+				<parameter required="false" position="named" pipelineInput="false" globbing="false">
+					<maml:name>PassThru</maml:name>
+				</parameter>
 			</syntaxItem>
 			<syntaxItem>
 				<maml:name>Set-Readme</maml:name>
@@ -1261,6 +1300,9 @@
 					<maml:name>TranslateRules</maml:name>
 					<parameterValue required="false">Array</parameterValue>
 				</parameter>
+				<parameter required="false" position="named" pipelineInput="false" globbing="false">
+					<maml:name>PassThru</maml:name>
+				</parameter>
 			</syntaxItem>
 			<syntaxItem>
 				<maml:name>Set-Readme</maml:name>
@@ -1282,6 +1324,9 @@
 				<parameter required="false" position="named" pipelineInput="false" globbing="false">
 					<maml:name>TranslateRules</maml:name>
 					<parameterValue required="false">Array</parameterValue>
+				</parameter>
+				<parameter required="false" position="named" pipelineInput="false" globbing="false">
+					<maml:name>PassThru</maml:name>
 				</parameter>
 			</syntaxItem>
 		</syntax>
@@ -1345,6 +1390,14 @@
 				</maml:description>
 				<parameterValue required="True">Array</parameterValue>
 				<defaultValue>@()</defaultValue>
+			</parameter>
+			<parameter required="false" position="named" pipelineInput="false" globbing="false">
+				<maml:name>PassThru</maml:name>
+				<maml:description>
+					<maml:para>Передавать полученный по конвейеру описатель дальше</maml:para>
+				</maml:description>
+				<parameterValue required="True">SwitchParameter</parameterValue>
+				<defaultValue>False</defaultValue>
 			</parameter>
 		</parameters>
 		<inputTypes>
