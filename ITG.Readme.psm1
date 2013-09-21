@@ -1,4 +1,8 @@
-﻿$Translator = @{
+﻿Import-LocalizedData `
+    -BindingVariable loc `
+;
+
+$Translator = @{
 	RegExp = $null;
 	RuleType = @();
 	RegExpResults = @{};
@@ -503,8 +507,7 @@ Function MatchEvaluatorForAbout( [System.Text.RegularExpressions.Match] $Match )
 	} else {
 		Write-Warning `
 			-Message @"
-Обнаружен термин about_*, для которого не найдено определение.
-Проверьте правильность написания термина:
+$loc.WarningUnknownAboutTerm
 
 	$( $Match.Groups['about'].Value )
 	
@@ -582,9 +585,7 @@ Function MatchEvaluatorForFunc( [System.Text.RegularExpressions.Match] $Match ) 
         if ( -not $ModuleReadmeURL ) {
     		Write-Warning `
 	    		-Message @"
-В качестве зависимости при генерации справки использован модуль $( $Translator.TokenRules.func.$id.Module.Name ), в
-манифесте которого в PrivateData не определён ReadmeURL (url документа с описаниями функций модуля).
-Рекомендуем указать url в манифесте модуля следующим образом (пример):
+$( [String]::Format( $loc.WarningUnknownModuleReadmeURL, $Translator.TokenRules.func.$id.Module.Name ) )
 
 PrivateData = @{
     ReadmeURL = 'https://github.com/$( $Translator.TokenRules.func.$id.Module.CompanyName )/$( $Translator.TokenRules.func.$id.Module.Name )';
@@ -902,13 +903,13 @@ $($ModuleInfo.Name -replace '.','=')
 
 $( $ModuleInfo.Description | Expand-Definitions )
 
-Версия модуля: **$( $ModuleInfo.Version.ToString() )**
+$( $loc.ModuleVersion ): **$( $ModuleInfo.Version.ToString() )**
 "@
 					if ( $ModuleInfo.ExportedFunctions ) {
 @"
 
-Функции модуля
---------------
+$( $loc.Funtions )
+$( $loc.Funtions -replace '.','-')
 "@
 						# генерация краткого описания функций
 						$ModuleInfo.ExportedFunctions.Values `
@@ -933,7 +934,7 @@ $( $ModuleInfo.Description | Expand-Definitions )
 								if ( -not $ShortDescription ) {
 @"
 
-Подробнее - $( $_.Name | Expand-Definitions ).
+$( [String]::Format( $loc.Details, ( $_.Name | Expand-Definitions ) ) )
 "@
 								};
 							};
@@ -942,8 +943,8 @@ $( $ModuleInfo.Description | Expand-Definitions )
 						if ( -not $ShortDescription ) {
 @"
 
-Подробное описание функций модуля
----------------------------------
+$( $loc.FunctionsDescriptionFull )
+$( $loc.FunctionsDescriptionFull -replace '.','-')
 "@
 							$ModuleInfo.ExportedFunctions.Values `
 							| Sort-Object -Property `
@@ -999,7 +1000,7 @@ $( $ModuleInfo.Description | Expand-Definitions )
 					if ( $ShortDescription ) {
 @"
 
-#### Обзор $( $FunctionInfo.Name | Expand-Definitions )
+#### $( [String]::Format( $loc.Overview, ( $FunctionInfo.Name | Expand-Definitions ) ) )
 
 "@
 						$Help.Synopsis `
@@ -1017,7 +1018,7 @@ $( $ModuleInfo.Description | Expand-Definitions )
 					} else {
 @"
 
-#### $($FunctionInfo.Name)
+#### $( [String]::Format( $loc.FunctionDescriptionFull, $($FunctionInfo.Name) ) )
 
 "@
 						if ( $Help.Description ) {
@@ -1032,7 +1033,7 @@ $( $ModuleInfo.Description | Expand-Definitions )
 						};
 @"
 
-##### Синтаксис
+##### $( $loc.Syntax )
 "@
 						$Syntax `
 						| % {
@@ -1044,7 +1045,7 @@ $( $ModuleInfo.Description | Expand-Definitions )
 						if ( $Help.Component ) {
 @"
 
-##### Компонент
+##### $( $loc.Component )
 
 $($Help.Component)
 "@
@@ -1055,7 +1056,7 @@ $($Help.Component)
 							;
 @"
 
-##### Функциональность
+##### $( $loc.Functionality )
 
 $Description
 "@
@@ -1063,16 +1064,15 @@ $Description
 						if ( $Help.Role ) {
 @"
 
-##### Требуемая роль пользователя
+##### $( $loc.Role )
 
-Для выполнения функции $($FunctionInfo.Name) требуется роль $($Help.Role) для учётной записи,
-от имени которой будет выполнена описываемая функция.
+$( [String]::Format( $loc.RoleDetails, $Help.Role, $FunctionInfo.Name ) )
 "@
 						};
 						if ( $Help.inputTypes ) {
 @"
 
-##### Принимаемые данные по конвейеру
+##### $( $loc.InputTypes )
 
 "@
 							$Help.inputTypes.inputType `
@@ -1089,7 +1089,7 @@ $Description
 						if ( $Help.returnValues ) {
 @"
 
-##### Передаваемые по конвейеру данные
+##### $( $loc.ReturnValues )
 
 "@
 							$Help.returnValues.returnValue `
@@ -1113,7 +1113,7 @@ $Description
 							;
 @"
 
-##### Параметры
+##### $( $loc.Parameters )
 $Description
 "@
 						};
@@ -1123,7 +1123,7 @@ $Description
 								$ExNum=0;
 @"
 
-##### Примеры использования
+##### $( $loc.Examples )
 "@
 							} `
 							-Process {
@@ -1145,7 +1145,7 @@ $ExNum. $Comment
 								} else {
 @"
 
-$ExNum. Пример $ExNum.
+$ExNum. $( [String]::Format( $loc.Example, $ExNum ) )
 "@
 								};
 @"
@@ -1157,7 +1157,7 @@ $ExNum. Пример $ExNum.
 						if ( $Help.relatedLinks ) {
 @"
 
-##### См. также
+##### $( $loc.RelatedLinks )
 
 "@
 							$Help.relatedLinks.navigationLink `
@@ -1166,16 +1166,12 @@ $ExNum. Пример $ExNum.
 								# обрабатываем ссылки на online версию справки
 								if ( $_.uri -match $reOnlineHelpLinkCheck ) {
 @"
-- [$( & { if ( $_.LinkText ) { $_.LinkText } else { 'Online версия справки' } } )]($( $_.uri ))
+- [$( & { if ( $_.LinkText ) { $_.LinkText } else { $( $loc.OnlineHelp ) } } )]($( $_.uri ))
 "@
 								} else {
 									Write-Warning `
 										-Message @"
-Обнаружена ошибка при оформлении раздела .Link в справке к функции $( $FunctionInfo.Name ).
-Если содержание указанного раздела начинается с URL, то оно трактуется как ссылка на online 
-версию справки. И не может содержать ничего, кроме URL.
-
-Раздел с ошибочным содержанием:
+$( [String]::Format( $loc.WarningLinkError, $FunctionInfo.Name ) )
 
 	$( $_.uri )
 	
@@ -1356,7 +1352,7 @@ Function Set-Readme {
 
 ---------------------------------------
 
-Генератор: [ITG.Readme](http://github.com/IT-Service/ITG.Readme "Модуль PowerShell для генерации readme для модулей PowerShell").
+$( [String]::Format( $loc.GeneratorAbout, 'ITG.Readme', 'http://github.com/IT-Service/ITG.Readme' ) )
 "@ `
 				) `
 				| Out-String `
@@ -1540,6 +1536,10 @@ Function Set-AboutModule {
 	            | Join-Path -ChildPath "about_$( $ModuleInfo.Name ).txt" `
             ;
         };
+		$Dir = Split-Path -Path ( $PSPath ) -Parent;
+		if ( -not ( Test-Path -LiteralPath $Dir ) ) {
+			$null = New-Item -Path $Dir -ItemType Directory;
+		};
 		$null = $PSBoundParameters.Remove( 'PSPath' );
 		$null = $PSBoundParameters.Remove( 'PassThru' );
 
@@ -1551,7 +1551,7 @@ Function Set-AboutModule {
 
 ---------------------------------------
 
-Генератор: [ITG.Readme](http://github.com/IT-Service/ITG.Readme "Модуль PowerShell для генерации readme для модулей PowerShell").
+$( [String]::Format( $loc.GeneratorAbout, 'ITG.Readme', 'http://github.com/IT-Service/ITG.Readme' ) )
 "@ `
 				) `
 				| Out-String `
@@ -1756,7 +1756,7 @@ Function New-HelpXML {
 		switch ( $PsCmdlet.ParameterSetName ) {
 			'ModuleInfo' {
 				[System.Xml.XmlDocument]$HelpContent = @"
-<!-- Генератор: ITG.Readme (http://github.com/IT-Service/ITG.Readme). -->
+<!-- $( [String]::Format( $loc.GeneratorXmlAbout, 'ITG.Readme', 'http://github.com/IT-Service/ITG.Readme' ) ) -->
 <helpItems
 	xmlns="$( $HelpXMLNS.msh )"
 	xmlns:maml="$( $HelpXMLNS.maml )"
@@ -1782,13 +1782,13 @@ Function New-HelpXML {
 				;
 				if ( -not ( Test-Path -LiteralPath $ModuleManifestPath ) ) {
 					Write-Error `
-						-Message "Не обнаружен манифест ($ModuleManifestPath) модуля. XML справка может быть получена только при наличии манифеста." `
+						-Message ( [String]::Format( $loc.ErrorModuleManifestPathMessage, $ModuleManifestPath ) ) `
 						-Category ResourceUnavailable `
-						-CategoryActivity 'Загрузка манифеста модуля' `
-						-CategoryReason 'Не обнаружен манифест модуля.' `
+						-CategoryActivity ( $loc.ErrorModuleManifestPathActivity ) `
+						-CategoryReason ( $loc.ErrorModuleManifestPathReason ) `
 						-CategoryTargetName ( $FunctionInfo.Module.Name ) `
 						-TargetObject ( $FunctionInfo.Module ) `
-						-RecommendedAction 'Создайте .psd1 манифест к модулю и разместите его в каталоге модуля.' `
+						-RecommendedAction ( $loc.ErrorModuleManifestPathRecommendedAction ) `
 					;
 					return;
 				};
@@ -2055,7 +2055,7 @@ Function Get-HelpXML {
 					));
 				} else {
 					return [xml] @"
-<!-- Генератор: ITG.Readme (http://github.com/IT-Service/ITG.Readme). -->
+<!-- $( [String]::Format( $loc.GeneratorXmlAbout, 'ITG.Readme', 'http://github.com/IT-Service/ITG.Readme' ) ) -->
 <helpItems
 	xmlns="$( $HelpXMLNS.msh )"
 	xmlns:maml="$( $HelpXMLNS.maml )"
@@ -2240,7 +2240,7 @@ Function Set-HelpXML {
 					;
 					if ( $MakeCabProcess.ExitCode ) {
 						Write-Error `
-							-Message "Возникла ошибка $( $MakeCabProcess.ExitCode ) при выполнении makecab.exe." `
+							-Message ( [String]::Format( $loc.ErrorMakeCabMessage, $MakeCabProcess.ExitCode ) ) `
 						;
 					};
 				};
@@ -2617,15 +2617,15 @@ Function Set-HelpInfo {
 						-ChildPath "$( $ModuleInfo.Name ).psd1" `
 					;
 					if ( -not ( Test-Path -LiteralPath $ModuleManifestPath ) ) {
-						Write-Error `
-							-Message "Не обнаружен манифест ($ModuleManifestPath) модуля." `
-							-Category ResourceUnavailable `
-							-CategoryActivity 'Загрузка манифеста модуля' `
-							-CategoryReason 'Не обнаружен манифест модуля.' `
-							-CategoryTargetName ( $ModuleInfo.Name ) `
-							-TargetObject ( $ModuleInfo ) `
-							-RecommendedAction 'Создайте .psd1 манифест к модулю и разместите его в каталоге модуля.' `
-						;
+					    Write-Error `
+						    -Message ( [String]::Format( $loc.ErrorModuleManifestPathMessage, $ModuleManifestPath ) ) `
+						    -Category ResourceUnavailable `
+						    -CategoryActivity ( $loc.ErrorModuleManifestPathActivity ) `
+						    -CategoryReason ( $loc.ErrorModuleManifestPathReason ) `
+						    -CategoryTargetName ( $FunctionInfo.Module.Name ) `
+						    -TargetObject ( $FunctionInfo.Module ) `
+						    -RecommendedAction ( $loc.ErrorModuleManifestPathRecommendedAction ) `
+					    ;
 						return;
 					};
 					( Get-Content `
