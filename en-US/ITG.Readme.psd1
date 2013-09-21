@@ -17,6 +17,7 @@ ReturnValues = Return values
 Parameters = Parameters
 Examples = Examples
 Example = Example {0}.
+Notes = Notes
 RelatedLinks = Related links
 OnlineHelp = Online help
 GeneratorAbout = Generator: [{0}]({1} "PowerShell module for readme.md creating").

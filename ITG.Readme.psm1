@@ -1052,18 +1052,15 @@ $( $loc.FunctionsDescriptionFull -replace '.','-')
 
 ##### $( $loc.Component )
 
-$($Help.Component)
+$( $Help.Component )
 "@
 						};
 						if ( $Help.Functionality ) {
-							$Description = `
-								$Help.Functionality `
-							;
 @"
 
 ##### $( $loc.Functionality )
 
-$Description
+$( $Help.Functionality )
 "@
 						};
 						if ( $Help.Role ) {
@@ -1158,6 +1155,19 @@ $ExNum. $( [String]::Format( $loc.Example, $ExNum ) )
 		$($_.code)
 "@
 							};
+						};
+						if ( $Help.alertSet ) {
+@"
+
+##### $( $loc.Notes )
+
+"@
+                            (
+                                $Help.alertSet.alert `
+	                            | Select-Object -ExpandProperty Text `
+                                | Out-String `
+                                | Expand-Definitions `
+                            ) -replace "(`r`n)+$", '';
 						};
 						if ( $Help.relatedLinks ) {
 @"

@@ -17,6 +17,7 @@ ReturnValues = Передаваемые по конвейеру данные
 Parameters = Параметры
 Examples = Примеры использования
 Example = Пример {0}.
+Notes = Примечания
 RelatedLinks = См. также
 OnlineHelp = Online версия справки
 GeneratorAbout= Генератор: [{0}]({1} "Модуль PowerShell для генерации readme для модулей PowerShell").
