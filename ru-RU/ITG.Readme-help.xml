@@ -3,6 +3,119 @@
 <helpItems xmlns="http://msh" xmlns:maml="http://schemas.microsoft.com/maml/2004/10" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:MSHelp="http://msdn.microsoft.com/mshelp" schema="maml">
 	<command xmlns:msh="http://msh" xmlns="http://schemas.microsoft.com/maml/dev/command/2004/10">
 		<details>
+			<name>Get-AboutModule</name>
+			<verb>Get</verb>
+			<noun>AboutModule</noun>
+			<maml:description>
+				<maml:para>Генерирует содержимое файла `about_$(ModuleInfo.Name).txt` с MarkDown разметкой по данным модуля и комментариям к его функциям.</maml:para>
+			</maml:description>
+			<maml:copyright>
+				<maml:para>(c) 2012 Sergey S. Betke. All rights reserved.</maml:para>
+			</maml:copyright>
+			<dev:version>2.2.0</dev:version>
+		</details>
+		<maml:functionality>Readme</maml:functionality>
+		<maml:role>Everyone</maml:role>
+		<maml:description>
+			<maml:para>Генерирует содержимое файла `about_$(ModuleInfo.Name).txt` с MarkDown разметкой по данным модуля и комментариям к его функциям. Для сохранения в файл используйте Set-AboutModule.</maml:para>
+		</maml:description>
+		<syntax>
+			<syntaxItem>
+				<maml:name>Get-AboutModule</maml:name>
+				<parameter required="true" position="1" pipelineInput="true (ByValue)" globbing="false">
+					<maml:name>ModuleInfo</maml:name>
+					<parameterValue required="true">PSModuleInfo</parameterValue>
+				</parameter>
+				<parameter required="false" position="named" pipelineInput="false" globbing="false">
+					<maml:name>UICulture</maml:name>
+					<parameterValue required="false">CultureInfo</parameterValue>
+				</parameter>
+				<parameter required="false" position="named" pipelineInput="false" globbing="false">
+					<maml:name>ReferencedModules</maml:name>
+					<parameterValue required="false">PSModuleInfo[]</parameterValue>
+				</parameter>
+			</syntaxItem>
+		</syntax>
+		<parameters>
+			<parameter required="true" position="1" pipelineInput="true (ByValue)" globbing="false">
+				<maml:name>ModuleInfo</maml:name>
+				<maml:description>
+					<maml:para>Описатель модуля</maml:para>
+				</maml:description>
+				<parameterValue required="True">PSModuleInfo</parameterValue>
+			</parameter>
+			<parameter required="false" position="named" pipelineInput="false" globbing="false">
+				<maml:name>UICulture</maml:name>
+				<maml:description>
+					<maml:para>культура, для которой генерировать данные, на данный момент параметр задавать не следует.</maml:para>
+				</maml:description>
+				<parameterValue required="True">CultureInfo</parameterValue>
+				<defaultValue>( Get-Culture )</defaultValue>
+			</parameter>
+			<parameter required="false" position="named" pipelineInput="false" globbing="false">
+				<maml:name>ReferencedModules</maml:name>
+				<maml:description>
+					<maml:para>Перечень модулей, упоминания функций которых будут заменены на ссылки</maml:para>
+				</maml:description>
+				<parameterValue required="True">PSModuleInfo[]</parameterValue>
+				<defaultValue>@()</defaultValue>
+			</parameter>
+		</parameters>
+		<inputTypes>
+			<inputType>
+				<dev:type>
+					<maml:name>System.Management.Automation.PSModuleInfo.</maml:name>
+					<maml:description>
+						<maml:para>Описатели модулей, для которых будет сгенерирован about.txt. Получены описатели могут быть через Get-Module.</maml:para>
+					</maml:description>
+				</dev:type>
+				<maml:description>
+					<maml:para>Описатели модулей, для которых будет сгенерирован about.txt. Получены описатели могут быть через Get-Module.</maml:para>
+				</maml:description>
+			</inputType>
+		</inputTypes>
+		<returnValues>
+			<returnValue>
+				<dev:type>
+					<maml:name>String.</maml:name>
+					<maml:description>
+						<maml:para>Содержимое about.txt.</maml:para>
+					</maml:description>
+				</dev:type>
+				<maml:description>
+					<maml:para>Содержимое about.txt.</maml:para>
+				</maml:description>
+			</returnValue>
+		</returnValues>
+		<examples>
+			<example>
+				<maml:title>-------------------------- ПРИМЕР 1 --------------------------</maml:title>
+				<maml:introduction>
+					<maml:paragraph>C:\PS&gt;</maml:paragraph>
+				</maml:introduction>
+				<dev:code>Get-Module 'ITG.Yandex.DnsServer' | Get-AboutModule;</dev:code>
+				<maml:remarks>
+					<maml:para>Генерация содержимого about.txt файла для модуля `ITG.Yandex.DnsServer`.</maml:para>
+				</maml:remarks>
+			</example>
+		</examples>
+		<maml:relatedLinks>
+			<maml:navigationLink>
+				<maml:linkText>[MarkDown]: &lt;http://daringfireball.net/projects/markdown/syntax&gt; "MarkDown (md) Syntax"</maml:linkText>
+			</maml:navigationLink>
+			<maml:navigationLink>
+				<maml:linkText>about_comment_based_help</maml:linkText>
+			</maml:navigationLink>
+			<maml:navigationLink>
+				<maml:linkText>[Написание справки для командлетов](http://go.microsoft.com/fwlink/?LinkID=123415)</maml:linkText>
+			</maml:navigationLink>
+			<maml:navigationLink>
+				<maml:uri>http://github.com/IT-Service/ITG.Readme#Get-AboutModule</maml:uri>
+			</maml:navigationLink>
+		</maml:relatedLinks>
+	</command>
+	<command xmlns:msh="http://msh" xmlns="http://schemas.microsoft.com/maml/dev/command/2004/10">
+		<details>
 			<name>Get-HelpInfo</name>
 			<verb>Get</verb>
 			<noun>HelpInfo</noun>
@@ -12,7 +125,7 @@
 			<maml:copyright>
 				<maml:para>(c) 2012 Sergey S. Betke. All rights reserved.</maml:para>
 			</maml:copyright>
-			<dev:version>2.1.0</dev:version>
+			<dev:version>2.2.0</dev:version>
 		</details>
 		<maml:role>Everyone</maml:role>
 		<maml:description>
@@ -106,7 +219,7 @@
 			<maml:copyright>
 				<maml:para>(c) 2012 Sergey S. Betke. All rights reserved.</maml:para>
 			</maml:copyright>
-			<dev:version>2.1.0</dev:version>
+			<dev:version>2.2.0</dev:version>
 		</details>
 		<maml:role>Everyone</maml:role>
 		<maml:description>
@@ -214,7 +327,7 @@
 			<maml:copyright>
 				<maml:para>(c) 2012 Sergey S. Betke. All rights reserved.</maml:para>
 			</maml:copyright>
-			<dev:version>2.1.0</dev:version>
+			<dev:version>2.2.0</dev:version>
 		</details>
 		<maml:functionality>Readme</maml:functionality>
 		<maml:role>Everyone</maml:role>
@@ -451,7 +564,7 @@
 			<maml:copyright>
 				<maml:para>(c) 2012 Sergey S. Betke. All rights reserved.</maml:para>
 			</maml:copyright>
-			<dev:version>2.1.0</dev:version>
+			<dev:version>2.2.0</dev:version>
 		</details>
 		<maml:role>Everyone</maml:role>
 		<maml:description>
@@ -568,7 +681,7 @@
 			<maml:copyright>
 				<maml:para>(c) 2012 Sergey S. Betke. All rights reserved.</maml:para>
 			</maml:copyright>
-			<dev:version>2.1.0</dev:version>
+			<dev:version>2.2.0</dev:version>
 		</details>
 		<maml:role>Everyone</maml:role>
 		<maml:description>
@@ -684,6 +797,120 @@
 	</command>
 	<command xmlns:msh="http://msh" xmlns="http://schemas.microsoft.com/maml/dev/command/2004/10">
 		<details>
+			<name>Set-AboutModule</name>
+			<verb>Set</verb>
+			<noun>AboutModule</noun>
+			<maml:description>
+				<maml:para>Генерирует файл `about_$(ModuleInfo.Name).txt` с MarkDown разметкой по данным модуля и комментариям к его функциям.</maml:para>
+			</maml:description>
+			<maml:copyright>
+				<maml:para>(c) 2012 Sergey S. Betke. All rights reserved.</maml:para>
+			</maml:copyright>
+			<dev:version>2.2.0</dev:version>
+		</details>
+		<maml:functionality>Readme</maml:functionality>
+		<maml:role>Everyone</maml:role>
+		<maml:description>
+			<maml:para>Генерирует файл `about_$(ModuleInfo.Name).txt` с MarkDown разметкой по данным модуля и комментариям к его функциям в подкаталоге указанной культуры в каталоге модуля или в соответствии с указанным значением параметра `Path`.</maml:para>
+		</maml:description>
+		<syntax>
+			<syntaxItem>
+				<maml:name>Set-AboutModule</maml:name>
+				<parameter required="true" position="1" pipelineInput="true (ByValue)" globbing="false">
+					<maml:name>ModuleInfo</maml:name>
+					<parameterValue required="true">PSModuleInfo</parameterValue>
+				</parameter>
+				<parameter required="false" position="named" pipelineInput="false" globbing="false">
+					<maml:name>UICulture</maml:name>
+					<parameterValue required="false">CultureInfo</parameterValue>
+				</parameter>
+				<parameter required="false" position="named" pipelineInput="false" globbing="false">
+					<maml:name>PSPath</maml:name>
+					<parameterValue required="false">String</parameterValue>
+				</parameter>
+				<parameter required="false" position="named" pipelineInput="false" globbing="false">
+					<maml:name>ReferencedModules</maml:name>
+					<parameterValue required="false">PSModuleInfo[]</parameterValue>
+				</parameter>
+			</syntaxItem>
+		</syntax>
+		<parameters>
+			<parameter required="true" position="1" pipelineInput="true (ByValue)" globbing="false">
+				<maml:name>ModuleInfo</maml:name>
+				<maml:description>
+					<maml:para>Описатель модуля</maml:para>
+				</maml:description>
+				<parameterValue required="True">PSModuleInfo</parameterValue>
+			</parameter>
+			<parameter required="false" position="named" pipelineInput="false" globbing="false">
+				<maml:name>UICulture</maml:name>
+				<maml:description>
+					<maml:para>культура, для которой генерировать данные, на данный момент параметр задавать не следует.</maml:para>
+				</maml:description>
+				<parameterValue required="True">CultureInfo</parameterValue>
+				<defaultValue>( Get-Culture )</defaultValue>
+			</parameter>
+			<parameter required="false" position="named" pipelineInput="false" globbing="false">
+				<maml:name>PSPath</maml:name>
+				<maml:description>
+					<maml:para>Путь для about.txt файла. По умолчанию - в подкаталоге указанной культуры.</maml:para>
+				</maml:description>
+				<parameterValue required="True">String</parameterValue>
+			</parameter>
+			<parameter required="false" position="named" pipelineInput="false" globbing="false">
+				<maml:name>ReferencedModules</maml:name>
+				<maml:description>
+					<maml:para>Перечень модулей, упоминания функций которых будут заменены на ссылки</maml:para>
+				</maml:description>
+				<parameterValue required="True">PSModuleInfo[]</parameterValue>
+				<defaultValue>@()</defaultValue>
+			</parameter>
+		</parameters>
+		<inputTypes>
+			<inputType>
+				<dev:type>
+					<maml:name>System.Management.Automation.PSModuleInfo.</maml:name>
+					<maml:description>
+						<maml:para>Описатели модулей, для которых будет сгенерирован readme.md. Получены описатели могут быть через Get-Module.</maml:para>
+					</maml:description>
+				</dev:type>
+				<maml:description>
+					<maml:para>Описатели модулей, для которых будет сгенерирован readme.md. Получены описатели могут быть через Get-Module.</maml:para>
+				</maml:description>
+			</inputType>
+		</inputTypes>
+		<examples>
+			<example>
+				<maml:title>-------------------------- ПРИМЕР 1 --------------------------</maml:title>
+				<maml:introduction>
+					<maml:paragraph>C:\PS&gt;</maml:paragraph>
+				</maml:introduction>
+				<dev:code>Get-Module 'ITG.Yandex.DnsServer' | Set-AboutModule;</dev:code>
+				<maml:remarks>
+					<maml:para>Генерация `about_ITG.Yandex.DnsServer.txt` файла для модуля `ITG.Yandex.DnsServer` в подкаталоге текущей культуры в каталоге модуля.</maml:para>
+				</maml:remarks>
+			</example>
+		</examples>
+		<maml:relatedLinks>
+			<maml:navigationLink>
+				<maml:linkText>Get-AboutModule</maml:linkText>
+			</maml:navigationLink>
+			<maml:navigationLink>
+				<maml:linkText>[MarkDown]: &lt;http://daringfireball.net/projects/markdown/syntax&gt; "MarkDown (md) Syntax"</maml:linkText>
+			</maml:navigationLink>
+			<maml:navigationLink>
+				<maml:linkText>about_comment_based_help</maml:linkText>
+			</maml:navigationLink>
+			<maml:navigationLink>
+				<maml:linkText>[Написание справки для командлетов](http://go.microsoft.com/fwlink/?LinkID=123415)</maml:linkText>
+			</maml:navigationLink>
+			<maml:navigationLink>
+				<maml:uri>http://github.com/IT-Service/ITG.Readme#Set-AboutModule</maml:uri>
+			</maml:navigationLink>
+		</maml:relatedLinks>
+	</command>
+	<command xmlns:msh="http://msh" xmlns="http://schemas.microsoft.com/maml/dev/command/2004/10">
+		<details>
 			<name>Set-HelpInfo</name>
 			<verb>Set</verb>
 			<noun>HelpInfo</noun>
@@ -693,7 +920,7 @@
 			<maml:copyright>
 				<maml:para>(c) 2012 Sergey S. Betke. All rights reserved.</maml:para>
 			</maml:copyright>
-			<dev:version>2.1.0</dev:version>
+			<dev:version>2.2.0</dev:version>
 		</details>
 		<maml:role>Everyone</maml:role>
 		<maml:description>
@@ -805,7 +1032,7 @@
 			<maml:copyright>
 				<maml:para>(c) 2012 Sergey S. Betke. All rights reserved.</maml:para>
 			</maml:copyright>
-			<dev:version>2.1.0</dev:version>
+			<dev:version>2.2.0</dev:version>
 		</details>
 		<maml:role>Everyone</maml:role>
 		<maml:description>
@@ -979,7 +1206,7 @@
 			<maml:copyright>
 				<maml:para>(c) 2012 Sergey S. Betke. All rights reserved.</maml:para>
 			</maml:copyright>
-			<dev:version>2.1.0</dev:version>
+			<dev:version>2.2.0</dev:version>
 		</details>
 		<maml:functionality>Readme</maml:functionality>
 		<maml:role>Everyone</maml:role>

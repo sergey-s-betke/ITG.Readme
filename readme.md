@@ -1,17 +1,36 @@
 ﻿ITG.Readme
 ==========
 
-Набор функций для PowerShell для генерации readme файла для модулей и функций.
+Набор функций для PowerShell для генерации readme файла для модулей и функций PowerShell.
 Файл Readme.md для этого модуля сгенерирован функциями этого же модуля.
-Весь функционал модуля предоставлен командлетом [Get-Readme][].
 
 Формат генерируемого Readme.MD файла - текстовый файл в кодировке UTF-8 с
 разметкой [MarkDown][].
 
-Версия модуля: **2.1.0**
+Версия модуля: **2.2.0**
 
 Функции модуля
 --------------
+
+### AboutModule
+
+#### Обзор [Get-AboutModule][]
+
+Генерирует содержимое файла `about_$(ModuleInfo.Name).txt` с [MarkDown][] разметкой
+по данным модуля и комментариям к его функциям.
+
+	Get-AboutModule [-ModuleInfo] <PSModuleInfo> [-UICulture <CultureInfo>] [-ReferencedModules <PSModuleInfo[]>] <CommonParameters>
+
+Подробнее - [Get-AboutModule][].
+
+#### Обзор [Set-AboutModule][]
+
+Генерирует файл `about_$(ModuleInfo.Name).txt` с [MarkDown][] разметкой
+по данным модуля и комментариям к его функциям.
+
+	Set-AboutModule [-ModuleInfo] <PSModuleInfo> [-UICulture <CultureInfo>] [-PSPath <String>] [-ReferencedModules <PSModuleInfo[]>] <CommonParameters>
+
+Подробнее - [Set-AboutModule][].
 
 ### HelpInfo
 
@@ -98,6 +117,173 @@
 
 Подробное описание функций модуля
 ---------------------------------
+
+#### Get-AboutModule
+
+Генерирует содержимое файла `about_$(ModuleInfo.Name).txt` с [MarkDown][] разметкой
+по данным модуля и комментариям к его функциям.
+         Для сохранения в файл используйте [Set-AboutModule][].
+
+##### Синтаксис
+
+	Get-AboutModule [-ModuleInfo] <PSModuleInfo> [-UICulture <CultureInfo>] [-ReferencedModules <PSModuleInfo[]>] <CommonParameters>
+
+##### Функциональность
+
+Readme
+
+##### Требуемая роль пользователя
+
+Для выполнения функции Get-AboutModule требуется роль Everyone для учётной записи,
+от имени которой будет выполнена описываемая функция.
+
+##### Принимаемые данные по конвейеру
+
+- System.Management.Automation.PSModuleInfo.
+Описатели модулей, для которых будет сгенерирован about.txt.
+Получены описатели могут быть через Get-Module.
+
+##### Передаваемые по конвейеру данные
+
+- String.
+Содержимое about.txt.
+
+##### Параметры
+
+- `ModuleInfo <PSModuleInfo>`
+        Описатель модуля
+
+        Требуется? true
+        Позиция? 1
+        Значение по умолчанию
+        Принимать входные данные конвейера?true (ByValue)
+        Принимать подстановочные знаки?false
+
+- `UICulture <CultureInfo>`
+        культура, для которой генерировать данные, на данный момент параметр задавать не следует.
+
+        Требуется? false
+        Позиция? named
+        Значение по умолчанию ( Get-Culture )
+        Принимать входные данные конвейера?false
+        Принимать подстановочные знаки?false
+
+- `ReferencedModules <PSModuleInfo[]>`
+        Перечень модулей, упоминания функций которых будут заменены на ссылки
+
+        Требуется? false
+        Позиция? named
+        Значение по умолчанию @()
+        Принимать входные данные конвейера?false
+        Принимать подстановочные знаки?false
+
+- `<CommonParameters>`
+        Этот командлет поддерживает общие параметры: Verbose, Debug,
+        ErrorAction, ErrorVariable, WarningAction, WarningVariable,
+        OutBuffer и OutVariable. Для получения дополнительных сведений см. раздел
+        [about_CommonParameters][].
+
+
+
+##### Примеры использования
+
+1. Генерация содержимого about.txt файла для модуля `ITG.Yandex.DnsServer`.
+
+		Get-Module 'ITG.Yandex.DnsServer' | Get-AboutModule;
+
+##### См. также
+
+- [Online версия справки](http://github.com/IT-Service/ITG.Readme#Get-AboutModule)
+- [MarkDown][]
+- [about_Comment_Based_Help][]
+- [Написание справки для командлетов](http://go.microsoft.com/fwlink/?LinkID=123415)
+
+#### Set-AboutModule
+
+Генерирует файл `about_$(ModuleInfo.Name).txt` с [MarkDown][] разметкой
+по данным модуля и комментариям к его функциям в подкаталоге указанной
+культуры в каталоге модуля или в соответствии с указанным значением
+параметра `Path`.
+
+##### Синтаксис
+
+	Set-AboutModule [-ModuleInfo] <PSModuleInfo> [-UICulture <CultureInfo>] [-PSPath <String>] [-ReferencedModules <PSModuleInfo[]>] <CommonParameters>
+
+##### Функциональность
+
+Readme
+
+##### Требуемая роль пользователя
+
+Для выполнения функции Set-AboutModule требуется роль Everyone для учётной записи,
+от имени которой будет выполнена описываемая функция.
+
+##### Принимаемые данные по конвейеру
+
+- System.Management.Automation.PSModuleInfo.
+Описатели модулей, для которых будет сгенерирован readme.md.
+Получены описатели могут быть через Get-Module.
+
+##### Параметры
+
+- `ModuleInfo <PSModuleInfo>`
+        Описатель модуля
+
+        Требуется? true
+        Позиция? 1
+        Значение по умолчанию
+        Принимать входные данные конвейера?true (ByValue)
+        Принимать подстановочные знаки?false
+
+- `UICulture <CultureInfo>`
+        культура, для которой генерировать данные, на данный момент параметр задавать не следует.
+
+        Требуется? false
+        Позиция? named
+        Значение по умолчанию ( Get-Culture )
+        Принимать входные данные конвейера?false
+        Принимать подстановочные знаки?false
+
+- `PSPath <String>`
+        Путь для about.txt файла. По умолчанию - в подкаталоге указанной культуры.
+
+        Требуется? false
+        Позиция? named
+        Значение по умолчанию
+        Принимать входные данные конвейера?false
+        Принимать подстановочные знаки?false
+
+- `ReferencedModules <PSModuleInfo[]>`
+        Перечень модулей, упоминания функций которых будут заменены на ссылки
+
+        Требуется? false
+        Позиция? named
+        Значение по умолчанию @()
+        Принимать входные данные конвейера?false
+        Принимать подстановочные знаки?false
+
+- `<CommonParameters>`
+        Этот командлет поддерживает общие параметры: Verbose, Debug,
+        ErrorAction, ErrorVariable, WarningAction, WarningVariable,
+        OutBuffer и OutVariable. Для получения дополнительных сведений см. раздел
+        [about_CommonParameters][].
+
+
+
+##### Примеры использования
+
+1. Генерация `about_ITG.Yandex.DnsServer.txt` файла для модуля `ITG.Yandex.DnsServer`
+в подкаталоге текущей культуры в каталоге модуля.
+
+		Get-Module 'ITG.Yandex.DnsServer' | Set-AboutModule;
+
+##### См. также
+
+- [Online версия справки](http://github.com/IT-Service/ITG.Readme#Set-AboutModule)
+- [Get-AboutModule][]
+- [MarkDown][]
+- [about_Comment_Based_Help][]
+- [Написание справки для командлетов](http://go.microsoft.com/fwlink/?LinkID=123415)
 
 #### Get-HelpInfo
 
@@ -874,12 +1060,14 @@ Readme
 [about_Comment_Based_Help]: http://go.microsoft.com/fwlink/?LinkID=144309 "Describes how to write comment-based help topics for functions and scripts."
 [about_CommonParameters]: http://go.microsoft.com/fwlink/?LinkID=113216 "Describes the parameters that can be used with any cmdlet."
 [about_Updatable_Help]: http://go.microsoft.com/fwlink/?LinkID=235801 "SHORT DESCRIPTION..."
+[Get-AboutModule]: <#get-aboutmodule> "Генерирует содержимое файла `about_$(ModuleInfo.Name).txt` с MarkDown разметкой по данным модуля и комментариям к его функциям."
 [Get-HelpInfo]: <#get-helpinfo> "Возвращает HelpInfo.xml (как xml) для указанного модуля."
 [Get-HelpXML]: <#get-helpxml> "Возващает XML содержимое xml файла справки для переданного модуля."
 [Get-Readme]: <#get-readme> "Генерирует readme с MarkDown разметкой по данным модуля и комментариям к его функциям."
 [MarkDown]: http://daringfireball.net/projects/markdown/syntax "MarkDown (md) Syntax"
 [New-HelpInfo]: <#new-helpinfo> "Генерирует HelpInfo XML для переданного модуля."
 [New-HelpXML]: <#new-helpxml> "Генерирует XML справку для переданного модуля, функции, командлеты."
+[Set-AboutModule]: <#set-aboutmodule> "Генерирует файл `about_$(ModuleInfo.Name).txt` с MarkDown разметкой по данным модуля и комментариям к его функциям."
 [Set-HelpInfo]: <#set-helpinfo> "Генерирует HelpInfo XML для указанного модуля."
 [Set-HelpXML]: <#set-helpxml> "Генерирует XML файл справки для переданного модуля, функции, командлеты."
 [Set-Readme]: <#set-readme> "Генерирует readme файл с MarkDown разметкой по данным модуля и комментариям к его функциям. Файл предназначен, в частности, для размещения в репозиториях github."

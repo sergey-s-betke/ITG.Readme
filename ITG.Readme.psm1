@@ -1369,6 +1369,190 @@ Function Set-Readme {
 	}
 }
 
+Function Get-AboutModule {
+	<#
+		.Synopsis
+			Генерирует содержимое файла `about_$(ModuleInfo.Name).txt` с MarkDown разметкой
+			по данным модуля и комментариям к его функциям. 
+		.Description
+			Генерирует содержимое файла `about_$(ModuleInfo.Name).txt` с MarkDown разметкой
+			по данным модуля и комментариям к его функциям.
+            Для сохранения в файл используйте Set-AboutModule.
+		.Functionality
+			Readme
+		.Role
+			Everyone
+		.Notes
+		.Inputs
+			System.Management.Automation.PSModuleInfo.
+			Описатели модулей, для которых будет сгенерирован about.txt. 
+			Получены описатели могут быть через Get-Module.
+		.Outputs
+			String.
+			Содержимое about.txt.
+		.Link
+			[MarkDown]: <http://daringfireball.net/projects/markdown/syntax> "MarkDown (md) Syntax"
+		.Link
+			about_comment_based_help
+		.Link
+			[Написание справки для командлетов](http://go.microsoft.com/fwlink/?LinkID=123415)
+		.Link
+			http://github.com/IT-Service/ITG.Readme#Get-AboutModule
+		.Example
+			Get-Module 'ITG.Yandex.DnsServer' | Get-AboutModule;
+			Генерация содержимого about.txt файла для модуля `ITG.Yandex.DnsServer`.
+	#>
+	
+	[CmdletBinding(
+		DefaultParametersetName='ModuleInfo'
+	)]
+
+	param (
+		# Описатель модуля
+		[Parameter(
+			Mandatory=$true
+			, Position=0
+			, ValueFromPipeline=$true
+			, ParameterSetName='ModuleInfo'
+		)]
+		[PSModuleInfo]
+		[Alias('Module')]
+		$ModuleInfo
+	,
+		# культура, для которой генерировать данные, на данный момент параметр задавать не следует.
+		[Parameter(
+			Mandatory=$false
+		)]
+		[System.Globalization.CultureInfo]
+		$UICulture = ( Get-Culture )
+	,
+		# Перечень модулей, упоминания функций которых будут заменены на ссылки
+		[Parameter(
+			Mandatory=$false
+		)]
+		[PSModuleInfo[]]
+		$ReferencedModules = @()
+	)
+
+	process {
+		switch ( $PsCmdlet.ParameterSetName ) {
+			'ModuleInfo' {
+                return Get-Readme `
+                    @PSBoundParameters `
+                    -ShortDescription `
+                ;
+			}
+		}
+	}
+}
+
+Function Set-AboutModule {
+	<#
+		.Synopsis
+			Генерирует файл `about_$(ModuleInfo.Name).txt` с MarkDown разметкой
+			по данным модуля и комментариям к его функциям.
+		.Description
+			Генерирует файл `about_$(ModuleInfo.Name).txt` с MarkDown разметкой
+			по данным модуля и комментариям к его функциям в подкаталоге указанной
+			культуры в каталоге модуля или в соответствии с указанным значением
+			параметра `Path`.
+		.Functionality
+			Readme
+		.Role
+			Everyone
+		.Notes
+		.Inputs
+			System.Management.Automation.PSModuleInfo.
+			Описатели модулей, для которых будет сгенерирован readme.md. 
+			Получены описатели могут быть через Get-Module.
+		.Link
+			Get-AboutModule
+		.Link
+			[MarkDown]: <http://daringfireball.net/projects/markdown/syntax> "MarkDown (md) Syntax"
+		.Link
+			about_comment_based_help
+		.Link
+			[Написание справки для командлетов](http://go.microsoft.com/fwlink/?LinkID=123415)
+		.Link
+			http://github.com/IT-Service/ITG.Readme#Set-AboutModule
+		.Example
+			Get-Module 'ITG.Yandex.DnsServer' | Set-AboutModule;
+			Генерация `about_ITG.Yandex.DnsServer.txt` файла для модуля `ITG.Yandex.DnsServer` 
+			в подкаталоге текущей культуры в каталоге модуля.
+	#>
+	
+	[CmdletBinding(
+		DefaultParametersetName='ModuleInfo'
+	)]
+
+	param (
+		# Описатель модуля
+		[Parameter(
+			Mandatory=$true
+			, Position=0
+			, ValueFromPipeline=$true
+			, ParameterSetName='ModuleInfo'
+		)]
+		[PSModuleInfo]
+		[Alias('Module')]
+		$ModuleInfo
+	,
+		# культура, для которой генерировать данные, на данный момент параметр задавать не следует.
+		[Parameter(
+			Mandatory=$false
+		)]
+		[System.Globalization.CultureInfo]
+		$UICulture = ( Get-Culture )
+	,
+		# Путь для about.txt файла. По умолчанию - в подкаталоге указанной культуры.
+		[Parameter(
+			ParameterSetName='ModuleInfo'
+			, Mandatory=$false
+		)]
+		[String]
+        [Alias('Path')]
+		$PSPath = ''
+	,
+		# Перечень модулей, упоминания функций которых будут заменены на ссылки
+		[Parameter(
+			Mandatory=$false
+		)]
+		[PSModuleInfo[]]
+		$ReferencedModules = @()
+	)
+
+	process {
+        if ( -not $PSPath ) {
+            $PSPath = `
+	            $ModuleInfo.ModuleBase `
+	            | Join-Path -ChildPath ( $UICulture.Name ) `
+	            | Join-Path -ChildPath "about_$( $ModuleInfo.Name ).txt" `
+            ;
+        };
+		$null = $PSBoundParameters.Remove( 'PSPath' );
+
+		switch ( $PsCmdlet.ParameterSetName ) {
+			'ModuleInfo' {
+				( Get-AboutModule @PSBoundParameters ) `
+				, (
+@"
+
+---------------------------------------
+
+Генератор: [ITG.Readme](http://github.com/IT-Service/ITG.Readme "Модуль PowerShell для генерации readme для модулей PowerShell").
+"@ `
+				) `
+				| Out-String `
+				| Set-Content `
+					-LiteralPath $PSPath `
+					-Encoding 'UTF8' `
+					-Force `
+				;
+			}
+		};
+	}
+}
+
 Filter Split-Para {
 	<#
 		.Synopsis
@@ -2442,6 +2626,8 @@ Function Set-HelpInfo {
 Export-ModuleMember `
 	  Get-Readme `
 	, Set-Readme `
+	, Get-AboutModule `
+	, Set-AboutModule `
 	, New-HelpXML `
 	, Get-HelpXML `
 	, Set-HelpXML `

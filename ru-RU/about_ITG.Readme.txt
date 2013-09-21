@@ -1,0 +1,114 @@
+﻿ITG.Readme
+==========
+
+Набор функций для PowerShell для генерации readme файла для модулей и функций PowerShell.
+Файл Readme.md для этого модуля сгенерирован функциями этого же модуля.
+
+Формат генерируемого Readme.MD файла - текстовый файл в кодировке UTF-8 с
+разметкой [MarkDown][].
+
+Версия модуля: **2.2.0**
+
+Функции модуля
+--------------
+
+### AboutModule
+
+#### Обзор [Get-AboutModule][]
+
+Генерирует содержимое файла `about_$(ModuleInfo.Name).txt` с [MarkDown][] разметкой
+по данным модуля и комментариям к его функциям.
+
+	Get-AboutModule [-ModuleInfo] <PSModuleInfo> [-UICulture <CultureInfo>] [-ReferencedModules <PSModuleInfo[]>] <CommonParameters>
+
+#### Обзор [Set-AboutModule][]
+
+Генерирует файл `about_$(ModuleInfo.Name).txt` с [MarkDown][] разметкой
+по данным модуля и комментариям к его функциям.
+
+	Set-AboutModule [-ModuleInfo] <PSModuleInfo> [-UICulture <CultureInfo>] [-PSPath <String>] [-ReferencedModules <PSModuleInfo[]>] <CommonParameters>
+
+### HelpInfo
+
+#### Обзор [Get-HelpInfo][]
+
+Возвращает HelpInfo.xml (как xml) для указанного модуля.
+
+	Get-HelpInfo [-ModuleInfo] <PSModuleInfo> <CommonParameters>
+
+#### Обзор [New-HelpInfo][]
+
+Генерирует HelpInfo XML для переданного модуля.
+
+	New-HelpInfo [-ModuleInfo] <PSModuleInfo> [-HelpContentUriTemplate <ScriptBlock>] [-HelpContentUri <Uri>] <CommonParameters>
+
+#### Обзор [Set-HelpInfo][]
+
+Генерирует HelpInfo XML для указанного модуля.
+
+	Set-HelpInfo [-ModuleInfo] <PSModuleInfo> [-HelpContentUri <Uri>] [-UpdateManifest] [-HelpInfoUri <Uri>] <CommonParameters>
+
+### HelpXML
+
+#### Обзор [Get-HelpXML][]
+
+Возващает XML содержимое xml файла справки для переданного модуля.
+
+	Get-HelpXML [-ModuleInfo] <PSModuleInfo> [-UICulture <CultureInfo>] [-PSPath <String>] <CommonParameters>
+
+#### Обзор [New-HelpXML][]
+
+Генерирует XML справку для переданного модуля, функции, командлеты.
+
+	New-HelpXML [-ModuleInfo] <PSModuleInfo> <CommonParameters>
+
+	New-HelpXML [-FunctionInfo] <FunctionInfo> <CommonParameters>
+
+#### Обзор [Set-HelpXML][]
+
+Генерирует XML файл справки для переданного модуля, функции, командлеты.
+
+	Set-HelpXML [-ModuleInfo] <PSModuleInfo> [-UICulture <CultureInfo>] [-PSPath <String>] [-UpdateModule] [-Cab] [-PSCabPath <String>] <CommonParameters>
+
+	Set-HelpXML [-FunctionInfo] <FunctionInfo> [-UICulture <CultureInfo>] <CommonParameters>
+
+### Readme
+
+#### Обзор [Get-Readme][]
+
+Генерирует readme с [MarkDown][] разметкой по данным модуля и комментариям к его функциям.
+
+	Get-Readme [-ModuleInfo] <PSModuleInfo> [-UICulture <CultureInfo>] [-ShortDescription] [-ReferencedModules <PSModuleInfo[]>] [-TranslateRules <Array>] <CommonParameters>
+
+	Get-Readme [-ExternalScriptInfo] <ExternalScriptInfo> [-UICulture <CultureInfo>] [-ShortDescription] [-ReferencedModules <PSModuleInfo[]>] [-TranslateRules <Array>] <CommonParameters>
+
+	Get-Readme [-FunctionInfo] <FunctionInfo> [-UICulture <CultureInfo>] [-ShortDescription] [-ReferencedModules <PSModuleInfo[]>] [-TranslateRules <Array>] <CommonParameters>
+
+#### Обзор [Set-Readme][]
+
+Генерирует readme файл с [MarkDown][] разметкой по данным модуля и комментариям к его функциям.
+Файл предназначен, в частности, для размещения в репозиториях github.
+
+	Set-Readme [-ModuleInfo] <PSModuleInfo> [-UICulture <CultureInfo>] [-PSPath <String>] [-ShortDescription] [-ReferencedModules <PSModuleInfo[]>] [-TranslateRules <Array>] <CommonParameters>
+
+	Set-Readme [-ExternalScriptInfo] <ExternalScriptInfo> [-UICulture <CultureInfo>] [-ShortDescription] [-ReferencedModules <PSModuleInfo[]>] [-TranslateRules <Array>] <CommonParameters>
+
+	Set-Readme [-FunctionInfo] <FunctionInfo> [-UICulture <CultureInfo>] [-ShortDescription] [-ReferencedModules <PSModuleInfo[]>] [-TranslateRules <Array>] <CommonParameters>
+
+
+[Get-AboutModule]: <#get-aboutmodule> "Генерирует содержимое файла `about_$(ModuleInfo.Name).txt` с MarkDown разметкой по данным модуля и комментариям к его функциям."
+[Get-HelpInfo]: <#get-helpinfo> "Возвращает HelpInfo.xml (как xml) для указанного модуля."
+[Get-HelpXML]: <#get-helpxml> "Возващает XML содержимое xml файла справки для переданного модуля."
+[Get-Readme]: <#get-readme> "Генерирует readme с MarkDown разметкой по данным модуля и комментариям к его функциям."
+[MarkDown]: http://daringfireball.net/projects/markdown/syntax "MarkDown (md) Syntax"
+[New-HelpInfo]: <#new-helpinfo> "Генерирует HelpInfo XML для переданного модуля."
+[New-HelpXML]: <#new-helpxml> "Генерирует XML справку для переданного модуля, функции, командлеты."
+[Set-AboutModule]: <#set-aboutmodule> "Генерирует файл `about_$(ModuleInfo.Name).txt` с MarkDown разметкой по данным модуля и комментариям к его функциям."
+[Set-HelpInfo]: <#set-helpinfo> "Генерирует HelpInfo XML для указанного модуля."
+[Set-HelpXML]: <#set-helpxml> "Генерирует XML файл справки для переданного модуля, функции, командлеты."
+[Set-Readme]: <#set-readme> "Генерирует readme файл с MarkDown разметкой по данным модуля и комментариям к его функциям. Файл предназначен, в частности, для размещения в репозиториях github."
+
+---------------------------------------
+
+Генератор: [ITG.Readme](http://github.com/IT-Service/ITG.Readme "Модуль PowerShell для генерации readme для модулей PowerShell").
+
