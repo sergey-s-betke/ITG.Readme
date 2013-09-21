@@ -74,6 +74,14 @@ Filter ConvertTo-TranslateRule {
 		[System.Management.Automation.FunctionInfo]
 		$FunctionInfo
 	,
+		# Генерировать правила для формирования ссылок как на функции внешнего модуля
+		[Parameter(
+			Mandatory = $false
+			, ValueFromPipelineByPropertyName = $true
+		)]
+		[switch]
+		$AsExternalModule
+	,
 		[Parameter(
 			Mandatory = $false
 			, ValueFromPipelineByPropertyName = $true
@@ -81,6 +89,13 @@ Filter ConvertTo-TranslateRule {
 		[String]
 		$ModuleName
 	,
+		[Parameter(
+			Mandatory = $false
+			, ValueFromPipelineByPropertyName = $true
+		)]
+		[PSModuleInfo]
+		$Module
+,
 		[Parameter(
 			Mandatory = $false
 			, ValueFromPipelineByPropertyName = $true
@@ -561,9 +576,28 @@ $BasicTranslateRules = `
 Function MatchEvaluatorForFunc( [System.Text.RegularExpressions.Match] $Match ) {
 	$id = $Match.Groups['func'].Value;
 	$title = ( ( Get-Help $id ).Synopsis -split '\s*\r?\n' ) -join ' ';
+    $ModuleReadmeURL = '';
+    if ( $Translator.TokenRules.func.$id.AsExternalModule ) {
+        $ModuleReadmeURL = $Translator.TokenRules.func.$id.Module.PrivateData.ReadmeURL;
+        if ( -not $ModuleReadmeURL ) {
+    		Write-Warning `
+	    		-Message @"
+В качестве зависимости при генерации справки использован модуль $( $Translator.TokenRules.func.$id.Module.Name ), в
+манифесте которого в PrivateData не определён ReadmeURL (url документа с описаниями функций модуля).
+Рекомендуем указать url в манифесте модуля следующим образом (пример):
+
+PrivateData = @{
+    ReadmeURL = 'https://github.com/$( $Translator.TokenRules.func.$id.Module.CompanyName )/$( $Translator.TokenRules.func.$id.Module.Name )';
+}
+	
+"@ `
+    		;
+            $ModuleReadmeURL = "https://github.com/IT-Service/$( $Translator.TokenRules.func.$id.Module.Name )";
+        };
+    };
 	Add-EndReference `
 		-id $id `
-		-url "<#$( $id.ToLower() )>" `
+		-url "<$ModuleReadmeURL#$( $id.ToLower() )>" `
 		-title $title `
 	;
 	return "[${id}][]";
@@ -593,6 +627,7 @@ Function Get-FunctionsReferenceTranslateRules {
 	process {
 		$ModuleInfo.ExportedFunctions.Values `
 		| ConvertTo-TranslateRule `
+            -AsExternalModule:$AsExternalModule `
 		;
 	}
 }
