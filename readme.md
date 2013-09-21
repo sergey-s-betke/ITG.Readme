@@ -153,7 +153,7 @@ xml "заготовку" HelpInfo.xml, но валидную.
 ##### См. также
 
 - [Online версия справки](http://github.com/IT-Service/ITG.Readme#Get-HelpInfo)
-- about_Updatable_Help
+- [about_Updatable_Help][]
 - [Set-HelpInfo][]
 - [New-HelpInfo][]
 - [How to Name a HelpInfo XML File](http://msdn.microsoft.com/en-us/library/windows/desktop/hh852748.aspx)
@@ -205,7 +205,7 @@ HelpInfo.XML по сути является манифестом для xml сп
         Принимать подстановочные знаки?false
 
 - `HelpContentUri <Uri>`
-        Ссылка для загрузки обновляемой справки. Смотрите about_Updatable_Help.
+        Ссылка для загрузки обновляемой справки. Смотрите [about_Updatable_Help][].
         Значение по умолчанию - url к репозиторию проекта на github.
 
         Требуется? false
@@ -231,7 +231,7 @@ HelpInfo.XML по сути является манифестом для xml сп
 ##### См. также
 
 - [Online версия справки](http://github.com/IT-Service/ITG.Readme#New-HelpInfo)
-- about_Updatable_Help
+- [about_Updatable_Help][]
 - [Set-HelpInfo][]
 - [HelpInfo XML Sample File](http://msdn.microsoft.com/en-us/library/windows/desktop/hh852750.aspx)
 
@@ -272,7 +272,7 @@ HelpInfo.xml в каталоге модуля, либо создаёт новы�
         Принимать подстановочные знаки?false
 
 - `HelpContentUri <Uri>`
-        Ссылка для загрузки обновляемой справки. Смотрите about_Updatable_Help.
+        Ссылка для загрузки обновляемой справки. Смотрите [about_Updatable_Help][].
         Значение по умолчанию - url к репозиторию проекта на github.
 
         Требуется? false
@@ -318,7 +318,7 @@ HelpInfo.xml в каталоге модуля, либо создаёт новы�
 ##### См. также
 
 - [Online версия справки](http://github.com/IT-Service/ITG.Readme#Set-HelpInfo)
-- about_Updatable_Help
+- [about_Updatable_Help][]
 - [HelpInfo XML Sample File](http://msdn.microsoft.com/en-us/library/windows/desktop/hh852750.aspx)
 
 #### Get-HelpXML
@@ -392,7 +392,7 @@ HelpInfo.xml в каталоге модуля, либо создаёт новы�
 ##### См. также
 
 - [Online версия справки](http://github.com/IT-Service/ITG.Readme#Get-HelpXML)
-- about_Updatable_Help
+- [about_Updatable_Help][]
 - [Creating the Cmdlet Help File](http://msdn.microsoft.com/en-us/library/bb525433.aspx)
 
 #### New-HelpXML
@@ -468,7 +468,7 @@ HelpInfo.xml в каталоге модуля, либо создаёт новы�
 
 - [Online версия справки](http://github.com/IT-Service/ITG.Readme#New-HelpXML)
 - [about_Comment_Based_Help][]
-- about_Updatable_Help
+- [about_Updatable_Help][]
 - [Creating the Cmdlet Help File](http://msdn.microsoft.com/en-us/library/bb525433.aspx)
 
 #### Set-HelpXML
@@ -587,7 +587,7 @@ HelpInfo.xml в каталоге модуля, либо создаёт новы�
 ##### См. также
 
 - [Online версия справки](http://github.com/IT-Service/ITG.Readme#Set-HelpXML)
-- about_Updatable_Help
+- [about_Updatable_Help][]
 - [Creating the Cmdlet Help File](http://msdn.microsoft.com/en-us/library/bb525433.aspx)
 
 #### Get-Readme
@@ -873,6 +873,7 @@ Readme
 
 [about_Comment_Based_Help]: http://go.microsoft.com/fwlink/?LinkID=144309 "Describes how to write comment-based help topics for functions and scripts."
 [about_CommonParameters]: http://go.microsoft.com/fwlink/?LinkID=113216 "Describes the parameters that can be used with any cmdlet."
+[about_Updatable_Help]: http://go.microsoft.com/fwlink/?LinkID=235801 "SHORT DESCRIPTION..."
 [Get-HelpInfo]: <#get-helpinfo> "Возвращает HelpInfo.xml (как xml) для указанного модуля."
 [Get-HelpXML]: <#get-helpxml> "Возващает XML содержимое xml файла справки для переданного модуля."
 [Get-Readme]: <#get-readme> "Генерирует readme с MarkDown разметкой по данным модуля и комментариям к его функциям."

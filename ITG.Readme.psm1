@@ -467,6 +467,7 @@ $PowerShellAboutTopics = @{
 	'about_Try_Catch_Finally' = 113444
 	'about_Type_Operators' = 113273
 	'about_Types.ps1xml' = 113274
+    'about_Updatable_Help' = 235801
 	'about_Variables' = 157591
 	'about_While' = 113275
 	'about_Wildcards' = 113276
