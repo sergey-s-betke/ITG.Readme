@@ -28,7 +28,7 @@
 Генерирует файл `about_$(ModuleInfo.Name).txt` с [MarkDown][] разметкой
 по данным модуля и комментариям к его функциям.
 
-	Set-AboutModule [-ModuleInfo] <PSModuleInfo> [-UICulture <CultureInfo>] [-PSPath <String>] [-ReferencedModules <PSModuleInfo[]>] <CommonParameters>
+	Set-AboutModule [-ModuleInfo] <PSModuleInfo> [-UICulture <CultureInfo>] [-PSPath <String>] [-ReferencedModules <PSModuleInfo[]>] [-PassThru] <CommonParameters>
 
 Подробнее - [Set-AboutModule][].
 
@@ -54,7 +54,7 @@
 
 Генерирует HelpInfo XML для указанного модуля.
 
-	Set-HelpInfo [-ModuleInfo] <PSModuleInfo> [-HelpContentUri <Uri>] [-UpdateManifest] [-HelpInfoUri <Uri>] <CommonParameters>
+	Set-HelpInfo [-ModuleInfo] <PSModuleInfo> [-HelpContentUri <Uri>] [-UpdateManifest] [-HelpInfoUri <Uri>] [-PassThru] <CommonParameters>
 
 Подробнее - [Set-HelpInfo][].
 
@@ -82,9 +82,9 @@
 
 Генерирует XML файл справки для переданного модуля, функции, командлеты.
 
-	Set-HelpXML [-ModuleInfo] <PSModuleInfo> [-UICulture <CultureInfo>] [-PSPath <String>] [-UpdateModule] [-Cab] [-PSCabPath <String>] <CommonParameters>
+	Set-HelpXML [-ModuleInfo] <PSModuleInfo> [-UICulture <CultureInfo>] [-PSPath <String>] [-UpdateModule] [-Cab] [-PSCabPath <String>] [-PassThru] <CommonParameters>
 
-	Set-HelpXML [-FunctionInfo] <FunctionInfo> [-UICulture <CultureInfo>] <CommonParameters>
+	Set-HelpXML [-FunctionInfo] <FunctionInfo> [-UICulture <CultureInfo>] [-PassThru] <CommonParameters>
 
 Подробнее - [Set-HelpXML][].
 
@@ -107,11 +107,11 @@
 Генерирует readme файл с [MarkDown][] разметкой по данным модуля и комментариям к его функциям.
 Файл предназначен, в частности, для размещения в репозиториях github.
 
-	Set-Readme [-ModuleInfo] <PSModuleInfo> [-UICulture <CultureInfo>] [-PSPath <String>] [-ShortDescription] [-ReferencedModules <PSModuleInfo[]>] [-TranslateRules <Array>] <CommonParameters>
+	Set-Readme [-ModuleInfo] <PSModuleInfo> [-UICulture <CultureInfo>] [-PSPath <String>] [-ShortDescription] [-ReferencedModules <PSModuleInfo[]>] [-TranslateRules <Array>] [-PassThru] <CommonParameters>
 
-	Set-Readme [-ExternalScriptInfo] <ExternalScriptInfo> [-UICulture <CultureInfo>] [-ShortDescription] [-ReferencedModules <PSModuleInfo[]>] [-TranslateRules <Array>] <CommonParameters>
+	Set-Readme [-ExternalScriptInfo] <ExternalScriptInfo> [-UICulture <CultureInfo>] [-ShortDescription] [-ReferencedModules <PSModuleInfo[]>] [-TranslateRules <Array>] [-PassThru] <CommonParameters>
 
-	Set-Readme [-FunctionInfo] <FunctionInfo> [-UICulture <CultureInfo>] [-ShortDescription] [-ReferencedModules <PSModuleInfo[]>] [-TranslateRules <Array>] <CommonParameters>
+	Set-Readme [-FunctionInfo] <FunctionInfo> [-UICulture <CultureInfo>] [-ShortDescription] [-ReferencedModules <PSModuleInfo[]>] [-TranslateRules <Array>] [-PassThru] <CommonParameters>
 
 Подробнее - [Set-Readme][].
 
@@ -207,7 +207,7 @@ Readme
 
 ##### Синтаксис
 
-	Set-AboutModule [-ModuleInfo] <PSModuleInfo> [-UICulture <CultureInfo>] [-PSPath <String>] [-ReferencedModules <PSModuleInfo[]>] <CommonParameters>
+	Set-AboutModule [-ModuleInfo] <PSModuleInfo> [-UICulture <CultureInfo>] [-PSPath <String>] [-ReferencedModules <PSModuleInfo[]>] [-PassThru] <CommonParameters>
 
 ##### Функциональность
 
@@ -259,6 +259,15 @@ Readme
         Требуется? false
         Позиция? named
         Значение по умолчанию @()
+        Принимать входные данные конвейера?false
+        Принимать подстановочные знаки?false
+
+- `PassThru [<SwitchParameter>]`
+        Передавать полученный по конвейеру описатель дальше
+
+        Требуется? false
+        Позиция? named
+        Значение по умолчанию False
         Принимать входные данные конвейера?false
         Принимать подстановочные знаки?false
 
@@ -429,7 +438,7 @@ HelpInfo.xml в каталоге модуля, либо создаёт новы�
 
 ##### Синтаксис
 
-	Set-HelpInfo [-ModuleInfo] <PSModuleInfo> [-HelpContentUri <Uri>] [-UpdateManifest] [-HelpInfoUri <Uri>] <CommonParameters>
+	Set-HelpInfo [-ModuleInfo] <PSModuleInfo> [-HelpContentUri <Uri>] [-UpdateManifest] [-HelpInfoUri <Uri>] [-PassThru] <CommonParameters>
 
 ##### Требуемая роль пользователя
 
@@ -484,6 +493,15 @@ HelpInfo.xml в каталоге модуля, либо создаёт новы�
         Требуется? false
         Позиция? named
         Значение по умолчанию
+        Принимать входные данные конвейера?false
+        Принимать подстановочные знаки?false
+
+- `PassThru [<SwitchParameter>]`
+        Передавать полученный по конвейеру описатель дальше
+
+        Требуется? false
+        Позиция? named
+        Значение по умолчанию False
         Принимать входные данные конвейера?false
         Принимать подстановочные знаки?false
 
@@ -668,9 +686,9 @@ HelpInfo.xml в каталоге модуля, либо создаёт новы�
 
 ##### Синтаксис
 
-	Set-HelpXML [-ModuleInfo] <PSModuleInfo> [-UICulture <CultureInfo>] [-PSPath <String>] [-UpdateModule] [-Cab] [-PSCabPath <String>] <CommonParameters>
+	Set-HelpXML [-ModuleInfo] <PSModuleInfo> [-UICulture <CultureInfo>] [-PSPath <String>] [-UpdateModule] [-Cab] [-PSCabPath <String>] [-PassThru] <CommonParameters>
 
-	Set-HelpXML [-FunctionInfo] <FunctionInfo> [-UICulture <CultureInfo>] <CommonParameters>
+	Set-HelpXML [-FunctionInfo] <FunctionInfo> [-UICulture <CultureInfo>] [-PassThru] <CommonParameters>
 
 ##### Требуемая роль пользователя
 
@@ -752,6 +770,15 @@ HelpInfo.xml в каталоге модуля, либо создаёт новы�
         Требуется? false
         Позиция? named
         Значение по умолчанию
+        Принимать входные данные конвейера?false
+        Принимать подстановочные знаки?false
+
+- `PassThru [<SwitchParameter>]`
+        Передавать полученный по конвейеру описатель дальше
+
+        Требуется? false
+        Позиция? named
+        Значение по умолчанию False
         Принимать входные данные конвейера?false
         Принимать подстановочные знаки?false
 
@@ -922,11 +949,11 @@ Readme
 
 ##### Синтаксис
 
-	Set-Readme [-ModuleInfo] <PSModuleInfo> [-UICulture <CultureInfo>] [-PSPath <String>] [-ShortDescription] [-ReferencedModules <PSModuleInfo[]>] [-TranslateRules <Array>] <CommonParameters>
+	Set-Readme [-ModuleInfo] <PSModuleInfo> [-UICulture <CultureInfo>] [-PSPath <String>] [-ShortDescription] [-ReferencedModules <PSModuleInfo[]>] [-TranslateRules <Array>] [-PassThru] <CommonParameters>
 
-	Set-Readme [-ExternalScriptInfo] <ExternalScriptInfo> [-UICulture <CultureInfo>] [-ShortDescription] [-ReferencedModules <PSModuleInfo[]>] [-TranslateRules <Array>] <CommonParameters>
+	Set-Readme [-ExternalScriptInfo] <ExternalScriptInfo> [-UICulture <CultureInfo>] [-ShortDescription] [-ReferencedModules <PSModuleInfo[]>] [-TranslateRules <Array>] [-PassThru] <CommonParameters>
 
-	Set-Readme [-FunctionInfo] <FunctionInfo> [-UICulture <CultureInfo>] [-ShortDescription] [-ReferencedModules <PSModuleInfo[]>] [-TranslateRules <Array>] <CommonParameters>
+	Set-Readme [-FunctionInfo] <FunctionInfo> [-UICulture <CultureInfo>] [-ShortDescription] [-ReferencedModules <PSModuleInfo[]>] [-TranslateRules <Array>] [-PassThru] <CommonParameters>
 
 ##### Функциональность
 
@@ -1022,6 +1049,15 @@ Readme
         Требуется? false
         Позиция? named
         Значение по умолчанию @()
+        Принимать входные данные конвейера?false
+        Принимать подстановочные знаки?false
+
+- `PassThru [<SwitchParameter>]`
+        Передавать полученный по конвейеру описатель дальше
+
+        Требуется? false
+        Позиция? named
+        Значение по умолчанию False
         Принимать входные данные конвейера?false
         Принимать подстановочные знаки?false
 

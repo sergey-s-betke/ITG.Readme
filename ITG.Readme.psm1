@@ -126,8 +126,8 @@ Filter ConvertTo-TranslateRule {
 	)
 	
 	if ( $TranslateRule ) {
-		$res = $PSBoundParameters.Remove( 'TranslateRule' );
-		$res = $PSBoundParameters.Remove( 'template' );
+		$null = $PSBoundParameters.Remove( 'TranslateRule' );
+		$null = $PSBoundParameters.Remove( 'template' );
 		return `
 			New-Object PSObject -Property $TranslateRule `
 			| ConvertTo-TranslateRule @PSBoundParameters `
@@ -1332,6 +1332,10 @@ Function Set-Readme {
 		)]
 		[Array]
 		$TranslateRules = @()
+	,
+		# Передавать полученный по конвейеру описатель дальше
+		[switch]
+		$PassThru
 	)
 
 	process {
@@ -1341,7 +1345,8 @@ Function Set-Readme {
 	            | Join-Path -ChildPath 'readme.md' `
             ;
         };
-		$res = $PSBoundParameters.Remove( 'PSPath' );
+		$null = $PSBoundParameters.Remove( 'PSPath' );
+		$null = $PSBoundParameters.Remove( 'PassThru' );
 
 		switch ( $PsCmdlet.ParameterSetName ) {
 			'ModuleInfo' {
@@ -1366,6 +1371,8 @@ Function Set-Readme {
 			default {
 			};
 		};
+        
+        if ( $PassThru ) { return $input };
 	}
 }
 
@@ -1519,6 +1526,10 @@ Function Set-AboutModule {
 		)]
 		[PSModuleInfo[]]
 		$ReferencedModules = @()
+	,
+		# Передавать полученный по конвейеру описатель дальше
+		[switch]
+		$PassThru
 	)
 
 	process {
@@ -1530,6 +1541,7 @@ Function Set-AboutModule {
             ;
         };
 		$null = $PSBoundParameters.Remove( 'PSPath' );
+		$null = $PSBoundParameters.Remove( 'PassThru' );
 
 		switch ( $PsCmdlet.ParameterSetName ) {
 			'ModuleInfo' {
@@ -1550,6 +1562,8 @@ Function Set-AboutModule {
 				;
 			}
 		};
+        
+        if ( $PassThru ) { return $input };
 	}
 }
 
@@ -2161,6 +2175,10 @@ Function Set-HelpXML {
 		[String]
         [Alias('$CabPath')]
 		$PSCabPath = ''
+	,
+		# Передавать полученный по конвейеру описатель дальше
+		[switch]
+		$PassThru
 	)
 
 	process {
@@ -2258,6 +2276,8 @@ Function Set-HelpXML {
 				};
 			}
 		};
+        
+        if ( $PassThru ) { return $input };
 	}
 }
 
@@ -2502,6 +2522,10 @@ Function Set-HelpInfo {
 		)]
 		[System.Uri]
 		$HelpInfoUri = $null
+	,
+		# Передавать полученный по конвейеру описатель дальше
+		[switch]
+		$PassThru
 	)
 
 	process {
@@ -2620,6 +2644,8 @@ Function Set-HelpInfo {
 				};
 			}
 		};
+        
+        if ( $PassThru ) { return $input };
 	}
 }
 
