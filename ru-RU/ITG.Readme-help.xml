@@ -12,7 +12,7 @@
 			<maml:copyright>
 				<maml:para>(c) 2012 Sergey S. Betke. All rights reserved.</maml:para>
 			</maml:copyright>
-			<dev:version>2.0.0</dev:version>
+			<dev:version>2.1.0</dev:version>
 		</details>
 		<maml:role>Everyone</maml:role>
 		<maml:description>
@@ -106,7 +106,7 @@
 			<maml:copyright>
 				<maml:para>(c) 2012 Sergey S. Betke. All rights reserved.</maml:para>
 			</maml:copyright>
-			<dev:version>2.0.0</dev:version>
+			<dev:version>2.1.0</dev:version>
 		</details>
 		<maml:role>Everyone</maml:role>
 		<maml:description>
@@ -214,7 +214,7 @@
 			<maml:copyright>
 				<maml:para>(c) 2012 Sergey S. Betke. All rights reserved.</maml:para>
 			</maml:copyright>
-			<dev:version>2.0.0</dev:version>
+			<dev:version>2.1.0</dev:version>
 		</details>
 		<maml:functionality>Readme</maml:functionality>
 		<maml:role>Everyone</maml:role>
@@ -451,7 +451,7 @@
 			<maml:copyright>
 				<maml:para>(c) 2012 Sergey S. Betke. All rights reserved.</maml:para>
 			</maml:copyright>
-			<dev:version>2.0.0</dev:version>
+			<dev:version>2.1.0</dev:version>
 		</details>
 		<maml:role>Everyone</maml:role>
 		<maml:description>
@@ -568,7 +568,7 @@
 			<maml:copyright>
 				<maml:para>(c) 2012 Sergey S. Betke. All rights reserved.</maml:para>
 			</maml:copyright>
-			<dev:version>2.0.0</dev:version>
+			<dev:version>2.1.0</dev:version>
 		</details>
 		<maml:role>Everyone</maml:role>
 		<maml:description>
@@ -693,7 +693,7 @@
 			<maml:copyright>
 				<maml:para>(c) 2012 Sergey S. Betke. All rights reserved.</maml:para>
 			</maml:copyright>
-			<dev:version>2.0.0</dev:version>
+			<dev:version>2.1.0</dev:version>
 		</details>
 		<maml:role>Everyone</maml:role>
 		<maml:description>
@@ -805,7 +805,7 @@
 			<maml:copyright>
 				<maml:para>(c) 2012 Sergey S. Betke. All rights reserved.</maml:para>
 			</maml:copyright>
-			<dev:version>2.0.0</dev:version>
+			<dev:version>2.1.0</dev:version>
 		</details>
 		<maml:role>Everyone</maml:role>
 		<maml:description>
@@ -979,7 +979,7 @@
 			<maml:copyright>
 				<maml:para>(c) 2012 Sergey S. Betke. All rights reserved.</maml:para>
 			</maml:copyright>
-			<dev:version>2.0.0</dev:version>
+			<dev:version>2.1.0</dev:version>
 		</details>
 		<maml:functionality>Readme</maml:functionality>
 		<maml:role>Everyone</maml:role>
