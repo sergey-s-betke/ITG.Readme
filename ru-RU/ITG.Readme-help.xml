@@ -124,8 +124,8 @@
 					<parameterValue required="false">CultureInfo</parameterValue>
 				</parameter>
 				<parameter required="false" position="named" pipelineInput="false" globbing="false">
-					<maml:name>Path</maml:name>
-					<parameterValue required="false">FileInfo</parameterValue>
+					<maml:name>PSPath</maml:name>
+					<parameterValue required="false">String</parameterValue>
 				</parameter>
 			</syntaxItem>
 		</syntax>
@@ -146,11 +146,11 @@
 				<defaultValue>( Get-Culture )</defaultValue>
 			</parameter>
 			<parameter required="false" position="named" pipelineInput="false" globbing="false">
-				<maml:name>Path</maml:name>
+				<maml:name>PSPath</maml:name>
 				<maml:description>
 					<maml:para>Путь для xml файла справки</maml:para>
 				</maml:description>
-				<parameterValue required="True">FileInfo</parameterValue>
+				<parameterValue required="True">String</parameterValue>
 			</parameter>
 		</parameters>
 		<inputTypes>
@@ -824,8 +824,8 @@
 					<parameterValue required="false">CultureInfo</parameterValue>
 				</parameter>
 				<parameter required="false" position="named" pipelineInput="false" globbing="false">
-					<maml:name>Path</maml:name>
-					<parameterValue required="false">FileInfo</parameterValue>
+					<maml:name>PSPath</maml:name>
+					<parameterValue required="false">String</parameterValue>
 				</parameter>
 				<parameter required="false" position="named" pipelineInput="false" globbing="false">
 					<maml:name>UpdateModule</maml:name>
@@ -834,8 +834,8 @@
 					<maml:name>Cab</maml:name>
 				</parameter>
 				<parameter required="false" position="named" pipelineInput="false" globbing="false">
-					<maml:name>CabPath</maml:name>
-					<parameterValue required="false">FileInfo</parameterValue>
+					<maml:name>PSCabPath</maml:name>
+					<parameterValue required="false">String</parameterValue>
 				</parameter>
 			</syntaxItem>
 			<syntaxItem>
@@ -874,11 +874,11 @@
 				<defaultValue>( Get-Culture )</defaultValue>
 			</parameter>
 			<parameter required="false" position="named" pipelineInput="false" globbing="false">
-				<maml:name>Path</maml:name>
+				<maml:name>PSPath</maml:name>
 				<maml:description>
 					<maml:para>Путь для xml файла справки</maml:para>
 				</maml:description>
-				<parameterValue required="True">FileInfo</parameterValue>
+				<parameterValue required="True">String</parameterValue>
 			</parameter>
 			<parameter required="false" position="named" pipelineInput="false" globbing="false">
 				<maml:name>UpdateModule</maml:name>
@@ -897,11 +897,11 @@
 				<defaultValue>False</defaultValue>
 			</parameter>
 			<parameter required="false" position="named" pipelineInput="false" globbing="false">
-				<maml:name>CabPath</maml:name>
+				<maml:name>PSCabPath</maml:name>
 				<maml:description>
 					<maml:para>Путь к .cab файлу</maml:para>
 				</maml:description>
-				<parameterValue required="True">FileInfo</parameterValue>
+				<parameterValue required="True">String</parameterValue>
 			</parameter>
 		</parameters>
 		<inputTypes>
@@ -998,8 +998,8 @@
 					<parameterValue required="false">CultureInfo</parameterValue>
 				</parameter>
 				<parameter required="false" position="named" pipelineInput="false" globbing="false">
-					<maml:name>Path</maml:name>
-					<parameterValue required="false">FileInfo</parameterValue>
+					<maml:name>PSPath</maml:name>
+					<parameterValue required="false">String</parameterValue>
 				</parameter>
 				<parameter required="false" position="named" pipelineInput="false" globbing="false">
 					<maml:name>ShortDescription</maml:name>
@@ -1089,11 +1089,11 @@
 				<defaultValue>( Get-Culture )</defaultValue>
 			</parameter>
 			<parameter required="false" position="named" pipelineInput="false" globbing="false">
-				<maml:name>Path</maml:name>
+				<maml:name>PSPath</maml:name>
 				<maml:description>
 					<maml:para>Путь для readme файла. По умолчанию - `readme.md` в каталоге модуля</maml:para>
 				</maml:description>
-				<parameterValue required="True">FileInfo</parameterValue>
+				<parameterValue required="True">String</parameterValue>
 			</parameter>
 			<parameter required="false" position="named" pipelineInput="false" globbing="false">
 				<maml:name>ShortDescription</maml:name>

@@ -1268,8 +1268,9 @@ Function Set-Readme {
 			ParameterSetName='ModuleInfo'
 			, Mandatory=$false
 		)]
-		[System.IO.FileInfo]
-		$Path = $null
+		[String]
+        [Alias('Path')]
+		$PSPath = ''
 	,
 		# Генерировать только краткое описание
 		[switch]
@@ -1292,13 +1293,13 @@ Function Set-Readme {
 	)
 
 	process {
-        if ( -not $Path ) {
-            $Path = `
+        if ( -not $PSPath ) {
+            $PSPath = `
 	            $ModuleInfo.ModuleBase `
 	            | Join-Path -ChildPath 'readme.md' `
             ;
         };
-		$res = $PSBoundParameters.Remove( 'Path' );
+		$res = $PSBoundParameters.Remove( 'PSPath' );
 
 		switch ( $PsCmdlet.ParameterSetName ) {
 			'ModuleInfo' {
@@ -1313,7 +1314,7 @@ Function Set-Readme {
 				) `
 				| Out-String `
 				| Set-Content `
-					-LiteralPath $Path `
+					-LiteralPath $PSPath `
 					-Encoding 'UTF8' `
 					-Force `
 				;
@@ -1788,8 +1789,9 @@ Function Get-HelpXML {
 			ParameterSetName='ModuleInfo'
 			, Mandatory=$false
 		)]
-		[System.IO.FileInfo]
-		$Path = $null
+		[String]
+        [Alias('Path')]
+		$PSPath = ''
 	)
 
 	process {
@@ -1798,17 +1800,17 @@ Function Get-HelpXML {
 		};
 		switch ( $PsCmdlet.ParameterSetName ) {
 			'ModuleInfo' {
-                if ( -not $Path ) {
-                    $Path = `
+                if ( -not $PSPath ) {
+                    $PSPath = `
 	                    $ModuleInfo.ModuleBase `
 	                    | Join-Path -ChildPath ( $UICulture.Name ) `
 	                    | Join-Path -ChildPath "$( $ModuleInfo.Name )-help.xml" `
                     ;
                 };
-				if ( Test-Path $Path ) {
+				if ( Test-Path $PSPath ) {
 					return ( [xml](
 						Get-Content `
-							-LiteralPath $Path `
+							-LiteralPath $PSPath `
 							-ReadCount 0 `
 					));
 				} else {
@@ -1906,8 +1908,9 @@ Function Set-HelpXML {
 			ParameterSetName='ModuleInfo'
 			, Mandatory=$false
 		)]
-		[System.IO.FileInfo]
-		$Path = $null
+		[String]
+        [Alias('Path')]
+		$PSPath = ''
 	,
 		# обновлять файл модуля - добавлять в файл модуля в комментарии к функциям модуля 
 		# записи типа `.ExternalHelp ITG.Readme-help.xml`
@@ -1929,8 +1932,9 @@ Function Set-HelpXML {
 			ParameterSetName='ModuleInfo'
 			, Mandatory=$false
 		)]
-		[System.IO.FileInfo]
-		$CabPath = $null
+		[String]
+        [Alias('$CabPath')]
+		$PSCabPath = ''
 	)
 
 	process {
@@ -1939,15 +1943,15 @@ Function Set-HelpXML {
 		};
 		switch ( $PsCmdlet.ParameterSetName ) {
 			'ModuleInfo' {
-                if ( -not $Path ) {
-                    $Path = `
+                if ( -not $PSPath ) {
+                    $PSPath = `
 	                    $ModuleInfo.ModuleBase `
 	                    | Join-Path -ChildPath ( $UICulture.Name ) `
 	                    | Join-Path -ChildPath "$( $ModuleInfo.Name )-help.xml" `
                     ;
                 };
-                if ( -not $CabPath ) {
-                    $CabPath = `
+                if ( -not $PSCabPath ) {
+                    $PSCabPath = `
 	                    $ModuleInfo.ModuleBase `
 	                    | Join-Path -ChildPath 'help.cab' `
 	                    | Join-Path -ChildPath "$( $ModuleInfo.Name )_$( $ModuleInfo.GUID )_$( $UICulture )_HelpContent.cab" `
@@ -1956,13 +1960,13 @@ Function Set-HelpXML {
 
 				[System.Xml.XmlDocument]$HelpContent = New-HelpXML -ModuleInfo $ModuleInfo;
 
-				$Dir = Split-Path -Path ( $Path.FullName ) -Parent;
+				$Dir = Split-Path -Path ( $PSPath ) -Parent;
 				if ( -not ( Test-Path -LiteralPath $Dir ) ) {
 					$null = New-Item -Path $Dir -ItemType Directory;
 				};
 				
 				$Writer = [System.Xml.XmlWriter]::Create(
-					$Path `
+					$PSPath `
 					, ( New-Object `
 						-TypeName System.Xml.XmlWriterSettings `
 						-Property @{
@@ -1979,13 +1983,13 @@ Function Set-HelpXML {
 				$Writer.Close();
 
 				if ( $Cab ) {
-					$CabDir = Split-Path -Path ( $CabPath.FullName ) -Parent;
+					$CabDir = Split-Path -Path ( $PSCabPath ) -Parent;
 					if ( -not ( Test-Path -LiteralPath $CabDir ) ) {
 						$null = New-Item -Path $CabDir -ItemType Directory;
 					};
 					$MakeCabProcess = Start-Process `
 						-FilePath 'makecab' `
-						-ArgumentList "`"$( $Path.FullName )`"", "`"$( $CabPath.FullName )`"" `
+						-ArgumentList "`"$( $PSPath )`"", "`"$( $PSCabPath )`"" `
 						-NoNewWindow `
 						-Wait `
 						-PassThru `

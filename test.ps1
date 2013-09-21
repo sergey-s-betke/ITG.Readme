@@ -30,6 +30,6 @@ $m | Set-Readme `
 #>
 
 Set-Readme -Module ( Get-Module 'ITG.Readme' );
-Set-HelpXML -Module ( Get-Module 'ITG.Readme' ) -Cab; # -UpdateModule;
+Set-HelpXML -Module ( Get-Module 'ITG.Readme' ); # -Cab; # -UpdateModule;
 Set-HelpInfo -Module ( Get-Module 'ITG.Readme' ); # -UpdateManifest;
 # ( Get-HelpXML -Module ( Get-Module 'ITG.Readme' ) ).OuterXml;
