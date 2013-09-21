@@ -1566,7 +1566,7 @@ Function Set-AboutModule {
             $PSPath = `
 	            $ModuleInfo.ModuleBase `
 	            | Join-Path -ChildPath ( $UICulture.Name ) `
-	            | Join-Path -ChildPath "about_$( $ModuleInfo.Name ).txt" `
+	            | Join-Path -ChildPath "about_$( $ModuleInfo.Name ).help.txt" `
             ;
         };
         Write-Verbose `
