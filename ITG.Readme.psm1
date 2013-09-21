@@ -823,7 +823,7 @@ Function Get-Readme {
 		[System.Management.Automation.FunctionInfo]
 		$FunctionInfo
 	,
-		# культура, для которой генерировать данные, на данный момент параметр задавать не следует.
+		# культура, для которой генерировать данные.
 		[Parameter(
 			Mandatory=$false
 		)]
@@ -852,6 +852,11 @@ Function Get-Readme {
 
 	process {
 		if ( -not $GetReadmeStatus.level ) {
+            Import-LocalizedData `
+                -UICulture $UICulture `
+                -BindingVariable loc `
+            ;
+
 		    if ( $PsCmdlet.ParameterSetName -eq 'ModuleInfo' ) {
                 $ReferencedModules += $ModuleInfo.RequiredModules;
             };
@@ -1294,7 +1299,7 @@ Function Set-Readme {
 		[System.Management.Automation.FunctionInfo]
 		$FunctionInfo
 	,
-		# культура, для которой генерировать данные, на данный момент параметр задавать не следует.
+		# культура, для которой генерировать данные.
 		[Parameter(
 			Mandatory=$false
 		)]
@@ -1343,6 +1348,11 @@ Function Set-Readme {
         };
 		$null = $PSBoundParameters.Remove( 'PSPath' );
 		$null = $PSBoundParameters.Remove( 'PassThru' );
+
+        Import-LocalizedData `
+            -UICulture $UICulture `
+            -BindingVariable loc `
+        ;
 
 		switch ( $PsCmdlet.ParameterSetName ) {
 			'ModuleInfo' {
@@ -1422,7 +1432,7 @@ Function Get-AboutModule {
 		[Alias('Module')]
 		$ModuleInfo
 	,
-		# культура, для которой генерировать данные, на данный момент параметр задавать не следует.
+		# культура, для которой генерировать данные.
 		[Parameter(
 			Mandatory=$false
 		)]
@@ -1500,7 +1510,7 @@ Function Set-AboutModule {
 		[Alias('Module')]
 		$ModuleInfo
 	,
-		# культура, для которой генерировать данные, на данный момент параметр задавать не следует.
+		# культура, для которой генерировать данные.
 		[Parameter(
 			Mandatory=$false
 		)]
@@ -1529,6 +1539,10 @@ Function Set-AboutModule {
 	)
 
 	process {
+        Import-LocalizedData `
+            -UICulture $UICulture `
+            -BindingVariable loc `
+        ;
         if ( -not $PSPath ) {
             $PSPath = `
 	            $ModuleInfo.ModuleBase `
@@ -2017,7 +2031,7 @@ Function Get-HelpXML {
 		[Alias('Module')]
 		$ModuleInfo
 	,
-		# культура, для которой вернуть данные, на данный момент параметр задавать не следует.
+		# культура, для которой вернуть данные.
 		[Parameter(
 			Mandatory=$false
 		)]
@@ -2038,6 +2052,10 @@ Function Get-HelpXML {
 		trap {
 			break;
 		};
+        Import-LocalizedData `
+            -UICulture $UICulture `
+            -BindingVariable loc `
+        ;
 		switch ( $PsCmdlet.ParameterSetName ) {
 			'ModuleInfo' {
                 if ( -not $PSPath ) {
@@ -2136,7 +2154,7 @@ Function Set-HelpXML {
 		[System.Management.Automation.FunctionInfo]
 		$FunctionInfo
 	,
-		# культура, для которой генерировать данные, на данный момент параметр задавать не следует.
+		# культура, для которой генерировать данные.
 		[Parameter(
 			Mandatory=$false
 		)]
@@ -2185,6 +2203,10 @@ Function Set-HelpXML {
 		trap {
 			break;
 		};
+        Import-LocalizedData `
+            -UICulture $UICulture `
+            -BindingVariable loc `
+        ;
 		switch ( $PsCmdlet.ParameterSetName ) {
 			'ModuleInfo' {
                 if ( -not $PSPath ) {
