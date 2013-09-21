@@ -816,8 +816,14 @@ Function Get-Readme {
 
 	process {
 		if ( -not $GetReadmeStatus.level ) {
+		    if ( $PsCmdlet.ParameterSetName -eq 'ModuleInfo' ) {
+                $ReferencedModules += $ModuleInfo.RequiredModules;
+            };
 			$TranslateRules += & {
 				$ReferencedModules `
+                | Sort-Object `
+                    -Unique `
+                    -Property Name `
 				| % {
 					$_ | Get-FunctionsReferenceTranslateRules -AsExternalModule;
 					$_ | Get-TagReferenceTranslateRules;

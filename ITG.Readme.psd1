@@ -14,7 +14,7 @@
 RootModule = 'ITG.Readme.psm1'
 
 # Номер версии данного модуля.
-ModuleVersion = '2.0.0'
+ModuleVersion = '2.1.0'
 
 # Уникальный идентификатор данного модуля
 GUID = '826e836c-d10c-4d4d-b86b-8b4a41829b00'
