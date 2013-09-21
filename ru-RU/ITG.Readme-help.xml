@@ -47,7 +47,7 @@
 			<parameter required="false" position="named" pipelineInput="false" globbing="false">
 				<maml:name>UICulture</maml:name>
 				<maml:description>
-					<maml:para>культура, для которой генерировать данные, на данный момент параметр задавать не следует.</maml:para>
+					<maml:para>культура, для которой генерировать данные.</maml:para>
 				</maml:description>
 				<parameterValue required="True">CultureInfo</parameterValue>
 				<defaultValue>( Get-Culture )</defaultValue>
@@ -253,7 +253,7 @@
 			<parameter required="false" position="named" pipelineInput="false" globbing="false">
 				<maml:name>UICulture</maml:name>
 				<maml:description>
-					<maml:para>культура, для которой вернуть данные, на данный момент параметр задавать не следует.</maml:para>
+					<maml:para>культура, для которой вернуть данные.</maml:para>
 				</maml:description>
 				<parameterValue required="True">CultureInfo</parameterValue>
 				<defaultValue>( Get-Culture )</defaultValue>
@@ -427,7 +427,7 @@
 			<parameter required="false" position="named" pipelineInput="false" globbing="false">
 				<maml:name>UICulture</maml:name>
 				<maml:description>
-					<maml:para>культура, для которой генерировать данные, на данный момент параметр задавать не следует.</maml:para>
+					<maml:para>культура, для которой генерировать данные.</maml:para>
 				</maml:description>
 				<parameterValue required="True">CultureInfo</parameterValue>
 				<defaultValue>( Get-Culture )</defaultValue>
@@ -848,7 +848,7 @@
 			<parameter required="false" position="named" pipelineInput="false" globbing="false">
 				<maml:name>UICulture</maml:name>
 				<maml:description>
-					<maml:para>культура, для которой генерировать данные, на данный момент параметр задавать не следует.</maml:para>
+					<maml:para>культура, для которой генерировать данные.</maml:para>
 				</maml:description>
 				<parameterValue required="True">CultureInfo</parameterValue>
 				<defaultValue>( Get-Culture )</defaultValue>
@@ -1123,7 +1123,7 @@
 			<parameter required="false" position="named" pipelineInput="false" globbing="false">
 				<maml:name>UICulture</maml:name>
 				<maml:description>
-					<maml:para>культура, для которой генерировать данные, на данный момент параметр задавать не следует.</maml:para>
+					<maml:para>культура, для которой генерировать данные.</maml:para>
 				</maml:description>
 				<parameterValue required="True">CultureInfo</parameterValue>
 				<defaultValue>( Get-Culture )</defaultValue>
@@ -1355,7 +1355,7 @@
 			<parameter required="false" position="named" pipelineInput="false" globbing="false">
 				<maml:name>UICulture</maml:name>
 				<maml:description>
-					<maml:para>культура, для которой генерировать данные, на данный момент параметр задавать не следует.</maml:para>
+					<maml:para>культура, для которой генерировать данные.</maml:para>
 				</maml:description>
 				<parameterValue required="True">CultureInfo</parameterValue>
 				<defaultValue>( Get-Culture )</defaultValue>
