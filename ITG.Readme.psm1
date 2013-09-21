@@ -774,7 +774,7 @@ Function Get-Readme {
 		.Link
 			[Написание справки для командлетов](http://go.microsoft.com/fwlink/?LinkID=123415)
 		.Link
-			http://github.com/IT-Service/ITG.Readme#Get-Readme
+			https://github.com/IT-Service/ITG.Readme#Get-Readme
 		.Example
 			Get-Module 'ITG.Yandex.DnsServer' | Get-Readme | Out-File -Path 'readme.md' -Encoding 'UTF8' -Width 1024;
 			Генерация readme.md файла для модуля `ITG.Yandex.DnsServer` 
@@ -1249,7 +1249,7 @@ Function Set-Readme {
 		.Link
 			[Написание справки для командлетов](http://go.microsoft.com/fwlink/?LinkID=123415)
 		.Link
-			http://github.com/IT-Service/ITG.Readme#Set-Readme
+			https://github.com/IT-Service/ITG.Readme#Set-Readme
 		.Example
 			Get-Module 'ITG.Yandex.DnsServer' | Set-Readme;
 			Генерация readme.md файла для модуля `ITG.Yandex.DnsServer` 
@@ -1362,7 +1362,7 @@ Function Set-Readme {
 
 ---------------------------------------
 
-$( [String]::Format( $loc.GeneratorAbout, 'ITG.Readme', 'http://github.com/IT-Service/ITG.Readme' ) )
+$( [String]::Format( $loc.GeneratorAbout, 'ITG.Readme', 'https://github.com/IT-Service/ITG.Readme' ) )
 "@ `
 				) `
 				| Out-String `
@@ -1410,7 +1410,7 @@ Function Get-AboutModule {
 		.Link
 			[Написание справки для командлетов](http://go.microsoft.com/fwlink/?LinkID=123415)
 		.Link
-			http://github.com/IT-Service/ITG.Readme#Get-AboutModule
+			https://github.com/IT-Service/ITG.Readme#Get-AboutModule
 		.Example
 			Get-Module 'ITG.Yandex.DnsServer' | Get-AboutModule;
 			Генерация содержимого about.txt файла для модуля `ITG.Yandex.DnsServer`.
@@ -1487,7 +1487,7 @@ Function Set-AboutModule {
 		.Link
 			[Написание справки для командлетов](http://go.microsoft.com/fwlink/?LinkID=123415)
 		.Link
-			http://github.com/IT-Service/ITG.Readme#Set-AboutModule
+			https://github.com/IT-Service/ITG.Readme#Set-AboutModule
 		.Example
 			Get-Module 'ITG.Yandex.DnsServer' | Set-AboutModule;
 			Генерация `about_ITG.Yandex.DnsServer.txt` файла для модуля `ITG.Yandex.DnsServer` 
@@ -1565,7 +1565,7 @@ Function Set-AboutModule {
 
 ---------------------------------------
 
-$( [String]::Format( $loc.GeneratorAbout, 'ITG.Readme', 'http://github.com/IT-Service/ITG.Readme' ) )
+$( [String]::Format( $loc.GeneratorAbout, 'ITG.Readme', 'https://github.com/IT-Service/ITG.Readme' ) )
 "@ `
 				) `
 				| Out-String `
@@ -1730,7 +1730,7 @@ Function New-HelpXML {
 		.Link
 			[Creating the Cmdlet Help File](http://msdn.microsoft.com/en-us/library/bb525433.aspx)
 		.Link
-			http://github.com/IT-Service/ITG.Readme#New-HelpXML
+			https://github.com/IT-Service/ITG.Readme#New-HelpXML
 		.Example
 			Get-Module 'ITG.Yandex.DnsServer' | New-HelpXML;
 			Генерация xml справки для модуля `ITG.Yandex.DnsServer`.
@@ -1770,7 +1770,7 @@ Function New-HelpXML {
 		switch ( $PsCmdlet.ParameterSetName ) {
 			'ModuleInfo' {
 				[System.Xml.XmlDocument]$HelpContent = @"
-<!-- $( [String]::Format( $loc.GeneratorXmlAbout, 'ITG.Readme', 'http://github.com/IT-Service/ITG.Readme' ) ) -->
+<!-- $( [String]::Format( $loc.GeneratorXmlAbout, 'ITG.Readme', 'https://github.com/IT-Service/ITG.Readme' ) ) -->
 <helpItems
 	xmlns="$( $HelpXMLNS.msh )"
 	xmlns:maml="$( $HelpXMLNS.maml )"
@@ -2008,7 +2008,7 @@ Function Get-HelpXML {
 		.Link
 			[Creating the Cmdlet Help File](http://msdn.microsoft.com/en-us/library/bb525433.aspx)
 		.Link
-			http://github.com/IT-Service/ITG.Readme#Get-HelpXML
+			https://github.com/IT-Service/ITG.Readme#Get-HelpXML
 		.Example
 			Get-Module 'ITG.Yandex.DnsServer' | Get-HelpXML;
 			Возвращает содержимое xml файла справки для модуля `ITG.Yandex.DnsServer` 
@@ -2073,7 +2073,7 @@ Function Get-HelpXML {
 					));
 				} else {
 					return [xml] @"
-<!-- $( [String]::Format( $loc.GeneratorXmlAbout, 'ITG.Readme', 'http://github.com/IT-Service/ITG.Readme' ) ) -->
+<!-- $( [String]::Format( $loc.GeneratorXmlAbout, 'ITG.Readme', 'https://github.com/IT-Service/ITG.Readme' ) ) -->
 <helpItems
 	xmlns="$( $HelpXMLNS.msh )"
 	xmlns:maml="$( $HelpXMLNS.maml )"
@@ -2121,7 +2121,7 @@ Function Set-HelpXML {
 		.Link
 			[Creating the Cmdlet Help File](http://msdn.microsoft.com/en-us/library/bb525433.aspx)
 		.Link
-			http://github.com/IT-Service/ITG.Readme#Set-HelpXML
+			https://github.com/IT-Service/ITG.Readme#Set-HelpXML
 		.Example
 			Get-Module 'ITG.Yandex.DnsServer' | Set-HelpXML;
 			Генерация xml файла справки для модуля `ITG.Yandex.DnsServer` 
@@ -2326,7 +2326,7 @@ Function New-HelpInfo {
 		.Link
 			Set-HelpInfo
 		.Link
-			http://github.com/IT-Service/ITG.Readme#New-HelpInfo
+			https://github.com/IT-Service/ITG.Readme#New-HelpInfo
 		.Link
 			[HelpInfo XML Sample File](http://msdn.microsoft.com/en-us/library/windows/desktop/hh852750.aspx)
 		.Example
@@ -2421,7 +2421,7 @@ Function Get-HelpInfo {
 		.Link
 			New-HelpInfo
 		.Link
-			http://github.com/IT-Service/ITG.Readme#Get-HelpInfo
+			https://github.com/IT-Service/ITG.Readme#Get-HelpInfo
 		.Link
 			[How to Name a HelpInfo XML File](http://msdn.microsoft.com/en-us/library/windows/desktop/hh852748.aspx)
 		.Link
@@ -2495,7 +2495,7 @@ Function Set-HelpInfo {
 		.Link
 			about_Updatable_Help
 		.Link
-			http://github.com/IT-Service/ITG.Readme#Set-HelpInfo
+			https://github.com/IT-Service/ITG.Readme#Set-HelpInfo
 		.Link
 			[HelpInfo XML Sample File](http://msdn.microsoft.com/en-us/library/windows/desktop/hh852750.aspx)
 		.Example

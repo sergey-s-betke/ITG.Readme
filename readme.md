@@ -193,7 +193,7 @@ Readme
 
 ##### См. также
 
-- [Online версия справки](http://github.com/IT-Service/ITG.Readme#Get-AboutModule)
+- [Online версия справки](https://github.com/IT-Service/ITG.Readme#Get-AboutModule)
 - [MarkDown][]
 - [about_Comment_Based_Help][]
 - [Написание справки для командлетов](http://go.microsoft.com/fwlink/?LinkID=123415)
@@ -288,7 +288,7 @@ Readme
 
 ##### См. также
 
-- [Online версия справки](http://github.com/IT-Service/ITG.Readme#Set-AboutModule)
+- [Online версия справки](https://github.com/IT-Service/ITG.Readme#Set-AboutModule)
 - [Get-AboutModule][]
 - [MarkDown][]
 - [about_Comment_Based_Help][]
@@ -347,7 +347,7 @@ xml "заготовку" HelpInfo.xml, но валидную.
 
 ##### См. также
 
-- [Online версия справки](http://github.com/IT-Service/ITG.Readme#Get-HelpInfo)
+- [Online версия справки](https://github.com/IT-Service/ITG.Readme#Get-HelpInfo)
 - [about_Updatable_Help][]
 - [Set-HelpInfo][]
 - [New-HelpInfo][]
@@ -425,7 +425,7 @@ HelpInfo.XML по сути является манифестом для xml сп
 
 ##### См. также
 
-- [Online версия справки](http://github.com/IT-Service/ITG.Readme#New-HelpInfo)
+- [Online версия справки](https://github.com/IT-Service/ITG.Readme#New-HelpInfo)
 - [about_Updatable_Help][]
 - [Set-HelpInfo][]
 - [HelpInfo XML Sample File](http://msdn.microsoft.com/en-us/library/windows/desktop/hh852750.aspx)
@@ -521,7 +521,7 @@ HelpInfo.xml в каталоге модуля, либо создаёт новы�
 
 ##### См. также
 
-- [Online версия справки](http://github.com/IT-Service/ITG.Readme#Set-HelpInfo)
+- [Online версия справки](https://github.com/IT-Service/ITG.Readme#Set-HelpInfo)
 - [about_Updatable_Help][]
 - [HelpInfo XML Sample File](http://msdn.microsoft.com/en-us/library/windows/desktop/hh852750.aspx)
 
@@ -595,7 +595,7 @@ HelpInfo.xml в каталоге модуля, либо создаёт новы�
 
 ##### См. также
 
-- [Online версия справки](http://github.com/IT-Service/ITG.Readme#Get-HelpXML)
+- [Online версия справки](https://github.com/IT-Service/ITG.Readme#Get-HelpXML)
 - [about_Updatable_Help][]
 - [Creating the Cmdlet Help File](http://msdn.microsoft.com/en-us/library/bb525433.aspx)
 
@@ -670,7 +670,7 @@ HelpInfo.xml в каталоге модуля, либо создаёт новы�
 
 ##### См. также
 
-- [Online версия справки](http://github.com/IT-Service/ITG.Readme#New-HelpXML)
+- [Online версия справки](https://github.com/IT-Service/ITG.Readme#New-HelpXML)
 - [about_Comment_Based_Help][]
 - [about_Updatable_Help][]
 - [Creating the Cmdlet Help File](http://msdn.microsoft.com/en-us/library/bb525433.aspx)
@@ -799,7 +799,7 @@ HelpInfo.xml в каталоге модуля, либо создаёт новы�
 
 ##### См. также
 
-- [Online версия справки](http://github.com/IT-Service/ITG.Readme#Set-HelpXML)
+- [Online версия справки](https://github.com/IT-Service/ITG.Readme#Set-HelpXML)
 - [about_Updatable_Help][]
 - [Creating the Cmdlet Help File](http://msdn.microsoft.com/en-us/library/bb525433.aspx)
 
@@ -935,7 +935,7 @@ Readme
 
 ##### См. также
 
-- [Online версия справки](http://github.com/IT-Service/ITG.Readme#Get-Readme)
+- [Online версия справки](https://github.com/IT-Service/ITG.Readme#Get-Readme)
 - [MarkDown][]
 - [about_Comment_Based_Help][]
 - [Написание справки для командлетов](http://go.microsoft.com/fwlink/?LinkID=123415)
@@ -1086,7 +1086,7 @@ Readme
 
 ##### См. также
 
-- [Online версия справки](http://github.com/IT-Service/ITG.Readme#Set-Readme)
+- [Online версия справки](https://github.com/IT-Service/ITG.Readme#Set-Readme)
 - [Get-Readme][]
 - [MarkDown][]
 - [about_Comment_Based_Help][]
@@ -1110,5 +1110,5 @@ Readme
 
 ---------------------------------------
 
-Генератор: [ITG.Readme](http://github.com/IT-Service/ITG.Readme "Модуль PowerShell для генерации readme для модулей PowerShell").
+Генератор: [ITG.Readme](https://github.com/IT-Service/ITG.Readme "Модуль PowerShell для генерации readme для модулей PowerShell").
 
