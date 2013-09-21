@@ -1071,7 +1071,7 @@ $Description
 
 ##### $( $loc.Role )
 
-$( [String]::Format( $loc.RoleDetails, $Help.Role, $FunctionInfo.Name ) )
+$( [String]::Format( $loc.RoleDetails, "**$( $Help.Role )**", "``$( $FunctionInfo.Name )``" ) )
 "@
 						};
 						if ( $Help.inputTypes ) {
