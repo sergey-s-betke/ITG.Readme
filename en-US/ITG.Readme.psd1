@@ -33,4 +33,8 @@ ErrorModuleManifestPathReason = Module manifest not found.
 ErrorModuleManifestPathRecommendedAction = Create .psd1 module manifest file.
 
 ErrorMakeCabMessage = Makecab.exe runtime error {0}.
+
+VerboseWriteReadme = Creating readme file "{1}" for module {0}.
+VerboseWriteAbout = Creating about.txt file "{1}" for module {0}.
+VerboseWriteHelpXML = Creating _help.xml file "{1}" and .cab file "{2}" for module {0}.
 '@

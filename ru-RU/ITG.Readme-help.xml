@@ -835,6 +835,12 @@
 				<parameter required="false" position="named" pipelineInput="false" globbing="false">
 					<maml:name>PassThru</maml:name>
 				</parameter>
+				<parameter required="false" position="named" pipelineInput="false" globbing="false">
+					<maml:name>WhatIf</maml:name>
+				</parameter>
+				<parameter required="false" position="named" pipelineInput="false" globbing="false">
+					<maml:name>Confirm</maml:name>
+				</parameter>
 			</syntaxItem>
 		</syntax>
 		<parameters>
@@ -875,6 +881,14 @@
 				</maml:description>
 				<parameterValue required="True">SwitchParameter</parameterValue>
 				<defaultValue>False</defaultValue>
+			</parameter>
+			<parameter required="false" position="named" pipelineInput="false" globbing="false">
+				<maml:name>WhatIf</maml:name>
+				<parameterValue required="True">SwitchParameter</parameterValue>
+			</parameter>
+			<parameter required="false" position="named" pipelineInput="false" globbing="false">
+				<maml:name>Confirm</maml:name>
+				<parameterValue required="True">SwitchParameter</parameterValue>
 			</parameter>
 		</parameters>
 		<inputTypes>
@@ -958,6 +972,12 @@
 				<parameter required="false" position="named" pipelineInput="false" globbing="false">
 					<maml:name>PassThru</maml:name>
 				</parameter>
+				<parameter required="false" position="named" pipelineInput="false" globbing="false">
+					<maml:name>WhatIf</maml:name>
+				</parameter>
+				<parameter required="false" position="named" pipelineInput="false" globbing="false">
+					<maml:name>Confirm</maml:name>
+				</parameter>
 			</syntaxItem>
 		</syntax>
 		<parameters>
@@ -997,6 +1017,14 @@
 				</maml:description>
 				<parameterValue required="True">SwitchParameter</parameterValue>
 				<defaultValue>False</defaultValue>
+			</parameter>
+			<parameter required="false" position="named" pipelineInput="false" globbing="false">
+				<maml:name>WhatIf</maml:name>
+				<parameterValue required="True">SwitchParameter</parameterValue>
+			</parameter>
+			<parameter required="false" position="named" pipelineInput="false" globbing="false">
+				<maml:name>Confirm</maml:name>
+				<parameterValue required="True">SwitchParameter</parameterValue>
 			</parameter>
 		</parameters>
 		<inputTypes>
@@ -1089,6 +1117,12 @@
 				<parameter required="false" position="named" pipelineInput="false" globbing="false">
 					<maml:name>PassThru</maml:name>
 				</parameter>
+				<parameter required="false" position="named" pipelineInput="false" globbing="false">
+					<maml:name>WhatIf</maml:name>
+				</parameter>
+				<parameter required="false" position="named" pipelineInput="false" globbing="false">
+					<maml:name>Confirm</maml:name>
+				</parameter>
 			</syntaxItem>
 			<syntaxItem>
 				<maml:name>Set-HelpXML</maml:name>
@@ -1102,6 +1136,12 @@
 				</parameter>
 				<parameter required="false" position="named" pipelineInput="false" globbing="false">
 					<maml:name>PassThru</maml:name>
+				</parameter>
+				<parameter required="false" position="named" pipelineInput="false" globbing="false">
+					<maml:name>WhatIf</maml:name>
+				</parameter>
+				<parameter required="false" position="named" pipelineInput="false" globbing="false">
+					<maml:name>Confirm</maml:name>
 				</parameter>
 			</syntaxItem>
 		</syntax>
@@ -1165,6 +1205,14 @@
 				</maml:description>
 				<parameterValue required="True">SwitchParameter</parameterValue>
 				<defaultValue>False</defaultValue>
+			</parameter>
+			<parameter required="false" position="named" pipelineInput="false" globbing="false">
+				<maml:name>WhatIf</maml:name>
+				<parameterValue required="True">SwitchParameter</parameterValue>
+			</parameter>
+			<parameter required="false" position="named" pipelineInput="false" globbing="false">
+				<maml:name>Confirm</maml:name>
+				<parameterValue required="True">SwitchParameter</parameterValue>
 			</parameter>
 		</parameters>
 		<inputTypes>
@@ -1278,6 +1326,12 @@
 				<parameter required="false" position="named" pipelineInput="false" globbing="false">
 					<maml:name>PassThru</maml:name>
 				</parameter>
+				<parameter required="false" position="named" pipelineInput="false" globbing="false">
+					<maml:name>WhatIf</maml:name>
+				</parameter>
+				<parameter required="false" position="named" pipelineInput="false" globbing="false">
+					<maml:name>Confirm</maml:name>
+				</parameter>
 			</syntaxItem>
 			<syntaxItem>
 				<maml:name>Set-Readme</maml:name>
@@ -1303,6 +1357,12 @@
 				<parameter required="false" position="named" pipelineInput="false" globbing="false">
 					<maml:name>PassThru</maml:name>
 				</parameter>
+				<parameter required="false" position="named" pipelineInput="false" globbing="false">
+					<maml:name>WhatIf</maml:name>
+				</parameter>
+				<parameter required="false" position="named" pipelineInput="false" globbing="false">
+					<maml:name>Confirm</maml:name>
+				</parameter>
 			</syntaxItem>
 			<syntaxItem>
 				<maml:name>Set-Readme</maml:name>
@@ -1327,6 +1387,12 @@
 				</parameter>
 				<parameter required="false" position="named" pipelineInput="false" globbing="false">
 					<maml:name>PassThru</maml:name>
+				</parameter>
+				<parameter required="false" position="named" pipelineInput="false" globbing="false">
+					<maml:name>WhatIf</maml:name>
+				</parameter>
+				<parameter required="false" position="named" pipelineInput="false" globbing="false">
+					<maml:name>Confirm</maml:name>
 				</parameter>
 			</syntaxItem>
 		</syntax>
@@ -1398,6 +1464,14 @@
 				</maml:description>
 				<parameterValue required="True">SwitchParameter</parameterValue>
 				<defaultValue>False</defaultValue>
+			</parameter>
+			<parameter required="false" position="named" pipelineInput="false" globbing="false">
+				<maml:name>WhatIf</maml:name>
+				<parameterValue required="True">SwitchParameter</parameterValue>
+			</parameter>
+			<parameter required="false" position="named" pipelineInput="false" globbing="false">
+				<maml:name>Confirm</maml:name>
+				<parameterValue required="True">SwitchParameter</parameterValue>
 			</parameter>
 		</parameters>
 		<inputTypes>

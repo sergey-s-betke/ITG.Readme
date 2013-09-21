@@ -30,10 +30,10 @@ $m | Set-Readme `
 #>
 
 Get-Module 'ITG.Readme' `
-| Set-Readme -PassThru `
-| Set-AboutModule -PassThru `
-| Set-HelpXML -PassThru `
-| Set-HelpInfo `
+| Set-Readme -PassThru -Verbose `
+| Set-AboutModule -PassThru -Verbose `
+| Set-HelpXML -PassThru -Verbose `
+| Set-HelpInfo -Verbose `
 ;
 
 <#

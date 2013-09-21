@@ -1274,7 +1274,9 @@ Function Set-Readme {
 	#>
 	
 	[CmdletBinding(
-		DefaultParametersetName='ModuleInfo'
+		DefaultParametersetName = 'ModuleInfo'
+		, SupportsShouldProcess = $true
+		, ConfirmImpact = 'Low'
 	)]
 
 	param (
@@ -1356,8 +1358,13 @@ Function Set-Readme {
 	            | Join-Path -ChildPath 'readme.md' `
             ;
         };
+        Write-Verbose `
+            -Message ( [String]::Format( $loc.VerboseWriteReadme, $ModuleInfo.Name, $PSPath ) ) `
+        ;
 		$null = $PSBoundParameters.Remove( 'PSPath' );
 		$null = $PSBoundParameters.Remove( 'PassThru' );
+		$null = $PSBoundParameters.Remove( 'WhatIf' );
+		$null = $PSBoundParameters.Remove( 'Confirm' );
 
         Import-LocalizedData `
             -UICulture $UICulture `
@@ -1506,6 +1513,8 @@ Function Set-AboutModule {
 	
 	[CmdletBinding(
 		DefaultParametersetName='ModuleInfo'
+		, SupportsShouldProcess = $true
+		, ConfirmImpact = 'Low'
 	)]
 
 	param (
@@ -1560,12 +1569,17 @@ Function Set-AboutModule {
 	            | Join-Path -ChildPath "about_$( $ModuleInfo.Name ).txt" `
             ;
         };
+        Write-Verbose `
+            -Message ( [String]::Format( $loc.VerboseWriteAbout, $ModuleInfo.Name, $PSPath ) ) `
+        ;
 		$Dir = Split-Path -Path ( $PSPath ) -Parent;
 		if ( -not ( Test-Path -LiteralPath $Dir ) ) {
 			$null = New-Item -Path $Dir -ItemType Directory;
 		};
 		$null = $PSBoundParameters.Remove( 'PSPath' );
 		$null = $PSBoundParameters.Remove( 'PassThru' );
+		$null = $PSBoundParameters.Remove( 'WhatIf' );
+		$null = $PSBoundParameters.Remove( 'Confirm' );
 
 		switch ( $PsCmdlet.ParameterSetName ) {
 			'ModuleInfo' {
@@ -2140,6 +2154,8 @@ Function Set-HelpXML {
 	
 	[CmdletBinding(
 		DefaultParametersetName='ModuleInfo'
+		, SupportsShouldProcess = $true
+		, ConfirmImpact = 'Low'
 	)]
 
 	param (
@@ -2233,6 +2249,9 @@ Function Set-HelpXML {
 	                    | Join-Path -ChildPath "$( $ModuleInfo.Name )_$( $ModuleInfo.GUID )_$( $UICulture )_HelpContent.cab" `
                     ;
                 };
+                Write-Verbose `
+                    -Message ( [String]::Format( $loc.VerboseWriteHelpXML, $ModuleInfo.Name, $PSPath, $PSCabPath ) ) `
+                ;
 
 				[System.Xml.XmlDocument]$HelpContent = New-HelpXML -ModuleInfo $ModuleInfo;
 
@@ -2515,6 +2534,8 @@ Function Set-HelpInfo {
 	
 	[CmdletBinding(
 		DefaultParametersetName='ModuleInfo'
+		, SupportsShouldProcess = $true
+		, ConfirmImpact = 'Medium'
 	)]
 
 	param (

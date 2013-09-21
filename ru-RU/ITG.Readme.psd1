@@ -33,4 +33,8 @@ ErrorModuleManifestPathReason = Не обнаружен манифест мод�
 ErrorModuleManifestPathRecommendedAction = Создайте .psd1 манифест к модулю и разместите его в каталоге модуля.
 
 ErrorMakeCabMessage = Возникла ошибка {0} при выполнении makecab.exe.
+
+VerboseWriteReadme = Создание readme файла "{1}" для модуля {0}.
+VerboseWriteAbout = Создание файла about.txt "{1}" для модуля {0}.
+VerboseWriteHelpXML = Создание файлов _help.xml "{1}" и .cab "{2}" для модуля {0}.
 '@

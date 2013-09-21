@@ -26,7 +26,7 @@
 Генерирует файл `about_$(ModuleInfo.Name).txt` с [MarkDown][] разметкой
 по данным модуля и комментариям к его функциям.
 
-	Set-AboutModule [-ModuleInfo] <PSModuleInfo> [-UICulture <CultureInfo>] [-PSPath <String>] [-ReferencedModules <PSModuleInfo[]>] [-PassThru] <CommonParameters>
+	Set-AboutModule [-ModuleInfo] <PSModuleInfo> [-UICulture <CultureInfo>] [-PSPath <String>] [-ReferencedModules <PSModuleInfo[]>] [-PassThru] [-WhatIf] [-Confirm] <CommonParameters>
 
 ### HelpInfo
 
@@ -46,7 +46,7 @@
 
 Генерирует HelpInfo XML для указанного модуля.
 
-	Set-HelpInfo [-ModuleInfo] <PSModuleInfo> [-HelpContentUri <Uri>] [-UpdateManifest] [-HelpInfoUri <Uri>] [-PassThru] <CommonParameters>
+	Set-HelpInfo [-ModuleInfo] <PSModuleInfo> [-HelpContentUri <Uri>] [-UpdateManifest] [-HelpInfoUri <Uri>] [-PassThru] [-WhatIf] [-Confirm] <CommonParameters>
 
 ### HelpXML
 
@@ -68,9 +68,9 @@
 
 Генерирует XML файл справки для переданного модуля, функции, командлеты.
 
-	Set-HelpXML [-ModuleInfo] <PSModuleInfo> [-UICulture <CultureInfo>] [-PSPath <String>] [-UpdateModule] [-Cab] [-PSCabPath <String>] [-PassThru] <CommonParameters>
+	Set-HelpXML [-ModuleInfo] <PSModuleInfo> [-UICulture <CultureInfo>] [-PSPath <String>] [-UpdateModule] [-Cab] [-PSCabPath <String>] [-PassThru] [-WhatIf] [-Confirm] <CommonParameters>
 
-	Set-HelpXML [-FunctionInfo] <FunctionInfo> [-UICulture <CultureInfo>] [-PassThru] <CommonParameters>
+	Set-HelpXML [-FunctionInfo] <FunctionInfo> [-UICulture <CultureInfo>] [-PassThru] [-WhatIf] [-Confirm] <CommonParameters>
 
 ### Readme
 
@@ -89,11 +89,11 @@
 Генерирует readme файл с [MarkDown][] разметкой по данным модуля и комментариям к его функциям.
 Файл предназначен, в частности, для размещения в репозиториях github.
 
-	Set-Readme [-ModuleInfo] <PSModuleInfo> [-UICulture <CultureInfo>] [-PSPath <String>] [-ShortDescription] [-ReferencedModules <PSModuleInfo[]>] [-TranslateRules <Array>] [-PassThru] <CommonParameters>
+	Set-Readme [-ModuleInfo] <PSModuleInfo> [-UICulture <CultureInfo>] [-PSPath <String>] [-ShortDescription] [-ReferencedModules <PSModuleInfo[]>] [-TranslateRules <Array>] [-PassThru] [-WhatIf] [-Confirm] <CommonParameters>
 
-	Set-Readme [-ExternalScriptInfo] <ExternalScriptInfo> [-UICulture <CultureInfo>] [-ShortDescription] [-ReferencedModules <PSModuleInfo[]>] [-TranslateRules <Array>] [-PassThru] <CommonParameters>
+	Set-Readme [-ExternalScriptInfo] <ExternalScriptInfo> [-UICulture <CultureInfo>] [-ShortDescription] [-ReferencedModules <PSModuleInfo[]>] [-TranslateRules <Array>] [-PassThru] [-WhatIf] [-Confirm] <CommonParameters>
 
-	Set-Readme [-FunctionInfo] <FunctionInfo> [-UICulture <CultureInfo>] [-ShortDescription] [-ReferencedModules <PSModuleInfo[]>] [-TranslateRules <Array>] [-PassThru] <CommonParameters>
+	Set-Readme [-FunctionInfo] <FunctionInfo> [-UICulture <CultureInfo>] [-ShortDescription] [-ReferencedModules <PSModuleInfo[]>] [-TranslateRules <Array>] [-PassThru] [-WhatIf] [-Confirm] <CommonParameters>
 
 
 [Get-AboutModule]: <#get-aboutmodule> "Генерирует содержимое файла `about_$(ModuleInfo.Name).txt` с MarkDown разметкой по данным модуля и комментариям к его функциям."
