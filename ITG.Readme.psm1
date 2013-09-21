@@ -1536,6 +1536,10 @@ Function Set-AboutModule {
 	            | Join-Path -ChildPath "about_$( $ModuleInfo.Name ).txt" `
             ;
         };
+		$Dir = Split-Path -Path ( $PSPath ) -Parent;
+		if ( -not ( Test-Path -LiteralPath $Dir ) ) {
+			$null = New-Item -Path $Dir -ItemType Directory;
+		};
 		$null = $PSBoundParameters.Remove( 'PSPath' );
 		$null = $PSBoundParameters.Remove( 'PassThru' );
 
