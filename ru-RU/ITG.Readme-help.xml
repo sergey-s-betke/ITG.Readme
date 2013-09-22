@@ -101,6 +101,9 @@
 		</examples>
 		<maml:relatedLinks>
 			<maml:navigationLink>
+				<maml:uri>https://github.com/IT-Service/ITG.Readme#Get-AboutModule</maml:uri>
+			</maml:navigationLink>
+			<maml:navigationLink>
 				<maml:linkText>[MarkDown]: &lt;http://daringfireball.net/projects/markdown/syntax&gt; "MarkDown (md) Syntax"</maml:linkText>
 			</maml:navigationLink>
 			<maml:navigationLink>
@@ -108,9 +111,6 @@
 			</maml:navigationLink>
 			<maml:navigationLink>
 				<maml:linkText>[Написание справки для командлетов](http://go.microsoft.com/fwlink/?LinkID=123415)</maml:linkText>
-			</maml:navigationLink>
-			<maml:navigationLink>
-				<maml:uri>https://github.com/IT-Service/ITG.Readme#Get-AboutModule</maml:uri>
 			</maml:navigationLink>
 		</maml:relatedLinks>
 	</command>
@@ -189,6 +189,9 @@
 		</examples>
 		<maml:relatedLinks>
 			<maml:navigationLink>
+				<maml:uri>https://github.com/IT-Service/ITG.Readme#Get-HelpInfo</maml:uri>
+			</maml:navigationLink>
+			<maml:navigationLink>
 				<maml:linkText>about_Updatable_Help</maml:linkText>
 			</maml:navigationLink>
 			<maml:navigationLink>
@@ -196,9 +199,6 @@
 			</maml:navigationLink>
 			<maml:navigationLink>
 				<maml:linkText>New-HelpInfo</maml:linkText>
-			</maml:navigationLink>
-			<maml:navigationLink>
-				<maml:uri>https://github.com/IT-Service/ITG.Readme#Get-HelpInfo</maml:uri>
 			</maml:navigationLink>
 			<maml:navigationLink>
 				<maml:linkText>[How to Name a HelpInfo XML File](http://msdn.microsoft.com/en-us/library/windows/desktop/hh852748.aspx)</maml:linkText>
@@ -306,13 +306,13 @@
 		</examples>
 		<maml:relatedLinks>
 			<maml:navigationLink>
+				<maml:uri>https://github.com/IT-Service/ITG.Readme#Get-HelpXML</maml:uri>
+			</maml:navigationLink>
+			<maml:navigationLink>
 				<maml:linkText>about_Updatable_Help</maml:linkText>
 			</maml:navigationLink>
 			<maml:navigationLink>
 				<maml:linkText>[Creating the Cmdlet Help File](http://msdn.microsoft.com/en-us/library/bb525433.aspx)</maml:linkText>
-			</maml:navigationLink>
-			<maml:navigationLink>
-				<maml:uri>https://github.com/IT-Service/ITG.Readme#Get-HelpXML</maml:uri>
 			</maml:navigationLink>
 		</maml:relatedLinks>
 	</command>
@@ -540,6 +540,9 @@
 		</examples>
 		<maml:relatedLinks>
 			<maml:navigationLink>
+				<maml:uri>https://github.com/IT-Service/ITG.Readme#Get-Readme</maml:uri>
+			</maml:navigationLink>
+			<maml:navigationLink>
 				<maml:linkText>[MarkDown]: &lt;http://daringfireball.net/projects/markdown/syntax&gt; "MarkDown (md) Syntax"</maml:linkText>
 			</maml:navigationLink>
 			<maml:navigationLink>
@@ -547,9 +550,6 @@
 			</maml:navigationLink>
 			<maml:navigationLink>
 				<maml:linkText>[Написание справки для командлетов](http://go.microsoft.com/fwlink/?LinkID=123415)</maml:linkText>
-			</maml:navigationLink>
-			<maml:navigationLink>
-				<maml:uri>https://github.com/IT-Service/ITG.Readme#Get-Readme</maml:uri>
 			</maml:navigationLink>
 		</maml:relatedLinks>
 	</command>
@@ -657,13 +657,13 @@
 		</examples>
 		<maml:relatedLinks>
 			<maml:navigationLink>
+				<maml:uri>https://github.com/IT-Service/ITG.Readme#New-HelpInfo</maml:uri>
+			</maml:navigationLink>
+			<maml:navigationLink>
 				<maml:linkText>about_Updatable_Help</maml:linkText>
 			</maml:navigationLink>
 			<maml:navigationLink>
 				<maml:linkText>Set-HelpInfo</maml:linkText>
-			</maml:navigationLink>
-			<maml:navigationLink>
-				<maml:uri>https://github.com/IT-Service/ITG.Readme#New-HelpInfo</maml:uri>
 			</maml:navigationLink>
 			<maml:navigationLink>
 				<maml:linkText>[HelpInfo XML Sample File](http://msdn.microsoft.com/en-us/library/windows/desktop/hh852750.aspx)</maml:linkText>
@@ -782,6 +782,9 @@
 		</examples>
 		<maml:relatedLinks>
 			<maml:navigationLink>
+				<maml:uri>https://github.com/IT-Service/ITG.Readme#New-HelpXML</maml:uri>
+			</maml:navigationLink>
+			<maml:navigationLink>
 				<maml:linkText>about_Comment_Based_Help</maml:linkText>
 			</maml:navigationLink>
 			<maml:navigationLink>
@@ -789,9 +792,6 @@
 			</maml:navigationLink>
 			<maml:navigationLink>
 				<maml:linkText>[Creating the Cmdlet Help File](http://msdn.microsoft.com/en-us/library/bb525433.aspx)</maml:linkText>
-			</maml:navigationLink>
-			<maml:navigationLink>
-				<maml:uri>https://github.com/IT-Service/ITG.Readme#New-HelpXML</maml:uri>
 			</maml:navigationLink>
 		</maml:relatedLinks>
 	</command>
@@ -918,6 +918,9 @@
 		</examples>
 		<maml:relatedLinks>
 			<maml:navigationLink>
+				<maml:uri>https://github.com/IT-Service/ITG.Readme#Set-AboutModule</maml:uri>
+			</maml:navigationLink>
+			<maml:navigationLink>
 				<maml:linkText>Get-AboutModule</maml:linkText>
 			</maml:navigationLink>
 			<maml:navigationLink>
@@ -928,9 +931,6 @@
 			</maml:navigationLink>
 			<maml:navigationLink>
 				<maml:linkText>[Написание справки для командлетов](http://go.microsoft.com/fwlink/?LinkID=123415)</maml:linkText>
-			</maml:navigationLink>
-			<maml:navigationLink>
-				<maml:uri>https://github.com/IT-Service/ITG.Readme#Set-AboutModule</maml:uri>
 			</maml:navigationLink>
 		</maml:relatedLinks>
 	</command>
@@ -1061,10 +1061,16 @@
 		</examples>
 		<maml:relatedLinks>
 			<maml:navigationLink>
+				<maml:uri>https://github.com/IT-Service/ITG.Readme#Set-HelpInfo</maml:uri>
+			</maml:navigationLink>
+			<maml:navigationLink>
 				<maml:linkText>about_Updatable_Help</maml:linkText>
 			</maml:navigationLink>
 			<maml:navigationLink>
-				<maml:uri>https://github.com/IT-Service/ITG.Readme#Set-HelpInfo</maml:uri>
+				<maml:linkText>Get-HelpInfo</maml:linkText>
+			</maml:navigationLink>
+			<maml:navigationLink>
+				<maml:linkText>New-HelpInfo</maml:linkText>
 			</maml:navigationLink>
 			<maml:navigationLink>
 				<maml:linkText>[HelpInfo XML Sample File](http://msdn.microsoft.com/en-us/library/windows/desktop/hh852750.aspx)</maml:linkText>
@@ -1269,13 +1275,16 @@
 		</examples>
 		<maml:relatedLinks>
 			<maml:navigationLink>
+				<maml:uri>https://github.com/IT-Service/ITG.Readme#Set-HelpXML</maml:uri>
+			</maml:navigationLink>
+			<maml:navigationLink>
+				<maml:linkText>Get-HelpXML</maml:linkText>
+			</maml:navigationLink>
+			<maml:navigationLink>
 				<maml:linkText>about_Updatable_Help</maml:linkText>
 			</maml:navigationLink>
 			<maml:navigationLink>
 				<maml:linkText>[Creating the Cmdlet Help File](http://msdn.microsoft.com/en-us/library/bb525433.aspx)</maml:linkText>
-			</maml:navigationLink>
-			<maml:navigationLink>
-				<maml:uri>https://github.com/IT-Service/ITG.Readme#Set-HelpXML</maml:uri>
 			</maml:navigationLink>
 		</maml:relatedLinks>
 	</command>
@@ -1544,6 +1553,9 @@
 		</examples>
 		<maml:relatedLinks>
 			<maml:navigationLink>
+				<maml:uri>https://github.com/IT-Service/ITG.Readme#Set-Readme</maml:uri>
+			</maml:navigationLink>
+			<maml:navigationLink>
 				<maml:linkText>Get-Readme</maml:linkText>
 			</maml:navigationLink>
 			<maml:navigationLink>
@@ -1554,9 +1566,6 @@
 			</maml:navigationLink>
 			<maml:navigationLink>
 				<maml:linkText>[Написание справки для командлетов](http://go.microsoft.com/fwlink/?LinkID=123415)</maml:linkText>
-			</maml:navigationLink>
-			<maml:navigationLink>
-				<maml:uri>https://github.com/IT-Service/ITG.Readme#Set-Readme</maml:uri>
 			</maml:navigationLink>
 		</maml:relatedLinks>
 	</command>

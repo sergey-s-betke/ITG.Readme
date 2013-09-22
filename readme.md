@@ -559,6 +559,8 @@ HelpInfo.xml в каталоге модуля, либо создаёт новы�
 
 - [Online версия справки](https://github.com/IT-Service/ITG.Readme#Set-HelpInfo)
 - [about_Updatable_Help][]
+- [Get-HelpInfo][]
+- [New-HelpInfo][]
 - [HelpInfo XML Sample File](http://msdn.microsoft.com/en-us/library/windows/desktop/hh852750.aspx)
 
 #### Get-HelpXML
@@ -856,6 +858,7 @@ HelpInfo.xml в каталоге модуля, либо создаёт новы�
 ##### См. также
 
 - [Online версия справки](https://github.com/IT-Service/ITG.Readme#Set-HelpXML)
+- [Get-HelpXML][]
 - [about_Updatable_Help][]
 - [Creating the Cmdlet Help File](http://msdn.microsoft.com/en-us/library/bb525433.aspx)
 

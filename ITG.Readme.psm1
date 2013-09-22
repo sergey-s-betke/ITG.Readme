@@ -768,13 +768,13 @@ Function Get-Readme {
 			String.
 			Содержимое readme.md.
 		.Link
+			https://github.com/IT-Service/ITG.Readme#Get-Readme
+		.Link
 			[MarkDown]: <http://daringfireball.net/projects/markdown/syntax> "MarkDown (md) Syntax"
 		.Link
 			about_comment_based_help
 		.Link
 			[Написание справки для командлетов](http://go.microsoft.com/fwlink/?LinkID=123415)
-		.Link
-			https://github.com/IT-Service/ITG.Readme#Get-Readme
 		.Example
 			Get-Module 'ITG.Yandex.DnsServer' | Get-Readme | Out-File -Path 'readme.md' -Encoding 'UTF8' -Width 1024;
 			Генерация readme.md файла для модуля `ITG.Yandex.DnsServer` 
@@ -788,7 +788,8 @@ Function Get-Readme {
 	#>
 	
 	[CmdletBinding(
-		DefaultParametersetName='ModuleInfo'
+		DefaultParametersetName = 'ModuleInfo'
+        , HelpUri = 'https://github.com/IT-Service/ITG.Readme#Get-Readme'
 	)]
 
 	param (
@@ -1251,6 +1252,8 @@ Function Set-Readme {
 			Описатели функций, для которых будет сгенерирован readme.md. 
 			Получены описатели могут быть через Get-Command.
 		.Link
+			https://github.com/IT-Service/ITG.Readme#Set-Readme
+		.Link
 			Get-Readme
 		.Link
 			[MarkDown]: <http://daringfireball.net/projects/markdown/syntax> "MarkDown (md) Syntax"
@@ -1258,8 +1261,6 @@ Function Set-Readme {
 			about_comment_based_help
 		.Link
 			[Написание справки для командлетов](http://go.microsoft.com/fwlink/?LinkID=123415)
-		.Link
-			https://github.com/IT-Service/ITG.Readme#Set-Readme
 		.Example
 			Get-Module 'ITG.Yandex.DnsServer' | Set-Readme;
 			Генерация readme.md файла для модуля `ITG.Yandex.DnsServer` 
@@ -1277,6 +1278,7 @@ Function Set-Readme {
 		DefaultParametersetName = 'ModuleInfo'
 		, SupportsShouldProcess = $true
 		, ConfirmImpact = 'Low'
+        , HelpUri = 'https://github.com/IT-Service/ITG.Readme#Set-Readme'
 	)]
 
 	param (
@@ -1421,20 +1423,21 @@ Function Get-AboutModule {
 			String.
 			Содержимое about.txt.
 		.Link
+			https://github.com/IT-Service/ITG.Readme#Get-AboutModule
+		.Link
 			[MarkDown]: <http://daringfireball.net/projects/markdown/syntax> "MarkDown (md) Syntax"
 		.Link
 			about_comment_based_help
 		.Link
 			[Написание справки для командлетов](http://go.microsoft.com/fwlink/?LinkID=123415)
-		.Link
-			https://github.com/IT-Service/ITG.Readme#Get-AboutModule
 		.Example
 			Get-Module 'ITG.Yandex.DnsServer' | Get-AboutModule;
 			Генерация содержимого about.txt файла для модуля `ITG.Yandex.DnsServer`.
 	#>
 	
 	[CmdletBinding(
-		DefaultParametersetName='ModuleInfo'
+		DefaultParametersetName = 'ModuleInfo'
+        , HelpUri = 'https://github.com/IT-Service/ITG.Readme#Get-AboutModule'
 	)]
 
 	param (
@@ -1496,6 +1499,8 @@ Function Set-AboutModule {
 			Описатели модулей, для которых будет сгенерирован readme.md. 
 			Получены описатели могут быть через Get-Module.
 		.Link
+			https://github.com/IT-Service/ITG.Readme#Set-AboutModule
+		.Link
 			Get-AboutModule
 		.Link
 			[MarkDown]: <http://daringfireball.net/projects/markdown/syntax> "MarkDown (md) Syntax"
@@ -1503,8 +1508,6 @@ Function Set-AboutModule {
 			about_comment_based_help
 		.Link
 			[Написание справки для командлетов](http://go.microsoft.com/fwlink/?LinkID=123415)
-		.Link
-			https://github.com/IT-Service/ITG.Readme#Set-AboutModule
 		.Example
 			Get-Module 'ITG.Yandex.DnsServer' | Set-AboutModule;
 			Генерация `about_ITG.Yandex.DnsServer.txt` файла для модуля `ITG.Yandex.DnsServer` 
@@ -1515,6 +1518,7 @@ Function Set-AboutModule {
 		DefaultParametersetName='ModuleInfo'
 		, SupportsShouldProcess = $true
 		, ConfirmImpact = 'Low'
+        , HelpUri = 'https://github.com/IT-Service/ITG.Readme#Set-AboutModule'
 	)]
 
 	param (
@@ -1748,20 +1752,21 @@ Function New-HelpXML {
 			System.Xml.XmlDocument
 			Содержимое XML справки.
 		.Link
+			https://github.com/IT-Service/ITG.Readme#New-HelpXML
+		.Link
 			about_Comment_Based_Help
 		.Link
 			about_Updatable_Help
 		.Link
 			[Creating the Cmdlet Help File](http://msdn.microsoft.com/en-us/library/bb525433.aspx)
-		.Link
-			https://github.com/IT-Service/ITG.Readme#New-HelpXML
 		.Example
 			Get-Module 'ITG.Yandex.DnsServer' | New-HelpXML;
 			Генерация xml справки для модуля `ITG.Yandex.DnsServer`.
 	#>
 
 	[CmdletBinding(
-		DefaultParametersetName='ModuleInfo'
+		DefaultParametersetName = 'ModuleInfo'
+        , HelpUri = 'https://github.com/IT-Service/ITG.Readme#New-HelpXML'
 	)]
 
 	param (
@@ -2028,11 +2033,11 @@ Function Get-HelpXML {
 			System.Xml.XmlDocument
 			Содержимое XML справки.
 		.Link
+			https://github.com/IT-Service/ITG.Readme#Get-HelpXML
+		.Link
 			about_Updatable_Help
 		.Link
 			[Creating the Cmdlet Help File](http://msdn.microsoft.com/en-us/library/bb525433.aspx)
-		.Link
-			https://github.com/IT-Service/ITG.Readme#Get-HelpXML
 		.Example
 			Get-Module 'ITG.Yandex.DnsServer' | Get-HelpXML;
 			Возвращает содержимое xml файла справки для модуля `ITG.Yandex.DnsServer` 
@@ -2040,7 +2045,8 @@ Function Get-HelpXML {
 	#>
 	
 	[CmdletBinding(
-		DefaultParametersetName='ModuleInfo'
+		DefaultParametersetName = 'ModuleInfo'
+        , HelpUri = 'https://github.com/IT-Service/ITG.Readme#Get-HelpXML'
 	)]
 
 	param (
@@ -2141,11 +2147,13 @@ Function Set-HelpXML {
 			Описатели командлет. Именно для них и будет сгенерирована XML справка. 
 			Получены описатели могут быть через `Get-Command`.
 		.Link
+			https://github.com/IT-Service/ITG.Readme#Set-HelpXML
+		.Link
+			Get-HelpXML
+		.Link
 			about_Updatable_Help
 		.Link
 			[Creating the Cmdlet Help File](http://msdn.microsoft.com/en-us/library/bb525433.aspx)
-		.Link
-			https://github.com/IT-Service/ITG.Readme#Set-HelpXML
 		.Example
 			Get-Module 'ITG.Yandex.DnsServer' | Set-HelpXML;
 			Генерация xml файла справки для модуля `ITG.Yandex.DnsServer` 
@@ -2153,9 +2161,10 @@ Function Set-HelpXML {
 	#>
 	
 	[CmdletBinding(
-		DefaultParametersetName='ModuleInfo'
+		DefaultParametersetName = 'ModuleInfo'
 		, SupportsShouldProcess = $true
 		, ConfirmImpact = 'Low'
+        , HelpUri = 'https://github.com/IT-Service/ITG.Readme#Set-HelpXML'
 	)]
 
 	param (
@@ -2351,11 +2360,11 @@ Function New-HelpInfo {
 			System.Xml.XmlDocument
 			Содержимое XML манифеста (HelpInfo.xml) справки.
 		.Link
+			https://github.com/IT-Service/ITG.Readme#New-HelpInfo
+		.Link
 			about_Updatable_Help
 		.Link
 			Set-HelpInfo
-		.Link
-			https://github.com/IT-Service/ITG.Readme#New-HelpInfo
 		.Link
 			[HelpInfo XML Sample File](http://msdn.microsoft.com/en-us/library/windows/desktop/hh852750.aspx)
 		.Example
@@ -2364,7 +2373,8 @@ Function New-HelpInfo {
 	#>
 	
 	[CmdletBinding(
-		DefaultParametersetName='ModuleInfo'
+		DefaultParametersetName = 'ModuleInfo'
+        , HelpUri = 'https://github.com/IT-Service/ITG.Readme#New-HelpInfo'
 	)]
 
 	param (
@@ -2444,13 +2454,13 @@ Function Get-HelpInfo {
 			System.Xml.XmlDocument
 			Содержимое XML манифеста (HelpInfo.xml) справки.
 		.Link
+			https://github.com/IT-Service/ITG.Readme#Get-HelpInfo
+		.Link
 			about_Updatable_Help
 		.Link
 			Set-HelpInfo
 		.Link
 			New-HelpInfo
-		.Link
-			https://github.com/IT-Service/ITG.Readme#Get-HelpInfo
 		.Link
 			[How to Name a HelpInfo XML File](http://msdn.microsoft.com/en-us/library/windows/desktop/hh852748.aspx)
 		.Link
@@ -2461,7 +2471,8 @@ Function Get-HelpInfo {
 	#>
 	
 	[CmdletBinding(
-		DefaultParametersetName='ModuleInfo'
+		DefaultParametersetName = 'ModuleInfo'
+        , HelpUri = 'https://github.com/IT-Service/ITG.Readme#Get-HelpInfo'
 	)]
 
 	param (
@@ -2522,9 +2533,13 @@ Function Set-HelpInfo {
 		.Outputs
 			None.
 		.Link
+			https://github.com/IT-Service/ITG.Readme#Set-HelpInfo
+		.Link
 			about_Updatable_Help
 		.Link
-			https://github.com/IT-Service/ITG.Readme#Set-HelpInfo
+			Get-HelpInfo
+		.Link
+			New-HelpInfo
 		.Link
 			[HelpInfo XML Sample File](http://msdn.microsoft.com/en-us/library/windows/desktop/hh852750.aspx)
 		.Example
@@ -2533,9 +2548,10 @@ Function Set-HelpInfo {
 	#>
 	
 	[CmdletBinding(
-		DefaultParametersetName='ModuleInfo'
+		DefaultParametersetName = 'ModuleInfo'
 		, SupportsShouldProcess = $true
 		, ConfirmImpact = 'Medium'
+        , HelpUri = 'https://github.com/IT-Service/ITG.Readme#Set-HelpInfo'
 	)]
 
 	param (
