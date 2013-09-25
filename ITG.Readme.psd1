@@ -29,7 +29,7 @@ CompanyName = 'IT-Service.Nov.RU'
 Copyright = '(c) 2012 Sergey S. Betke. All rights reserved.'
 
 # Описание функций данного модуля
-Description = @"
+Description = @'
 Данный модуль предоставляет набор командлет для формирования **справочной системы** модулей
 PowerShell, сценариев PowerShell:
 
@@ -79,7 +79,7 @@ PowerShell, сценариев PowerShell:
 
 P.S. Надеюсь, функционал данного модуля будет Вам полезен и позволит обеспечить Ваши модули PowerShell
 документацией с существенно меньшими трудозатратами.
-"@
+'@
 
 # Минимальный номер версии обработчика Windows PowerShell, необходимой для работы данного модуля
 PowerShellVersion = '3.0'
