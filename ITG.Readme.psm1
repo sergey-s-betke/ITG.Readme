@@ -12,7 +12,10 @@ $Translator = @{
 	TokenRules = @{};
 };
 
+$reTokenFirstChar = '[a-zA-Z]';
 $reTokenChar = '[-a-zA-Z0-9_]';
+$reTokenLastChar = '[a-zA-Z0-9_]';
+$reToken = "${reTokenFirstChar}(?:${reTokenChar}*$reTokenLastChar)?";
 $reBeforeToken = "(?<!${reTokenChar}|^\t+.*?|(?:``.*?``)*?.*?``)";
 $reAfterToken = "(?!${reTokenChar})";
 $reBeforeURL = "(?<!${reTokenChar}|^\t+.*?|\(<?|<|(``.*?``)*?.*?``)";
@@ -541,7 +544,7 @@ Function MatchEvaluatorForAboutCP( [System.Text.RegularExpressions.Match] $Match
 };
 
 $PowerShellAboutTopicsTranslateRules = @(
-	'about_[a-zA-Z_.]+?' `
+	"about_$reFirstChar(?:[-a-zA-Z0-9_.]*$reTokenLastChar)?" `
 	| ConvertTo-TranslateRule -ruleType 'about' `
 );
 
