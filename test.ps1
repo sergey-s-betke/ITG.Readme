@@ -32,7 +32,7 @@ $m | Set-Readme `
 Get-Module 'ITG.Readme' `
 | Set-Readme -PassThru -Verbose `
 | Set-AboutModule -PassThru -Verbose `
-| Set-HelpXML -PassThru -Verbose `
+| Set-HelpXML -PassThru -Cab -Verbose `
 | Set-HelpInfo -Verbose `
 ;
 

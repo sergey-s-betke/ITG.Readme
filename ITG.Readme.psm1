@@ -2267,13 +2267,9 @@ Function Set-HelpXML {
 
 				[System.Xml.XmlDocument]$HelpContent = New-HelpXML -ModuleInfo $ModuleInfo;
 
-				$Dir = Split-Path -Path ( $PSPath ) -Parent;
-				if ( -not ( Test-Path -LiteralPath $Dir ) ) {
-					$null = New-Item -Path $Dir -ItemType Directory;
-				};
-				
+				$TempHelpXmlFile = [System.IO.Path]::GetTempFileName();
 				$Writer = [System.Xml.XmlWriter]::Create(
-					$PSPath `
+					$TempHelpXmlFile `
 					, ( New-Object `
 						-TypeName System.Xml.XmlWriterSettings `
 						-Property @{
@@ -2288,15 +2284,17 @@ Function Set-HelpXML {
 				);
 				$HelpContent.WriteTo( $Writer );
 				$Writer.Close();
+				Copy-Item `
+					-LiteralPath $TempHelpXmlFile `
+					-Destination $PSPath `
+					-Force `
+				;
 
 				if ( $Cab ) {
-					$CabDir = Split-Path -Path ( $PSCabPath ) -Parent;
-					if ( -not ( Test-Path -LiteralPath $CabDir ) ) {
-						$null = New-Item -Path $CabDir -ItemType Directory;
-					};
+					$TempCabFile = [System.IO.Path]::GetTempFileName();
 					$MakeCabProcess = Start-Process `
 						-FilePath 'makecab' `
-						-ArgumentList "`"$( $PSPath )`"", "`"$( $PSCabPath )`"" `
+						-ArgumentList "`"$( $TempHelpXmlFile )`"", "`"$( $TempCabFile )`"" `
 						-NoNewWindow `
 						-Wait `
 						-PassThru `
@@ -2306,7 +2304,15 @@ Function Set-HelpXML {
 							-Message ( [String]::Format( $loc.ErrorMakeCabMessage, $MakeCabProcess.ExitCode ) ) `
 						;
 					};
+					Copy-Item `
+						-LiteralPath $TempCabFile `
+						-Destination $PSCabPath `
+						-Force `
+					;
+					$null = [System.IO.File]::Delete( $TempCabFile );
 				};
+
+				$null = [System.IO.File]::Delete( $TempHelpXmlFile );
 
 				if ( $UpdateModule ) {
 					$reFuncHeaders = 
@@ -2666,8 +2672,12 @@ Function Set-HelpInfo {
 					-Path ( Split-Path -Path ( $ModuleInfo.Path ) -Parent ) `
 					-ChildPath "$( $ModuleInfo.Name )_$( $ModuleInfo.GUID )_HelpInfo.xml" `
 				);
+				Write-Verbose `
+					-Message ( [String]::Format( $loc.VerboseWriteHelpInfo, $ModuleInfo.Name, $HelpInfoPath ) ) `
+				;
+				$TempHelpInfoFile = [System.IO.Path]::GetTempFileName();
 				$Writer = [System.Xml.XmlWriter]::Create(
-					$HelpInfoPath `
+					$TempHelpInfoFile `
 					, ( New-Object `
 						-TypeName System.Xml.XmlWriterSettings `
 						-Property @{
@@ -2682,6 +2692,12 @@ Function Set-HelpInfo {
 				);
 				$HelpInfoContent.WriteTo( $Writer );
 				$Writer.Close();
+				Copy-Item `
+					-LiteralPath $TempHelpInfoFile `
+					-Destination $HelpInfoPath `
+					-Force `
+				;
+				$null = [System.IO.File]::Delete( $TempHelpInfoFile );
 
 				if ( $UpdateManifest ) {
 					$ModuleManifestPath = Join-Path `

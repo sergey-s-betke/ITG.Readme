@@ -1304,7 +1304,7 @@
 		<maml:functionality>Readme</maml:functionality>
 		<maml:role>Everyone</maml:role>
 		<maml:description>
-			<maml:para>Генерирует readme файл с MarkDown разметкой по данным модуля и комментариям к его функциям. Файл предназначен, в частности, для размещения в репозиториях github. В дополнение к функционалу Get-Readme сохраняет результат в файл, определённый параметра `Path`.</maml:para>
+			<maml:para>Генерирует readme файл с MarkDown разметкой по данным модуля и комментариям к его функциям. Файл предназначен, в частности, для размещения в репозиториях github. В дополнение к функционалу Get-Readme сохраняет результат в файл, определённый параметром `-PSPath`.</maml:para>
 		</maml:description>
 		<syntax>
 			<syntaxItem>
