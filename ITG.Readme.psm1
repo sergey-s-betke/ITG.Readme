@@ -1,5 +1,5 @@
-п»їImport-LocalizedData `
-    -BindingVariable loc `
+Import-LocalizedData `
+	-BindingVariable loc `
 ;
 
 $Translator = @{
@@ -16,9 +16,9 @@ $reTokenFirstChar = '[a-zA-Z]';
 $reTokenChar = '[-a-zA-Z0-9_]';
 $reTokenLastChar = '[a-zA-Z0-9_]';
 $reToken = "${reTokenFirstChar}(?:${reTokenChar}*$reTokenLastChar)?";
-$reBeforeToken = "(?<!${reTokenChar}|^\t+.*?|(?:``.*?``)*?.*?``)";
+$reBeforeToken = "(?<!${reTokenChar}|^\t+.*?|^[^``]*``[^``]*)";
 $reAfterToken = "(?!${reTokenChar})";
-$reBeforeURL = "(?<!${reTokenChar}|^\t+.*?|\(<?|<|(``.*?``)*?.*?``)";
+$reBeforeURL = "(?<!${reTokenChar}|^\t+.*?|^[^``]*``[^``]*|\(<?|<)";
 
 $reRegExpId = New-Object System.Text.RegularExpressions.Regex -ArgumentList `
 	'(?<=\(\?\<)(?<id>\w+)(?=\>)' `
@@ -40,8 +40,8 @@ $reOnlineHelpLinkCheck = New-Object System.Text.RegularExpressions.Regex -Argume
 Filter ConvertTo-TranslateRule {
 	<#
 		.Synopsis
-			РџСЂРµРѕР±СЂР°Р·СѓРµС‚ РїСЂР°РІРёР»Р° РІС‹РґРµР»РµРЅРёСЏ РІРЅРµС€РЅРёС… СЃСЃС‹Р»РѕРє, РїРµСЂРµРґР°РЅРЅС‹С… РїРѕ РєРѕРЅРІРµР№РµСЂСѓ РІ СЂР°Р·Р»РёС‡РЅС‹С… С„РѕСЂРјР°С‚Р°С…, РІ СѓРЅРёС„РёС†РёСЂРѕРІР°РЅРЅС‹Р№ С„РѕСЂРјР°С‚
-			РґР»СЏ РїРѕСЃР»РµРґСѓСЋС‰РµР№ РёРЅРёС†РёР°Р»РёР·Р°С†РёРё С‚СЂР°РЅСЃР»СЏС‚РѕСЂР° `$Translator` (С‡РµСЂРµР· Use-TranslateRule).
+			Преобразует правила выделения внешних ссылок, переданных по конвейеру в различных форматах, в унифицированный формат
+			для последующей инициализации транслятора `$Translator` (через Use-TranslateRule).
 	#>
 	param (
 		[Parameter(
@@ -81,7 +81,7 @@ Filter ConvertTo-TranslateRule {
 		[System.Management.Automation.FunctionInfo]
 		$FunctionInfo
 	,
-		# Р“РµРЅРµСЂРёСЂРѕРІР°С‚СЊ РїСЂР°РІРёР»Р° РґР»СЏ С„РѕСЂРјРёСЂРѕРІР°РЅРёСЏ СЃСЃС‹Р»РѕРє РєР°Рє РЅР° С„СѓРЅРєС†РёРё РІРЅРµС€РЅРµРіРѕ РјРѕРґСѓР»СЏ
+		# Генерировать правила для формирования ссылок как на функции внешнего модуля
 		[Parameter(
 			Mandatory = $false
 			, ValueFromPipelineByPropertyName = $true
@@ -156,7 +156,7 @@ Filter ConvertTo-TranslateRule {
 Function Add-EndReference {
 	<#
 		.Synopsis
-			Р”РѕР±Р°РІР»СЏРµС‚ РІ `$Translator` РєРѕРЅС†РµРІСѓСЋ СЃСЃС‹Р»РєСѓ, СѓРїРѕРјРёРЅР°РЅРёРµ РєРѕС‚РѕСЂРѕР№ РІСЃС‚СЂРµС‡РµРЅРѕ РІ РѕР±СЂР°Р±Р°С‚С‹РІР°РµРјРѕРј С‚РµРєСЃС‚Рµ.
+			Добавляет в `$Translator` концевую ссылку, упоминание которой встречено в обрабатываемом тексте.
 	#>
 	param (
 		[Parameter(
@@ -221,7 +221,7 @@ Function Add-EndReference {
 Function Get-EndReference {
 	<#
 		.Synopsis
-			Р“РµРЅРµСЂРёСЂСѓРµС‚ РјР°СЃСЃРёРІ РЅР°РєРѕРїР»РµРЅРЅС‹С… РІ `$Translator` РєРѕРЅС†РµРІС‹С… СЃСЃС‹Р»РѕРє РґР»СЏ РІРєР»СЋС‡РµРЅРёСЏ РІ readme.
+			Генерирует массив накопленных в `$Translator` концевых ссылок для включения в readme.
 	#>
 	$Translator.Refs.Values `
 	| Group-Object -Property refType `
@@ -243,10 +243,10 @@ Function Get-EndReference {
 Function Use-TranslateRule {
 	<#
 		.Synopsis
-			РРЅРёС†РёР°Р»РёР·РёСЂСѓРµС‚ РѕР±СЉРµРєС‚ `$Translator` РЅР°Р±РѕСЂРѕРј РїСЂР°РІРёР» С‚СЂР°РЅСЃР»СЏС†РёРё, РїРѕСЃС‚СѓРїРёРІС€РёРј РїРѕ РєРѕРЅРІРµР№РµСЂСѓ.
+			Инициализирует объект `$Translator` набором правил трансляции, поступившим по конвейеру.
 	#>
 	param (
-		# СЌР»РµРјРµРЅС‚С‹ СЃР»РѕРІР°СЂСЏ (РїСЂР°РІРёР» СЃР»РѕРІР°СЂСЏ - РІ С‚РѕРј С‡РёСЃР»Рµ)
+		# элементы словаря (правил словаря - в том числе)
 		[Parameter(
 			Mandatory=$true
 			, ValueFromPipeline=$true
@@ -364,12 +364,12 @@ Function Use-TranslateRule {
 Filter Expand-Definitions {
 	<#
 		.Synopsis
-			Р”Р°РЅРЅР°СЏ С„СѓРЅРєС†РёСЏ РІС‹РґРµР»СЏРµС‚ РѕРїСЂРµРґРµР»РµРЅРёСЏ РёР· РїРѕРґРіРѕС‚РѕРІР»РµРЅРЅРѕРіРѕ readme Рё РѕС„РѕСЂРјР»СЏРµС‚ РёС… РІ СЃРѕРѕС‚РІРµС‚СЃС‚РІРёРё СЃРѕ 
-			СЃР»РѕРІР°СЂС‘Рј, РёСЃРїРѕР»СЊР·РѕРІР°РЅРЅС‹Рј РїСЂРё РїРѕРґРіРѕС‚РѕРІРєРµ С‚СЂР°РЅСЃР»СЏС‚РѕСЂР°.
+			Данная функция выделяет определения из подготовленного readme и оформляет их в соответствии со 
+			словарём, использованным при подготовке транслятора.
 	#>
 	
 	param (
-		# С‚СЂР°РЅСЃС„РѕСЂРјРёСЂСѓРµРјС‹Р№ С‚РµРєСЃС‚ readme
+		# трансформируемый текст readme
 		[Parameter(
 			Mandatory=$true
 			, ValueFromPipeline=$true
@@ -489,7 +489,7 @@ $PowerShellAboutTopics = @{
 	'about_Try_Catch_Finally' = 113444
 	'about_Type_Operators' = 113273
 	'about_Types.ps1xml' = 113274
-    'about_Updatable_Help' = 235801
+	'about_Updatable_Help' = 235801
 	'about_Variables' = 157591
 	'about_While' = 113275
 	'about_Wildcards' = 113276
@@ -548,7 +548,7 @@ $PowerShellAboutTopicsTranslateRules = @(
 	| ConvertTo-TranslateRule -ruleType 'about' `
 );
 
-# [test]: <http://novgaro.ru> "Р·Р°РіРѕР»РѕРІРѕРє С‚Р°РєРѕР№"
+# [test]: <http://novgaro.ru> "заголовок такой"
 $reMDRefTitle = "(?:'(?<title>.+?)'|`"(?<title>.+?)`"|\((?<title>.+?)\))";
 $reMDRef = New-Object System.Text.RegularExpressions.Regex -ArgumentList `
 	"(?<=^\s*)(?<mdRef>\[(?<id>.+?)\]:\s+(?:<$reURL>|$reURL)(?:\s+$reMDRefTitle)?)(?=\s*$)" `
@@ -582,23 +582,23 @@ $BasicTranslateRules = `
 Function MatchEvaluatorForFunc( [System.Text.RegularExpressions.Match] $Match ) {
 	$id = $Match.Groups['func'].Value;
 	$title = ( ( Get-Help $id ).Synopsis -split '\s*\r?\n' ) -join ' ';
-    $ModuleReadmeURL = '';
-    if ( $Translator.TokenRules.func.$id.AsExternalModule ) {
-        $ModuleReadmeURL = $Translator.TokenRules.func.$id.Module.PrivateData.ReadmeURL;
-        if ( -not $ModuleReadmeURL ) {
-    		Write-Warning `
-	    		-Message @"
+	$ModuleReadmeURL = '';
+	if ( $Translator.TokenRules.func.$id.AsExternalModule ) {
+		$ModuleReadmeURL = $Translator.TokenRules.func.$id.Module.PrivateData.ReadmeURL;
+		if ( -not $ModuleReadmeURL ) {
+			Write-Warning `
+				-Message @"
 $( [String]::Format( $loc.WarningUnknownModuleReadmeURL, $Translator.TokenRules.func.$id.Module.Name ) )
 
 PrivateData = @{
-    ReadmeURL = 'https://github.com/$( $Translator.TokenRules.func.$id.Module.CompanyName )/$( $Translator.TokenRules.func.$id.Module.Name )';
+	ReadmeURL = 'https://github.com/$( $Translator.TokenRules.func.$id.Module.CompanyName )/$( $Translator.TokenRules.func.$id.Module.Name )';
 }
 	
 "@ `
-    		;
-            $ModuleReadmeURL = "https://github.com/IT-Service/$( $Translator.TokenRules.func.$id.Module.Name )";
-        };
-    };
+			;
+			$ModuleReadmeURL = "https://github.com/IT-Service/$( $Translator.TokenRules.func.$id.Module.Name )";
+		};
+	};
 	Add-EndReference `
 		-id $id `
 		-url "<$ModuleReadmeURL#$( $id.ToLower() )>" `
@@ -610,12 +610,12 @@ PrivateData = @{
 Function Get-FunctionsReferenceTranslateRules {
 	<#
 		.Synopsis
-			Р”Р°РЅРЅР°СЏ С„СѓРЅРєС†РёСЏ РІРѕР·РІСЂР°С‰Р°РµС‚ РїСЂР°РІРёР»Р° С„РѕСЂРјРёСЂРѕРІР°РЅРёСЏ СЃСЃС‹Р»РѕРє РЅР° С„СѓРЅРєС†РёРё РјРѕРґСѓР»СЏ РїРѕ
-			РѕРїРёСЃР°С‚РµР»СЋ РјРѕРґСѓР»СЏ.
+			Данная функция возвращает правила формирования ссылок на функции модуля по
+			описателю модуля.
 	#>
 	
 	param (
-		# РћРїРёСЃР°С‚РµР»СЊ РјРѕРґСѓР»СЏ
+		# Описатель модуля
 		[Parameter(
 			Mandatory=$true
 			, ValueFromPipeline=$true
@@ -623,7 +623,7 @@ Function Get-FunctionsReferenceTranslateRules {
 		[PSModuleInfo]
 		$ModuleInfo
 	,
-		# Р“РµРЅРµСЂРёСЂРѕРІР°С‚СЊ РїСЂР°РІРёР»Р° РґР»СЏ С„РѕСЂРјРёСЂРѕРІР°РЅРёСЏ СЃСЃС‹Р»РѕРє РєР°Рє РЅР° С„СѓРЅРєС†РёРё РІРЅРµС€РЅРµРіРѕ РјРѕРґСѓР»СЏ
+		# Генерировать правила для формирования ссылок как на функции внешнего модуля
 		[switch]
 		$AsExternalModule
 	)
@@ -631,7 +631,7 @@ Function Get-FunctionsReferenceTranslateRules {
 	process {
 		$ModuleInfo.ExportedFunctions.Values `
 		| ConvertTo-TranslateRule `
-            -AsExternalModule:$AsExternalModule `
+			-AsExternalModule:$AsExternalModule `
 		;
 	}
 }
@@ -649,8 +649,8 @@ Function MatchEvaluatorForTag( [System.Text.RegularExpressions.Match] $Match ) {
 Function Get-TagReferenceTranslateRules {
 	<#
 		.Synopsis
-			Р”Р°РЅРЅР°СЏ С„СѓРЅРєС†РёСЏ РІРѕР·РІСЂР°С‰Р°РµС‚ РїСЂР°РІРёР»Р° Р·Р°РјРµРЅС‹ С‚РµСЂРјРёРЅРѕРІ РЅР° СЃСЃС‹Р»РєРё [tag][] РїРѕ РЅР°Р№РґРµРЅРЅС‹Рј
-			РѕРїСЂРµРґРµР»РµРЅРёСЏРј С‚РёРїР° `[test]: <http://novgaro.ru> "Р·Р°РіРѕР»РѕРІРѕРє С‚Р°РєРѕР№"`
+			Данная функция возвращает правила замены терминов на ссылки [tag][] по найденным
+			определениям типа `[test]: <http://novgaro.ru> "заголовок такой"`
 	#>
 
 	[CmdletBinding(
@@ -658,7 +658,7 @@ Function Get-TagReferenceTranslateRules {
 	)]
 
 	param (
-		# РћРїРёСЃР°С‚РµР»СЊ РјРѕРґСѓР»СЏ
+		# Описатель модуля
 		[Parameter(
 			Mandatory=$true
 			, ValueFromPipeline=$true
@@ -667,7 +667,7 @@ Function Get-TagReferenceTranslateRules {
 		[PSModuleInfo]
 		$ModuleInfo
 	,
-		# РћРїРёСЃР°С‚РµР»СЊ РІРЅРµС€РЅРµРіРѕ СЃС†РµРЅР°СЂРёСЏ
+		# Описатель внешнего сценария
 		[Parameter(
 			Mandatory=$true
 			, ValueFromPipeline=$true
@@ -676,7 +676,7 @@ Function Get-TagReferenceTranslateRules {
 		[System.Management.Automation.ExternalScriptInfo]
 		$ExternalScriptInfo
 	,
-		# РћРїРёСЃР°С‚РµР»СЊ С„СѓРЅРєС†РёРё
+		# Описатель функции
 		[Parameter(
 			Mandatory=$true
 			, ValueFromPipeline=$true
@@ -685,7 +685,7 @@ Function Get-TagReferenceTranslateRules {
 		[System.Management.Automation.FunctionInfo]
 		$FunctionInfo
 	,
-		# РўРµРєСЃС‚ РґР»СЏ РїРѕРёСЃРєР° СЃСЃС‹Р»РѕРє
+		# Текст для поиска ссылок
 		[Parameter(
 			Mandatory=$true
 			, ValueFromPipeline=$true
@@ -741,12 +741,12 @@ $GetReadmeStatus = @{
 Function Get-Readme {
 	<#
 		.Synopsis
-			Р“РµРЅРµСЂРёСЂСѓРµС‚ readme СЃ MarkDown СЂР°Р·РјРµС‚РєРѕР№ РїРѕ РґР°РЅРЅС‹Рј РјРѕРґСѓР»СЏ Рё РєРѕРјРјРµРЅС‚Р°СЂРёСЏРј Рє РµРіРѕ С„СѓРЅРєС†РёСЏРј. 
+			Генерирует readme с MarkDown разметкой по данным модуля и комментариям к его функциям. 
 		.Description
-			Р“РµРЅРµСЂРёСЂСѓРµС‚ readme СЃ MarkDown СЂР°Р·РјРµС‚РєРѕР№ РїРѕ РґР°РЅРЅС‹Рј РјРѕРґСѓР»СЏ Рё РєРѕРјРјРµРЅС‚Р°СЂРёСЏРј Рє РµРіРѕ С„СѓРЅРєС†РёСЏРј. 
-			РџСЂРµРґРЅР°Р·РЅР°С‡РµРЅ, РІ С‡Р°СЃС‚РЅРѕСЃС‚Рё, РґР»СЏ СЂР°Р·РјРµС‰РµРЅРёСЏ РІ СЂРµРїРѕР·РёС‚РѕСЂРёСЏС… github. Р”Р»СЏ СЃРѕС…СЂР°РЅРµРЅРёСЏ РІ С„Р°Р№Р»
-			РёСЃРїРѕР»СЊР·СѓР№С‚Рµ Set-Readme.
-			РћРїРёСЃР°РЅРёРµ РјРѕР¶РµС‚ Р±С‹С‚СЊ СЃРіРµРЅРµСЂРёСЂРѕРІР°РЅРѕ С„СѓРЅРєС†РёРµР№ Get-Readme РґР»СЏ РјРѕРґСѓР»СЏ, С„СѓРЅРєС†РёРё, РІРЅРµС€РµРіРѕ СЃС†РµРЅР°СЂРёСЏ.
+			Генерирует readme с MarkDown разметкой по данным модуля и комментариям к его функциям. 
+			Предназначен, в частности, для размещения в репозиториях github. Для сохранения в файл
+			используйте Set-Readme.
+			Описание может быть сгенерировано функцией Get-Readme для модуля, функции, внешего сценария.
 		.Functionality
 			Readme
 		.Role
@@ -754,22 +754,22 @@ Function Get-Readme {
 		.Notes
 		.Inputs
 			System.Management.Automation.PSModuleInfo.
-			РћРїРёСЃР°С‚РµР»Рё РјРѕРґСѓР»РµР№, РґР»СЏ РєРѕС‚РѕСЂС‹С… Р±СѓРґРµС‚ СЃРіРµРЅРµСЂРёСЂРѕРІР°РЅ readme.md. 
-			РџРѕР»СѓС‡РµРЅС‹ РѕРїРёСЃР°С‚РµР»Рё РјРѕРіСѓС‚ Р±С‹С‚СЊ С‡РµСЂРµР· Get-Module.
+			Описатели модулей, для которых будет сгенерирован readme.md. 
+			Получены описатели могут быть через Get-Module.
 		.Inputs
 			System.Management.Automation.ExternalScriptInfo.
-			РћРїРёСЃР°С‚РµР»Рё СЃС†РµРЅР°СЂРёРµРІ, РґР»СЏ РєРѕС‚РѕСЂС‹С… Р±СѓРґРµС‚ СЃРіРµРЅРµСЂРёСЂРѕРІР°РЅ readme.md. 
+			Описатели сценариев, для которых будет сгенерирован readme.md. 
 		.Inputs
 			System.Management.Automation.CmdletInfo.
-			РћРїРёСЃР°С‚РµР»Рё РєРѕРјР°РЅРґР»РµС‚, РґР»СЏ РєРѕС‚РѕСЂС‹С… Р±СѓРґРµС‚ СЃРіРµРЅРµСЂРёСЂРѕРІР°РЅ readme.md. 
-			РџРѕР»СѓС‡РµРЅС‹ РѕРїРёСЃР°С‚РµР»Рё РјРѕРіСѓС‚ Р±С‹С‚СЊ С‡РµСЂРµР· Get-Command.
+			Описатели командлет, для которых будет сгенерирован readme.md. 
+			Получены описатели могут быть через Get-Command.
 		.Inputs
 			System.Management.Automation.FunctionInfo.
-			РћРїРёСЃР°С‚РµР»Рё С„СѓРЅРєС†РёР№, РґР»СЏ РєРѕС‚РѕСЂС‹С… Р±СѓРґРµС‚ СЃРіРµРЅРµСЂРёСЂРѕРІР°РЅ readme.md. 
-			РџРѕР»СѓС‡РµРЅС‹ РѕРїРёСЃР°С‚РµР»Рё РјРѕРіСѓС‚ Р±С‹С‚СЊ С‡РµСЂРµР· Get-Command.
+			Описатели функций, для которых будет сгенерирован readme.md. 
+			Получены описатели могут быть через Get-Command.
 		.Outputs
 			String.
-			РЎРѕРґРµСЂР¶РёРјРѕРµ readme.md.
+			Содержимое readme.md.
 		.Link
 			https://github.com/IT-Service/ITG.Readme#Get-Readme
 		.Link
@@ -777,26 +777,26 @@ Function Get-Readme {
 		.Link
 			about_comment_based_help
 		.Link
-			[РќР°РїРёСЃР°РЅРёРµ СЃРїСЂР°РІРєРё РґР»СЏ РєРѕРјР°РЅРґР»РµС‚РѕРІ](http://go.microsoft.com/fwlink/?LinkID=123415)
+			[Написание справки для командлетов](http://go.microsoft.com/fwlink/?LinkID=123415)
 		.Example
 			Get-Module 'ITG.Yandex.DnsServer' | Get-Readme | Out-File -Path 'readme.md' -Encoding 'UTF8' -Width 1024;
-			Р“РµРЅРµСЂР°С†РёСЏ readme.md С„Р°Р№Р»Р° РґР»СЏ РјРѕРґСѓР»СЏ `ITG.Yandex.DnsServer` 
-			РІ С‚РµРєСѓС‰РµРј РєР°С‚Р°Р»РѕРіРµ.
+			Генерация readme.md файла для модуля `ITG.Yandex.DnsServer` 
+			в текущем каталоге.
 		.Example
 			Get-Module 'ITG.Yandex.DnsServer' | Get-Readme -ReferencedModules @( 'ITG.Yandex', 'ITG.Utils', 'ITG.WinAPI.UrlMon', 'ITG.WinAPI.User32' | Get-Module )
-			Р“РµРЅРµСЂР°С†РёСЏ readme РґР»СЏ РјРѕРґСѓР»СЏ `ITG.Yandex.DnsServer`, РїСЂРё СЌС‚РѕРј РІСЃРµ СѓРїРѕРјРёРЅР°РЅРёСЏ
-			С„СѓРЅРєС†РёР№ РјРѕРґСѓР»РµР№ `ITG.Yandex`, `ITG.Utils`, `ITG.WinAPI.UrlMon`,
-			`ITG.WinAPI.User32` С‚Р°Рє Р¶Рµ Р±СѓРґСѓС‚ Р·Р°РјРµРЅРµРЅС‹ РїРµСЂРµРєСЂС‘СЃС‚РЅС‹РјРё СЃСЃС‹Р»РєР°РјРё
-			РЅР° readme.md СѓРєР°Р·Р°РЅРЅС‹С… РјРѕРґСѓР»РµР№.
+			Генерация readme для модуля `ITG.Yandex.DnsServer`, при этом все упоминания
+			функций модулей `ITG.Yandex`, `ITG.Utils`, `ITG.WinAPI.UrlMon`,
+			`ITG.WinAPI.User32` так же будут заменены перекрёстными ссылками
+			на readme.md указанных модулей.
 	#>
 	
 	[CmdletBinding(
 		DefaultParametersetName = 'ModuleInfo'
-        , HelpUri = 'https://github.com/IT-Service/ITG.Readme#Get-Readme'
+		, HelpUri = 'https://github.com/IT-Service/ITG.Readme#Get-Readme'
 	)]
 
 	param (
-		# РћРїРёСЃР°С‚РµР»СЊ РјРѕРґСѓР»СЏ
+		# Описатель модуля
 		[Parameter(
 			Mandatory=$true
 			, Position=0
@@ -807,7 +807,7 @@ Function Get-Readme {
 		[Alias('Module')]
 		$ModuleInfo
 	,
-		# РћРїРёСЃР°С‚РµР»СЊ РІРЅРµС€РЅРµРіРѕ СЃС†РµРЅР°СЂРёСЏ
+		# Описатель внешнего сценария
 		[Parameter(
 			Mandatory=$true
 			, Position=0
@@ -817,7 +817,7 @@ Function Get-Readme {
 		[System.Management.Automation.ExternalScriptInfo]
 		$ExternalScriptInfo
 	,
-		# РћРїРёСЃР°С‚РµР»СЊ С„СѓРЅРєС†РёРё
+		# Описатель функции
 		[Parameter(
 			Mandatory=$true
 			, Position=0
@@ -827,26 +827,26 @@ Function Get-Readme {
 		[System.Management.Automation.FunctionInfo]
 		$FunctionInfo
 	,
-		# РєСѓР»СЊС‚СѓСЂР°, РґР»СЏ РєРѕС‚РѕСЂРѕР№ РіРµРЅРµСЂРёСЂРѕРІР°С‚СЊ РґР°РЅРЅС‹Рµ.
+		# культура, для которой генерировать данные.
 		[Parameter(
 			Mandatory=$false
 		)]
 		[System.Globalization.CultureInfo]
 		$UICulture = ( Get-Culture )
 	,
-		# Р“РµРЅРµСЂРёСЂРѕРІР°С‚СЊ С‚РѕР»СЊРєРѕ РєСЂР°С‚РєРѕРµ РѕРїРёСЃР°РЅРёРµ
+		# Генерировать только краткое описание
 		[switch]
 		[Alias('Short')]
 		$ShortDescription
 	,
-		# РџРµСЂРµС‡РµРЅСЊ РјРѕРґСѓР»РµР№, СѓРїРѕРјРёРЅР°РЅРёСЏ С„СѓРЅРєС†РёР№ РєРѕС‚РѕСЂС‹С… Р±СѓРґСѓС‚ Р·Р°РјРµРЅРµРЅС‹ РЅР° СЃСЃС‹Р»РєРё
+		# Перечень модулей, упоминания функций которых будут заменены на ссылки
 		[Parameter(
 			Mandatory=$false
 		)]
 		[PSModuleInfo[]]
 		$ReferencedModules = @()
 	,
-		# РџСЂР°РІРёР»Р° РґР»СЏ РѕР±СЂР°Р±РѕС‚РєРё readme СЂРµРіСѓР»СЏСЂРЅС‹РјРё РІС‹СЂР°Р¶РµРЅРёСЏРјРё
+		# Правила для обработки readme регулярными выражениями
 		[Parameter(
 			Mandatory=$false
 		)]
@@ -856,19 +856,19 @@ Function Get-Readme {
 
 	process {
 		if ( -not $GetReadmeStatus.level ) {
-            Import-LocalizedData `
-                -UICulture $UICulture `
-                -BindingVariable loc `
-            ;
+			Import-LocalizedData `
+				-UICulture $UICulture `
+				-BindingVariable loc `
+			;
 
-		    if ( $PsCmdlet.ParameterSetName -eq 'ModuleInfo' ) {
-                $ReferencedModules += $ModuleInfo.RequiredModules;
-            };
+			if ( $PsCmdlet.ParameterSetName -eq 'ModuleInfo' ) {
+				$ReferencedModules += $ModuleInfo.RequiredModules;
+			};
 			$TranslateRules += & {
 				$ReferencedModules `
-                | Sort-Object `
-                    -Unique `
-                    -Property Name `
+				| Sort-Object `
+					-Unique `
+					-Property Name `
 				| % {
 					$_ | Get-FunctionsReferenceTranslateRules -AsExternalModule;
 					$_ | Get-TagReferenceTranslateRules;
@@ -920,7 +920,7 @@ $( $loc.ModuleVersion ): **$( $ModuleInfo.Version.ToString() )**
 $( $loc.Funtions )
 $( $loc.Funtions -replace '.','-')
 "@
-						# РіРµРЅРµСЂР°С†РёСЏ РєСЂР°С‚РєРѕРіРѕ РѕРїРёСЃР°РЅРёСЏ С„СѓРЅРєС†РёР№
+						# генерация краткого описания функций
 						$ModuleInfo.ExportedFunctions.Values `
 						| Sort-Object -Property `
 							@{ Expression={ ( $_.Name -split '-' )[1] } } `
@@ -1166,12 +1166,12 @@ $ExNum. $( [String]::Format( $loc.Example, $ExNum ) )
 ##### $( $loc.Notes )
 
 "@
-                            (
-                                $Help.alertSet.alert `
-	                            | Select-Object -ExpandProperty Text `
-                                | Out-String `
-                                | Expand-Definitions `
-                            ) -replace "(`r`n)+$", '';
+							(
+								$Help.alertSet.alert `
+								| Select-Object -ExpandProperty Text `
+								| Out-String `
+								| Expand-Definitions `
+							) -replace "(`r`n)+$", '';
 						};
 						if ( $Help.relatedLinks ) {
 @"
@@ -1182,7 +1182,7 @@ $ExNum. $( [String]::Format( $loc.Example, $ExNum ) )
 							$Help.relatedLinks.navigationLink `
 							| ? { $_.uri } `
 							| % {
-								# РѕР±СЂР°Р±Р°С‚С‹РІР°РµРј СЃСЃС‹Р»РєРё РЅР° online РІРµСЂСЃРёСЋ СЃРїСЂР°РІРєРё
+								# обрабатываем ссылки на online версию справки
 								if ( $_.uri -match $reOnlineHelpLinkCheck ) {
 @"
 - [$( & { if ( $_.LinkText ) { $_.LinkText } else { $( $loc.OnlineHelp ) } } )]($( $_.uri ))
@@ -1202,7 +1202,7 @@ $( [String]::Format( $loc.WarningLinkError, $FunctionInfo.Name ) )
 							| ? { -not $_.uri } `
 							| % { $_.LinkText } `
 							| % {
-								# РѕР±СЂР°Р±Р°С‚С‹РІР°РµРј РїСЂРѕС‡РёРµ СЃСЃС‹Р»РєРё
+								# обрабатываем прочие ссылки
 								$Link = `
 									$_ `
 									| Expand-Definitions `
@@ -1227,12 +1227,12 @@ $( [String]::Format( $loc.WarningLinkError, $FunctionInfo.Name ) )
 Function Set-Readme {
 	<#
 		.Synopsis
-			Р“РµРЅРµСЂРёСЂСѓРµС‚ readme С„Р°Р№Р» СЃ MarkDown СЂР°Р·РјРµС‚РєРѕР№ РїРѕ РґР°РЅРЅС‹Рј РјРѕРґСѓР»СЏ Рё РєРѕРјРјРµРЅС‚Р°СЂРёСЏРј Рє РµРіРѕ С„СѓРЅРєС†РёСЏРј. 
-			Р¤Р°Р№Р» РїСЂРµРґРЅР°Р·РЅР°С‡РµРЅ, РІ С‡Р°СЃС‚РЅРѕСЃС‚Рё, РґР»СЏ СЂР°Р·РјРµС‰РµРЅРёСЏ РІ СЂРµРїРѕР·РёС‚РѕСЂРёСЏС… github.
+			Генерирует readme файл с MarkDown разметкой по данным модуля и комментариям к его функциям. 
+			Файл предназначен, в частности, для размещения в репозиториях github.
 		.Description
-			Р“РµРЅРµСЂРёСЂСѓРµС‚ readme С„Р°Р№Р» СЃ MarkDown СЂР°Р·РјРµС‚РєРѕР№ РїРѕ РґР°РЅРЅС‹Рј РјРѕРґСѓР»СЏ Рё РєРѕРјРјРµРЅС‚Р°СЂРёСЏРј Рє РµРіРѕ С„СѓРЅРєС†РёСЏРј. 
-			Р¤Р°Р№Р» РїСЂРµРґРЅР°Р·РЅР°С‡РµРЅ, РІ С‡Р°СЃС‚РЅРѕСЃС‚Рё, РґР»СЏ СЂР°Р·РјРµС‰РµРЅРёСЏ РІ СЂРµРїРѕР·РёС‚РѕСЂРёСЏС… github.
-			Р’ РґРѕРїРѕР»РЅРµРЅРёРµ Рє С„СѓРЅРєС†РёРѕРЅР°Р»Сѓ Get-Readme СЃРѕС…СЂР°РЅСЏРµС‚ СЂРµР·СѓР»СЊС‚Р°С‚ РІ С„Р°Р№Р», РѕРїСЂРµРґРµР»С‘РЅРЅС‹Р№ РїР°СЂР°РјРµС‚СЂР°
+			Генерирует readme файл с MarkDown разметкой по данным модуля и комментариям к его функциям. 
+			Файл предназначен, в частности, для размещения в репозиториях github.
+			В дополнение к функционалу Get-Readme сохраняет результат в файл, определённый параметра
 			`Path`.
 		.Functionality
 			Readme
@@ -1241,19 +1241,19 @@ Function Set-Readme {
 		.Notes
 		.Inputs
 			System.Management.Automation.PSModuleInfo.
-			РћРїРёСЃР°С‚РµР»Рё РјРѕРґСѓР»РµР№, РґР»СЏ РєРѕС‚РѕСЂС‹С… Р±СѓРґРµС‚ СЃРіРµРЅРµСЂРёСЂРѕРІР°РЅ readme.md. 
-			РџРѕР»СѓС‡РµРЅС‹ РѕРїРёСЃР°С‚РµР»Рё РјРѕРіСѓС‚ Р±С‹С‚СЊ С‡РµСЂРµР· Get-Module.
+			Описатели модулей, для которых будет сгенерирован readme.md. 
+			Получены описатели могут быть через Get-Module.
 		.Inputs
 			System.Management.Automation.ExternalScriptInfo.
-			РћРїРёСЃР°С‚РµР»Рё СЃС†РµРЅР°СЂРёРµРІ, РґР»СЏ РєРѕС‚РѕСЂС‹С… Р±СѓРґРµС‚ СЃРіРµРЅРµСЂРёСЂРѕРІР°РЅ readme.md. 
+			Описатели сценариев, для которых будет сгенерирован readme.md. 
 		.Inputs
 			System.Management.Automation.CmdletInfo.
-			РћРїРёСЃР°С‚РµР»Рё РєРѕРјР°РЅРґР»РµС‚, РґР»СЏ РєРѕС‚РѕСЂС‹С… Р±СѓРґРµС‚ СЃРіРµРЅРµСЂРёСЂРѕРІР°РЅ readme.md. 
-			РџРѕР»СѓС‡РµРЅС‹ РѕРїРёСЃР°С‚РµР»Рё РјРѕРіСѓС‚ Р±С‹С‚СЊ С‡РµСЂРµР· Get-Command.
+			Описатели командлет, для которых будет сгенерирован readme.md. 
+			Получены описатели могут быть через Get-Command.
 		.Inputs
 			System.Management.Automation.FunctionInfo.
-			РћРїРёСЃР°С‚РµР»Рё С„СѓРЅРєС†РёР№, РґР»СЏ РєРѕС‚РѕСЂС‹С… Р±СѓРґРµС‚ СЃРіРµРЅРµСЂРёСЂРѕРІР°РЅ readme.md. 
-			РџРѕР»СѓС‡РµРЅС‹ РѕРїРёСЃР°С‚РµР»Рё РјРѕРіСѓС‚ Р±С‹С‚СЊ С‡РµСЂРµР· Get-Command.
+			Описатели функций, для которых будет сгенерирован readme.md. 
+			Получены описатели могут быть через Get-Command.
 		.Link
 			https://github.com/IT-Service/ITG.Readme#Set-Readme
 		.Link
@@ -1263,29 +1263,29 @@ Function Set-Readme {
 		.Link
 			about_comment_based_help
 		.Link
-			[РќР°РїРёСЃР°РЅРёРµ СЃРїСЂР°РІРєРё РґР»СЏ РєРѕРјР°РЅРґР»РµС‚РѕРІ](http://go.microsoft.com/fwlink/?LinkID=123415)
+			[Написание справки для командлетов](http://go.microsoft.com/fwlink/?LinkID=123415)
 		.Example
 			Get-Module 'ITG.Yandex.DnsServer' | Set-Readme;
-			Р“РµРЅРµСЂР°С†РёСЏ readme.md С„Р°Р№Р»Р° РґР»СЏ РјРѕРґСѓР»СЏ `ITG.Yandex.DnsServer` 
-			РІ РєР°С‚Р°Р»РѕРіРµ РјРѕРґСѓР»СЏ.
+			Генерация readme.md файла для модуля `ITG.Yandex.DnsServer` 
+			в каталоге модуля.
 		.Example
 			Get-Module 'ITG.Yandex.DnsServer' | Set-Readme -ReferencedModules @( 'ITG.Yandex', 'ITG.Utils', 'ITG.WinAPI.UrlMon', 'ITG.WinAPI.User32' | Get-Module )
-			Р“РµРЅРµСЂР°С†РёСЏ readme.md С„Р°Р№Р»Р° РґР»СЏ РјРѕРґСѓР»СЏ `ITG.Yandex.DnsServer` 
-			РІ РєР°С‚Р°Р»РѕРіРµ РјРѕРґСѓР»СЏ `ITG.Yandex.DnsServer`, РїСЂРё СЌС‚РѕРј РІСЃРµ СѓРїРѕРјРёРЅР°РЅРёСЏ
-			С„СѓРЅРєС†РёР№ РјРѕРґСѓР»РµР№ `ITG.Yandex`, `ITG.Utils`, `ITG.WinAPI.UrlMon`,
-			`ITG.WinAPI.User32` С‚Р°Рє Р¶Рµ Р±СѓРґСѓС‚ Р·Р°РјРµРЅРµРЅС‹ РїРµСЂРµРєСЂС‘СЃС‚РЅС‹РјРё СЃСЃС‹Р»РєР°РјРё
-			РЅР° readme.md С„Р°Р№Р»С‹ СѓРєР°Р·Р°РЅРЅС‹С… РјРѕРґСѓР»РµР№.
+			Генерация readme.md файла для модуля `ITG.Yandex.DnsServer` 
+			в каталоге модуля `ITG.Yandex.DnsServer`, при этом все упоминания
+			функций модулей `ITG.Yandex`, `ITG.Utils`, `ITG.WinAPI.UrlMon`,
+			`ITG.WinAPI.User32` так же будут заменены перекрёстными ссылками
+			на readme.md файлы указанных модулей.
 	#>
 	
 	[CmdletBinding(
 		DefaultParametersetName = 'ModuleInfo'
 		, SupportsShouldProcess = $true
 		, ConfirmImpact = 'Low'
-        , HelpUri = 'https://github.com/IT-Service/ITG.Readme#Set-Readme'
+		, HelpUri = 'https://github.com/IT-Service/ITG.Readme#Set-Readme'
 	)]
 
 	param (
-		# РћРїРёСЃР°С‚РµР»СЊ РјРѕРґСѓР»СЏ
+		# Описатель модуля
 		[Parameter(
 			Mandatory=$true
 			, Position=0
@@ -1296,7 +1296,7 @@ Function Set-Readme {
 		[Alias('Module')]
 		$ModuleInfo
 	,
-		# РћРїРёСЃР°С‚РµР»СЊ РІРЅРµС€РЅРµРіРѕ СЃС†РµРЅР°СЂРёСЏ
+		# Описатель внешнего сценария
 		[Parameter(
 			Mandatory=$true
 			, Position=0
@@ -1306,7 +1306,7 @@ Function Set-Readme {
 		[System.Management.Automation.ExternalScriptInfo]
 		$ExternalScriptInfo
 	,
-		# РћРїРёСЃР°С‚РµР»СЊ С„СѓРЅРєС†РёРё
+		# Описатель функции
 		[Parameter(
 			Mandatory=$true
 			, Position=0
@@ -1316,65 +1316,65 @@ Function Set-Readme {
 		[System.Management.Automation.FunctionInfo]
 		$FunctionInfo
 	,
-		# РєСѓР»СЊС‚СѓСЂР°, РґР»СЏ РєРѕС‚РѕСЂРѕР№ РіРµРЅРµСЂРёСЂРѕРІР°С‚СЊ РґР°РЅРЅС‹Рµ.
+		# культура, для которой генерировать данные.
 		[Parameter(
 			Mandatory=$false
 		)]
 		[System.Globalization.CultureInfo]
 		$UICulture = ( Get-Culture )
 	,
-		# РџСѓС‚СЊ РґР»СЏ readme С„Р°Р№Р»Р°. РџРѕ СѓРјРѕР»С‡Р°РЅРёСЋ - `readme.md` РІ РєР°С‚Р°Р»РѕРіРµ РјРѕРґСѓР»СЏ
+		# Путь для readme файла. По умолчанию - `readme.md` в каталоге модуля
 		[Parameter(
 			ParameterSetName='ModuleInfo'
 			, Mandatory=$false
 		)]
 		[String]
-        [Alias('Path')]
+		[Alias('Path')]
 		$PSPath = ''
 	,
-		# Р“РµРЅРµСЂРёСЂРѕРІР°С‚СЊ С‚РѕР»СЊРєРѕ РєСЂР°С‚РєРѕРµ РѕРїРёСЃР°РЅРёРµ
+		# Генерировать только краткое описание
 		[switch]
 		[Alias('Short')]
 		$ShortDescription
 	,
-		# РџРµСЂРµС‡РµРЅСЊ РјРѕРґСѓР»РµР№, СѓРїРѕРјРёРЅР°РЅРёСЏ С„СѓРЅРєС†РёР№ РєРѕС‚РѕСЂС‹С… Р±СѓРґСѓС‚ Р·Р°РјРµРЅРµРЅС‹ РЅР° СЃСЃС‹Р»РєРё
+		# Перечень модулей, упоминания функций которых будут заменены на ссылки
 		[Parameter(
 			Mandatory=$false
 		)]
 		[PSModuleInfo[]]
 		$ReferencedModules = @()
 	,
-		# РџСЂР°РІРёР»Р° РґР»СЏ РѕР±СЂР°Р±РѕС‚РєРё readme СЂРµРіСѓР»СЏСЂРЅС‹РјРё РІС‹СЂР°Р¶РµРЅРёСЏРјРё
+		# Правила для обработки readme регулярными выражениями
 		[Parameter(
 			Mandatory=$false
 		)]
 		[Array]
 		$TranslateRules = @()
 	,
-		# РџРµСЂРµРґР°РІР°С‚СЊ РїРѕР»СѓС‡РµРЅРЅС‹Р№ РїРѕ РєРѕРЅРІРµР№РµСЂСѓ РѕРїРёСЃР°С‚РµР»СЊ РґР°Р»СЊС€Рµ
+		# Передавать полученный по конвейеру описатель дальше
 		[switch]
 		$PassThru
 	)
 
 	process {
-        if ( -not $PSPath ) {
-            $PSPath = `
-	            $ModuleInfo.ModuleBase `
-	            | Join-Path -ChildPath 'readme.md' `
-            ;
-        };
-        Write-Verbose `
-            -Message ( [String]::Format( $loc.VerboseWriteReadme, $ModuleInfo.Name, $PSPath ) ) `
-        ;
+		if ( -not $PSPath ) {
+			$PSPath = `
+				$ModuleInfo.ModuleBase `
+				| Join-Path -ChildPath 'readme.md' `
+			;
+		};
+		Write-Verbose `
+			-Message ( [String]::Format( $loc.VerboseWriteReadme, $ModuleInfo.Name, $PSPath ) ) `
+		;
 		$null = $PSBoundParameters.Remove( 'PSPath' );
 		$null = $PSBoundParameters.Remove( 'PassThru' );
 		$null = $PSBoundParameters.Remove( 'WhatIf' );
 		$null = $PSBoundParameters.Remove( 'Confirm' );
 
-        Import-LocalizedData `
-            -UICulture $UICulture `
-            -BindingVariable loc `
-        ;
+		Import-LocalizedData `
+			-UICulture $UICulture `
+			-BindingVariable loc `
+		;
 
 		switch ( $PsCmdlet.ParameterSetName ) {
 			'ModuleInfo' {
@@ -1399,20 +1399,20 @@ $( [String]::Format( $loc.GeneratorAbout, 'ITG.Readme', 'https://github.com/IT-S
 			default {
 			};
 		};
-        
-        if ( $PassThru ) { return $input };
+		
+		if ( $PassThru ) { return $input };
 	}
 }
 
 Function Get-AboutModule {
 	<#
 		.Synopsis
-			Р“РµРЅРµСЂРёСЂСѓРµС‚ СЃРѕРґРµСЂР¶РёРјРѕРµ С„Р°Р№Р»Р° `about_$(ModuleInfo.Name).txt` СЃ MarkDown СЂР°Р·РјРµС‚РєРѕР№
-			РїРѕ РґР°РЅРЅС‹Рј РјРѕРґСѓР»СЏ Рё РєРѕРјРјРµРЅС‚Р°СЂРёСЏРј Рє РµРіРѕ С„СѓРЅРєС†РёСЏРј. 
+			Генерирует содержимое файла `about_$(ModuleInfo.Name).txt` с MarkDown разметкой
+			по данным модуля и комментариям к его функциям. 
 		.Description
-			Р“РµРЅРµСЂРёСЂСѓРµС‚ СЃРѕРґРµСЂР¶РёРјРѕРµ С„Р°Р№Р»Р° `about_$(ModuleInfo.Name).txt` СЃ MarkDown СЂР°Р·РјРµС‚РєРѕР№
-			РїРѕ РґР°РЅРЅС‹Рј РјРѕРґСѓР»СЏ Рё РєРѕРјРјРµРЅС‚Р°СЂРёСЏРј Рє РµРіРѕ С„СѓРЅРєС†РёСЏРј.
-            Р”Р»СЏ СЃРѕС…СЂР°РЅРµРЅРёСЏ РІ С„Р°Р№Р» РёСЃРїРѕР»СЊР·СѓР№С‚Рµ Set-AboutModule.
+			Генерирует содержимое файла `about_$(ModuleInfo.Name).txt` с MarkDown разметкой
+			по данным модуля и комментариям к его функциям.
+			Для сохранения в файл используйте Set-AboutModule.
 		.Functionality
 			Readme
 		.Role
@@ -1420,11 +1420,11 @@ Function Get-AboutModule {
 		.Notes
 		.Inputs
 			System.Management.Automation.PSModuleInfo.
-			РћРїРёСЃР°С‚РµР»Рё РјРѕРґСѓР»РµР№, РґР»СЏ РєРѕС‚РѕСЂС‹С… Р±СѓРґРµС‚ СЃРіРµРЅРµСЂРёСЂРѕРІР°РЅ about.txt. 
-			РџРѕР»СѓС‡РµРЅС‹ РѕРїРёСЃР°С‚РµР»Рё РјРѕРіСѓС‚ Р±С‹С‚СЊ С‡РµСЂРµР· Get-Module.
+			Описатели модулей, для которых будет сгенерирован about.txt. 
+			Получены описатели могут быть через Get-Module.
 		.Outputs
 			String.
-			РЎРѕРґРµСЂР¶РёРјРѕРµ about.txt.
+			Содержимое about.txt.
 		.Link
 			https://github.com/IT-Service/ITG.Readme#Get-AboutModule
 		.Link
@@ -1432,19 +1432,19 @@ Function Get-AboutModule {
 		.Link
 			about_comment_based_help
 		.Link
-			[РќР°РїРёСЃР°РЅРёРµ СЃРїСЂР°РІРєРё РґР»СЏ РєРѕРјР°РЅРґР»РµС‚РѕРІ](http://go.microsoft.com/fwlink/?LinkID=123415)
+			[Написание справки для командлетов](http://go.microsoft.com/fwlink/?LinkID=123415)
 		.Example
 			Get-Module 'ITG.Yandex.DnsServer' | Get-AboutModule;
-			Р“РµРЅРµСЂР°С†РёСЏ СЃРѕРґРµСЂР¶РёРјРѕРіРѕ about.txt С„Р°Р№Р»Р° РґР»СЏ РјРѕРґСѓР»СЏ `ITG.Yandex.DnsServer`.
+			Генерация содержимого about.txt файла для модуля `ITG.Yandex.DnsServer`.
 	#>
 	
 	[CmdletBinding(
 		DefaultParametersetName = 'ModuleInfo'
-        , HelpUri = 'https://github.com/IT-Service/ITG.Readme#Get-AboutModule'
+		, HelpUri = 'https://github.com/IT-Service/ITG.Readme#Get-AboutModule'
 	)]
 
 	param (
-		# РћРїРёСЃР°С‚РµР»СЊ РјРѕРґСѓР»СЏ
+		# Описатель модуля
 		[Parameter(
 			Mandatory=$true
 			, Position=0
@@ -1455,14 +1455,14 @@ Function Get-AboutModule {
 		[Alias('Module')]
 		$ModuleInfo
 	,
-		# РєСѓР»СЊС‚СѓСЂР°, РґР»СЏ РєРѕС‚РѕСЂРѕР№ РіРµРЅРµСЂРёСЂРѕРІР°С‚СЊ РґР°РЅРЅС‹Рµ.
+		# культура, для которой генерировать данные.
 		[Parameter(
 			Mandatory=$false
 		)]
 		[System.Globalization.CultureInfo]
 		$UICulture = ( Get-Culture )
 	,
-		# РџРµСЂРµС‡РµРЅСЊ РјРѕРґСѓР»РµР№, СѓРїРѕРјРёРЅР°РЅРёСЏ С„СѓРЅРєС†РёР№ РєРѕС‚РѕСЂС‹С… Р±СѓРґСѓС‚ Р·Р°РјРµРЅРµРЅС‹ РЅР° СЃСЃС‹Р»РєРё
+		# Перечень модулей, упоминания функций которых будут заменены на ссылки
 		[Parameter(
 			Mandatory=$false
 		)]
@@ -1473,10 +1473,10 @@ Function Get-AboutModule {
 	process {
 		switch ( $PsCmdlet.ParameterSetName ) {
 			'ModuleInfo' {
-                return Get-Readme `
-                    @PSBoundParameters `
-                    -ShortDescription `
-                ;
+				return Get-Readme `
+					@PSBoundParameters `
+					-ShortDescription `
+				;
 			}
 		}
 	}
@@ -1485,13 +1485,13 @@ Function Get-AboutModule {
 Function Set-AboutModule {
 	<#
 		.Synopsis
-			Р“РµРЅРµСЂРёСЂСѓРµС‚ С„Р°Р№Р» `about_$(ModuleInfo.Name).txt` СЃ MarkDown СЂР°Р·РјРµС‚РєРѕР№
-			РїРѕ РґР°РЅРЅС‹Рј РјРѕРґСѓР»СЏ Рё РєРѕРјРјРµРЅС‚Р°СЂРёСЏРј Рє РµРіРѕ С„СѓРЅРєС†РёСЏРј.
+			Генерирует файл `about_$(ModuleInfo.Name).txt` с MarkDown разметкой
+			по данным модуля и комментариям к его функциям.
 		.Description
-			Р“РµРЅРµСЂРёСЂСѓРµС‚ С„Р°Р№Р» `about_$(ModuleInfo.Name).txt` СЃ MarkDown СЂР°Р·РјРµС‚РєРѕР№
-			РїРѕ РґР°РЅРЅС‹Рј РјРѕРґСѓР»СЏ Рё РєРѕРјРјРµРЅС‚Р°СЂРёСЏРј Рє РµРіРѕ С„СѓРЅРєС†РёСЏРј РІ РїРѕРґРєР°С‚Р°Р»РѕРіРµ СѓРєР°Р·Р°РЅРЅРѕР№
-			РєСѓР»СЊС‚СѓСЂС‹ РІ РєР°С‚Р°Р»РѕРіРµ РјРѕРґСѓР»СЏ РёР»Рё РІ СЃРѕРѕС‚РІРµС‚СЃС‚РІРёРё СЃ СѓРєР°Р·Р°РЅРЅС‹Рј Р·РЅР°С‡РµРЅРёРµРј
-			РїР°СЂР°РјРµС‚СЂР° `Path`.
+			Генерирует файл `about_$(ModuleInfo.Name).txt` с MarkDown разметкой
+			по данным модуля и комментариям к его функциям в подкаталоге указанной
+			культуры в каталоге модуля или в соответствии с указанным значением
+			параметра `Path`.
 		.Functionality
 			Readme
 		.Role
@@ -1499,8 +1499,8 @@ Function Set-AboutModule {
 		.Notes
 		.Inputs
 			System.Management.Automation.PSModuleInfo.
-			РћРїРёСЃР°С‚РµР»Рё РјРѕРґСѓР»РµР№, РґР»СЏ РєРѕС‚РѕСЂС‹С… Р±СѓРґРµС‚ СЃРіРµРЅРµСЂРёСЂРѕРІР°РЅ readme.md. 
-			РџРѕР»СѓС‡РµРЅС‹ РѕРїРёСЃР°С‚РµР»Рё РјРѕРіСѓС‚ Р±С‹С‚СЊ С‡РµСЂРµР· Get-Module.
+			Описатели модулей, для которых будет сгенерирован readme.md. 
+			Получены описатели могут быть через Get-Module.
 		.Link
 			https://github.com/IT-Service/ITG.Readme#Set-AboutModule
 		.Link
@@ -1510,22 +1510,22 @@ Function Set-AboutModule {
 		.Link
 			about_comment_based_help
 		.Link
-			[РќР°РїРёСЃР°РЅРёРµ СЃРїСЂР°РІРєРё РґР»СЏ РєРѕРјР°РЅРґР»РµС‚РѕРІ](http://go.microsoft.com/fwlink/?LinkID=123415)
+			[Написание справки для командлетов](http://go.microsoft.com/fwlink/?LinkID=123415)
 		.Example
 			Get-Module 'ITG.Yandex.DnsServer' | Set-AboutModule;
-			Р“РµРЅРµСЂР°С†РёСЏ `about_ITG.Yandex.DnsServer.txt` С„Р°Р№Р»Р° РґР»СЏ РјРѕРґСѓР»СЏ `ITG.Yandex.DnsServer` 
-			РІ РїРѕРґРєР°С‚Р°Р»РѕРіРµ С‚РµРєСѓС‰РµР№ РєСѓР»СЊС‚СѓСЂС‹ РІ РєР°С‚Р°Р»РѕРіРµ РјРѕРґСѓР»СЏ.
+			Генерация `about_ITG.Yandex.DnsServer.txt` файла для модуля `ITG.Yandex.DnsServer` 
+			в подкаталоге текущей культуры в каталоге модуля.
 	#>
 	
 	[CmdletBinding(
 		DefaultParametersetName='ModuleInfo'
 		, SupportsShouldProcess = $true
 		, ConfirmImpact = 'Low'
-        , HelpUri = 'https://github.com/IT-Service/ITG.Readme#Set-AboutModule'
+		, HelpUri = 'https://github.com/IT-Service/ITG.Readme#Set-AboutModule'
 	)]
 
 	param (
-		# РћРїРёСЃР°С‚РµР»СЊ РјРѕРґСѓР»СЏ
+		# Описатель модуля
 		[Parameter(
 			Mandatory=$true
 			, Position=0
@@ -1536,49 +1536,49 @@ Function Set-AboutModule {
 		[Alias('Module')]
 		$ModuleInfo
 	,
-		# РєСѓР»СЊС‚СѓСЂР°, РґР»СЏ РєРѕС‚РѕСЂРѕР№ РіРµРЅРµСЂРёСЂРѕРІР°С‚СЊ РґР°РЅРЅС‹Рµ.
+		# культура, для которой генерировать данные.
 		[Parameter(
 			Mandatory=$false
 		)]
 		[System.Globalization.CultureInfo]
 		$UICulture = ( Get-Culture )
 	,
-		# РџСѓС‚СЊ РґР»СЏ about.txt С„Р°Р№Р»Р°. РџРѕ СѓРјРѕР»С‡Р°РЅРёСЋ - РІ РїРѕРґРєР°С‚Р°Р»РѕРіРµ СѓРєР°Р·Р°РЅРЅРѕР№ РєСѓР»СЊС‚СѓСЂС‹.
+		# Путь для about.txt файла. По умолчанию - в подкаталоге указанной культуры.
 		[Parameter(
 			ParameterSetName='ModuleInfo'
 			, Mandatory=$false
 		)]
 		[String]
-        [Alias('Path')]
+		[Alias('Path')]
 		$PSPath = ''
 	,
-		# РџРµСЂРµС‡РµРЅСЊ РјРѕРґСѓР»РµР№, СѓРїРѕРјРёРЅР°РЅРёСЏ С„СѓРЅРєС†РёР№ РєРѕС‚РѕСЂС‹С… Р±СѓРґСѓС‚ Р·Р°РјРµРЅРµРЅС‹ РЅР° СЃСЃС‹Р»РєРё
+		# Перечень модулей, упоминания функций которых будут заменены на ссылки
 		[Parameter(
 			Mandatory=$false
 		)]
 		[PSModuleInfo[]]
 		$ReferencedModules = @()
 	,
-		# РџРµСЂРµРґР°РІР°С‚СЊ РїРѕР»СѓС‡РµРЅРЅС‹Р№ РїРѕ РєРѕРЅРІРµР№РµСЂСѓ РѕРїРёСЃР°С‚РµР»СЊ РґР°Р»СЊС€Рµ
+		# Передавать полученный по конвейеру описатель дальше
 		[switch]
 		$PassThru
 	)
 
 	process {
-        Import-LocalizedData `
-            -UICulture $UICulture `
-            -BindingVariable loc `
-        ;
-        if ( -not $PSPath ) {
-            $PSPath = `
-	            $ModuleInfo.ModuleBase `
-	            | Join-Path -ChildPath ( $UICulture.Name ) `
-	            | Join-Path -ChildPath "about_$( $ModuleInfo.Name ).help.txt" `
-            ;
-        };
-        Write-Verbose `
-            -Message ( [String]::Format( $loc.VerboseWriteAbout, $ModuleInfo.Name, $PSPath ) ) `
-        ;
+		Import-LocalizedData `
+			-UICulture $UICulture `
+			-BindingVariable loc `
+		;
+		if ( -not $PSPath ) {
+			$PSPath = `
+				$ModuleInfo.ModuleBase `
+				| Join-Path -ChildPath ( $UICulture.Name ) `
+				| Join-Path -ChildPath "about_$( $ModuleInfo.Name ).help.txt" `
+			;
+		};
+		Write-Verbose `
+			-Message ( [String]::Format( $loc.VerboseWriteAbout, $ModuleInfo.Name, $PSPath ) ) `
+		;
 		$Dir = Split-Path -Path ( $PSPath ) -Parent;
 		if ( -not ( Test-Path -LiteralPath $Dir ) ) {
 			$null = New-Item -Path $Dir -ItemType Directory;
@@ -1607,16 +1607,16 @@ $( [String]::Format( $loc.GeneratorAbout, 'ITG.Readme', 'https://github.com/IT-S
 				;
 			}
 		};
-        
-        if ( $PassThru ) { return $input };
+		
+		if ( $PassThru ) { return $input };
 	}
 }
 
 Filter Split-Para {
 	<#
 		.Synopsis
-			Р”РµР»РёС‚ РїРµСЂРµРґР°РЅРЅС‹Р№ С‚РµРєСЃС‚ РЅР° Р°Р±Р·Р°С†С‹ РїРѕ РїСЂР°РІРёР»Р°Рј MarkDown. Р’ РєР°С‡РµСЃС‚РІРµ РіСЂР°РЅРёС†С‹
-			Р°Р±Р·Р°С†РµРІ - РїСѓСЃС‚Р°СЏ СЃС‚СЂРѕРєР°. РўРµРєСЃС‚ РІ РїСЂРµРґРµР»Р°С… Р°Р±Р·Р°С†Р° РѕР±СЉРµРґРёРЅСЏРµС‚ РІ РѕРґРЅСѓ СЃС‚СЂРѕРєСѓ.
+			Делит переданный текст на абзацы по правилам MarkDown. В качестве границы
+			абзацев - пустая строка. Текст в пределах абзаца объединяет в одну строку.
 	#>
 	param (
 		[Parameter(
@@ -1731,29 +1731,29 @@ Function DoParaList( $HelpContent, $Root, $Help, $ListId, $ListItemId ) {
 Function New-HelpXML {
 	<#
 		.Synopsis
-			Р“РµРЅРµСЂРёСЂСѓРµС‚ XML СЃРїСЂР°РІРєСѓ РґР»СЏ РїРµСЂРµРґР°РЅРЅРѕРіРѕ РјРѕРґСѓР»СЏ, С„СѓРЅРєС†РёРё, РєРѕРјР°РЅРґР»РµС‚С‹.
+			Генерирует XML справку для переданного модуля, функции, командлеты.
 		.Description
-			Р“РµРЅРµСЂРёСЂСѓРµС‚ XML СЃРїСЂР°РІРєСѓ РґР»СЏ РїРµСЂРµРґР°РЅРЅРѕРіРѕ РјРѕРґСѓР»СЏ, С„СѓРЅРєС†РёРё, РєРѕРјР°РЅРґР»РµС‚С‹.
+			Генерирует XML справку для переданного модуля, функции, командлеты.
 			
-			Р”Р»СЏ РіРµРЅРµСЂР°С†РёРё / РѕР±РЅРѕРІР»РµРЅРёСЏ .xml С„Р°Р№Р»Р° СЃРїСЂР°РІРєРё РІ РєР°С‚Р°Р»РѕРіРµ РјРѕРґСѓР»СЏ
-			РёСЃРїРѕР»СЊР·СѓР№С‚Рµ Set-HelpXML.
+			Для генерации / обновления .xml файла справки в каталоге модуля
+			используйте Set-HelpXML.
 		.Role
 			Everyone
 		.Inputs
 			System.Management.Automation.PSModuleInfo
-			РћРїРёСЃР°С‚РµР»Рё РјРѕРґСѓР»РµР№. РРјРµРЅРЅРѕ РґР»СЏ РЅРёС… Рё Р±СѓРґРµС‚ СЃРіРµРЅРµСЂРёСЂРѕРІР°РЅР° XML СЃРїСЂР°РІРєР°. 
-			РџРѕР»СѓС‡РµРЅС‹ РѕРїРёСЃР°С‚РµР»Рё РјРѕРіСѓС‚ Р±С‹С‚СЊ С‡РµСЂРµР· `Get-Module`.
+			Описатели модулей. Именно для них и будет сгенерирована XML справка. 
+			Получены описатели могут быть через `Get-Module`.
 		.Inputs
 			System.Management.Automation.FunctionInfo
-			РћРїРёСЃР°С‚РµР»Рё С„СѓРЅРєС†РёР№. РРјРµРЅРЅРѕ РґР»СЏ РЅРёС… Рё Р±СѓРґРµС‚ СЃРіРµРЅРµСЂРёСЂРѕРІР°РЅР° XML СЃРїСЂР°РІРєР°. 
-			РџРѕР»СѓС‡РµРЅС‹ РѕРїРёСЃР°С‚РµР»Рё РјРѕРіСѓС‚ Р±С‹С‚СЊ С‡РµСЂРµР· `Get-Command`.
+			Описатели функций. Именно для них и будет сгенерирована XML справка. 
+			Получены описатели могут быть через `Get-Command`.
 		.Inputs
 			System.Management.Automation.CmdletInfo
-			РћРїРёСЃР°С‚РµР»Рё РєРѕРјР°РЅРґР»РµС‚. РРјРµРЅРЅРѕ РґР»СЏ РЅРёС… Рё Р±СѓРґРµС‚ СЃРіРµРЅРµСЂРёСЂРѕРІР°РЅР° XML СЃРїСЂР°РІРєР°. 
-			РџРѕР»СѓС‡РµРЅС‹ РѕРїРёСЃР°С‚РµР»Рё РјРѕРіСѓС‚ Р±С‹С‚СЊ С‡РµСЂРµР· `Get-Command`.
+			Описатели командлет. Именно для них и будет сгенерирована XML справка. 
+			Получены описатели могут быть через `Get-Command`.
 		.Outputs
 			System.Xml.XmlDocument
-			РЎРѕРґРµСЂР¶РёРјРѕРµ XML СЃРїСЂР°РІРєРё.
+			Содержимое XML справки.
 		.Link
 			https://github.com/IT-Service/ITG.Readme#New-HelpXML
 		.Link
@@ -1764,16 +1764,16 @@ Function New-HelpXML {
 			[Creating the Cmdlet Help File](http://msdn.microsoft.com/en-us/library/bb525433.aspx)
 		.Example
 			Get-Module 'ITG.Yandex.DnsServer' | New-HelpXML;
-			Р“РµРЅРµСЂР°С†РёСЏ xml СЃРїСЂР°РІРєРё РґР»СЏ РјРѕРґСѓР»СЏ `ITG.Yandex.DnsServer`.
+			Генерация xml справки для модуля `ITG.Yandex.DnsServer`.
 	#>
 
 	[CmdletBinding(
 		DefaultParametersetName = 'ModuleInfo'
-        , HelpUri = 'https://github.com/IT-Service/ITG.Readme#New-HelpXML'
+		, HelpUri = 'https://github.com/IT-Service/ITG.Readme#New-HelpXML'
 	)]
 
 	param (
-		# РћРїРёСЃР°С‚РµР»СЊ РјРѕРґСѓР»СЏ
+		# Описатель модуля
 		[Parameter(
 			Mandatory=$true
 			, Position=0
@@ -1784,7 +1784,7 @@ Function New-HelpXML {
 		[Alias('Module')]
 		$ModuleInfo
 	,
-		# РћРїРёСЃР°С‚РµР»СЊ С„СѓРЅРєС†РёРё
+		# Описатель функции
 		[Parameter(
 			Mandatory=$true
 			, Position=0
@@ -2023,18 +2023,18 @@ Function New-HelpXML {
 Function Get-HelpXML {
 	<#
 		.Synopsis
-			Р’РѕР·РІР°С‰Р°РµС‚ XML СЃРѕРґРµСЂР¶РёРјРѕРµ xml С„Р°Р№Р»Р° СЃРїСЂР°РІРєРё РґР»СЏ РїРµСЂРµРґР°РЅРЅРѕРіРѕ РјРѕРґСѓР»СЏ.
+			Возващает XML содержимое xml файла справки для переданного модуля.
 		.Description
-			Р’РѕР·РІР°С‰Р°РµС‚ XML СЃРѕРґРµСЂР¶РёРјРѕРµ xml С„Р°Р№Р»Р° СЃРїСЂР°РІРєРё РґР»СЏ РїРµСЂРµРґР°РЅРЅРѕРіРѕ РјРѕРґСѓР»СЏ.
+			Возващает XML содержимое xml файла справки для переданного модуля.
 		.Role
 			Everyone
 		.Inputs
 			System.Management.Automation.PSModuleInfo
-			РћРїРёСЃР°С‚РµР»Рё РјРѕРґСѓР»РµР№. РРјРµРЅРЅРѕ РґР»СЏ РЅРёС… Рё Р±СѓРґРµС‚ СЃРіРµРЅРµСЂРёСЂРѕРІР°РЅР° XML СЃРїСЂР°РІРєР°. 
-			РџРѕР»СѓС‡РµРЅС‹ РѕРїРёСЃР°С‚РµР»Рё РјРѕРіСѓС‚ Р±С‹С‚СЊ С‡РµСЂРµР· `Get-Module`.
+			Описатели модулей. Именно для них и будет сгенерирована XML справка. 
+			Получены описатели могут быть через `Get-Module`.
 		.Outputs
 			System.Xml.XmlDocument
-			РЎРѕРґРµСЂР¶РёРјРѕРµ XML СЃРїСЂР°РІРєРё.
+			Содержимое XML справки.
 		.Link
 			https://github.com/IT-Service/ITG.Readme#Get-HelpXML
 		.Link
@@ -2043,17 +2043,17 @@ Function Get-HelpXML {
 			[Creating the Cmdlet Help File](http://msdn.microsoft.com/en-us/library/bb525433.aspx)
 		.Example
 			Get-Module 'ITG.Yandex.DnsServer' | Get-HelpXML;
-			Р’РѕР·РІСЂР°С‰Р°РµС‚ СЃРѕРґРµСЂР¶РёРјРѕРµ xml С„Р°Р№Р»Р° СЃРїСЂР°РІРєРё РґР»СЏ РјРѕРґСѓР»СЏ `ITG.Yandex.DnsServer` 
-			РІ РІРёРґРµ XML РґРѕРєСѓРјРµРЅС‚Р°.
+			Возвращает содержимое xml файла справки для модуля `ITG.Yandex.DnsServer` 
+			в виде XML документа.
 	#>
 	
 	[CmdletBinding(
 		DefaultParametersetName = 'ModuleInfo'
-        , HelpUri = 'https://github.com/IT-Service/ITG.Readme#Get-HelpXML'
+		, HelpUri = 'https://github.com/IT-Service/ITG.Readme#Get-HelpXML'
 	)]
 
 	param (
-		# РћРїРёСЃР°С‚РµР»СЊ РјРѕРґСѓР»СЏ
+		# Описатель модуля
 		[Parameter(
 			Mandatory=$true
 			, Position=0
@@ -2064,20 +2064,20 @@ Function Get-HelpXML {
 		[Alias('Module')]
 		$ModuleInfo
 	,
-		# РєСѓР»СЊС‚СѓСЂР°, РґР»СЏ РєРѕС‚РѕСЂРѕР№ РІРµСЂРЅСѓС‚СЊ РґР°РЅРЅС‹Рµ.
+		# культура, для которой вернуть данные.
 		[Parameter(
 			Mandatory=$false
 		)]
 		[System.Globalization.CultureInfo]
 		$UICulture = ( Get-Culture )
 	,
-		# РџСѓС‚СЊ РґР»СЏ xml С„Р°Р№Р»Р° СЃРїСЂР°РІРєРё
+		# Путь для xml файла справки
 		[Parameter(
 			ParameterSetName='ModuleInfo'
 			, Mandatory=$false
 		)]
 		[String]
-        [Alias('Path')]
+		[Alias('Path')]
 		$PSPath = ''
 	)
 
@@ -2085,19 +2085,19 @@ Function Get-HelpXML {
 		trap {
 			break;
 		};
-        Import-LocalizedData `
-            -UICulture $UICulture `
-            -BindingVariable loc `
-        ;
+		Import-LocalizedData `
+			-UICulture $UICulture `
+			-BindingVariable loc `
+		;
 		switch ( $PsCmdlet.ParameterSetName ) {
 			'ModuleInfo' {
-                if ( -not $PSPath ) {
-                    $PSPath = `
-	                    $ModuleInfo.ModuleBase `
-	                    | Join-Path -ChildPath ( $UICulture.Name ) `
-	                    | Join-Path -ChildPath "$( $ModuleInfo.Name )-help.xml" `
-                    ;
-                };
+				if ( -not $PSPath ) {
+					$PSPath = `
+						$ModuleInfo.ModuleBase `
+						| Join-Path -ChildPath ( $UICulture.Name ) `
+						| Join-Path -ChildPath "$( $ModuleInfo.Name )-help.xml" `
+					;
+				};
 				if ( Test-Path $PSPath ) {
 					return ( [xml](
 						Get-Content `
@@ -2125,30 +2125,30 @@ Function Get-HelpXML {
 Function Set-HelpXML {
 	<#
 		.Synopsis
-			Р“РµРЅРµСЂРёСЂСѓРµС‚ XML С„Р°Р№Р» СЃРїСЂР°РІРєРё РґР»СЏ РїРµСЂРµРґР°РЅРЅРѕРіРѕ РјРѕРґСѓР»СЏ, С„СѓРЅРєС†РёРё, РєРѕРјР°РЅРґР»РµС‚С‹.
+			Генерирует XML файл справки для переданного модуля, функции, командлеты.
 		.Description
-			Р“РµРЅРµСЂРёСЂСѓРµС‚ XML С„Р°Р№Р» СЃРїСЂР°РІРєРё РґР»СЏ РїРµСЂРµРґР°РЅРЅРѕРіРѕ РјРѕРґСѓР»СЏ, С„СѓРЅРєС†РёРё, РєРѕРјР°РЅРґР»РµС‚С‹.
+			Генерирует XML файл справки для переданного модуля, функции, командлеты.
 			
-			РљСЂРѕРјРµ С‚РѕРіРѕ, РґР°РЅРЅР°СЏ
-			С„СѓРЅРєС†РёСЏ СЃРѕР·РґР°СЃС‚ XML С„Р°Р№Р» СЃРїСЂР°РІРєРё РІ РєР°С‚Р°Р»РѕРіРµ РјРѕРґСѓР»СЏ (С‚РѕС‡РЅРµРµ - РІ
-			РїРѕРґРєР°С‚Р°Р»РѕРіРµ РєСѓР»СЊС‚СѓСЂС‹, РєР°Рє С‚РѕРіРѕ Рё С‚СЂРµР±СѓСЋС‚ РєРѕРјР°РЅРґР»РµС‚С‹ PowerShell, РІ
-			С‡Р°СЃС‚РЅРѕСЃС‚Рё - `Get-Help`).
+			Кроме того, данная
+			функция создаст XML файл справки в каталоге модуля (точнее - в
+			подкаталоге культуры, как того и требуют командлеты PowerShell, в
+			частности - `Get-Help`).
 		.Notes
-			РќРµРѕР±С…РѕРґРёРјРѕ РґРѕРїРѕР»РЅРёС‚РµР»СЊРЅРѕРµ С‚РµСЃС‚РёСЂРѕРІР°РЅРёРµ РЅР° PowerShell 3.
+			Необходимо дополнительное тестирование на PowerShell 3.
 		.Role
 			Everyone
 		.Inputs
 			System.Management.Automation.PSModuleInfo
-			РћРїРёСЃР°С‚РµР»Рё РјРѕРґСѓР»РµР№. РРјРµРЅРЅРѕ РґР»СЏ РЅРёС… Рё Р±СѓРґРµС‚ СЃРіРµРЅРµСЂРёСЂРѕРІР°РЅР° XML СЃРїСЂР°РІРєР°. 
-			РџРѕР»СѓС‡РµРЅС‹ РѕРїРёСЃР°С‚РµР»Рё РјРѕРіСѓС‚ Р±С‹С‚СЊ С‡РµСЂРµР· `Get-Module`.
+			Описатели модулей. Именно для них и будет сгенерирована XML справка. 
+			Получены описатели могут быть через `Get-Module`.
 		.Inputs
 			System.Management.Automation.FunctionInfo
-			РћРїРёСЃР°С‚РµР»Рё С„СѓРЅРєС†РёР№. РРјРµРЅРЅРѕ РґР»СЏ РЅРёС… Рё Р±СѓРґРµС‚ СЃРіРµРЅРµСЂРёСЂРѕРІР°РЅР° XML СЃРїСЂР°РІРєР°. 
-			РџРѕР»СѓС‡РµРЅС‹ РѕРїРёСЃР°С‚РµР»Рё РјРѕРіСѓС‚ Р±С‹С‚СЊ С‡РµСЂРµР· `Get-Command`.
+			Описатели функций. Именно для них и будет сгенерирована XML справка. 
+			Получены описатели могут быть через `Get-Command`.
 		.Inputs
 			System.Management.Automation.CmdletInfo
-			РћРїРёСЃР°С‚РµР»Рё РєРѕРјР°РЅРґР»РµС‚. РРјРµРЅРЅРѕ РґР»СЏ РЅРёС… Рё Р±СѓРґРµС‚ СЃРіРµРЅРµСЂРёСЂРѕРІР°РЅР° XML СЃРїСЂР°РІРєР°. 
-			РџРѕР»СѓС‡РµРЅС‹ РѕРїРёСЃР°С‚РµР»Рё РјРѕРіСѓС‚ Р±С‹С‚СЊ С‡РµСЂРµР· `Get-Command`.
+			Описатели командлет. Именно для них и будет сгенерирована XML справка. 
+			Получены описатели могут быть через `Get-Command`.
 		.Link
 			https://github.com/IT-Service/ITG.Readme#Set-HelpXML
 		.Link
@@ -2159,19 +2159,19 @@ Function Set-HelpXML {
 			[Creating the Cmdlet Help File](http://msdn.microsoft.com/en-us/library/bb525433.aspx)
 		.Example
 			Get-Module 'ITG.Yandex.DnsServer' | Set-HelpXML;
-			Р“РµРЅРµСЂР°С†РёСЏ xml С„Р°Р№Р»Р° СЃРїСЂР°РІРєРё РґР»СЏ РјРѕРґСѓР»СЏ `ITG.Yandex.DnsServer` 
-			РІ РєР°С‚Р°Р»РѕРіРµ РјРѕРґСѓР»СЏ.
+			Генерация xml файла справки для модуля `ITG.Yandex.DnsServer` 
+			в каталоге модуля.
 	#>
 	
 	[CmdletBinding(
 		DefaultParametersetName = 'ModuleInfo'
 		, SupportsShouldProcess = $true
 		, ConfirmImpact = 'Low'
-        , HelpUri = 'https://github.com/IT-Service/ITG.Readme#Set-HelpXML'
+		, HelpUri = 'https://github.com/IT-Service/ITG.Readme#Set-HelpXML'
 	)]
 
 	param (
-		# РћРїРёСЃР°С‚РµР»СЊ РјРѕРґСѓР»СЏ
+		# Описатель модуля
 		[Parameter(
 			Mandatory=$true
 			, Position=0
@@ -2182,7 +2182,7 @@ Function Set-HelpXML {
 		[Alias('Module')]
 		$ModuleInfo
 	,
-		# РћРїРёСЃР°С‚РµР»СЊ С„СѓРЅРєС†РёРё
+		# Описатель функции
 		[Parameter(
 			Mandatory=$true
 			, Position=0
@@ -2192,47 +2192,47 @@ Function Set-HelpXML {
 		[System.Management.Automation.FunctionInfo]
 		$FunctionInfo
 	,
-		# РєСѓР»СЊС‚СѓСЂР°, РґР»СЏ РєРѕС‚РѕСЂРѕР№ РіРµРЅРµСЂРёСЂРѕРІР°С‚СЊ РґР°РЅРЅС‹Рµ.
+		# культура, для которой генерировать данные.
 		[Parameter(
 			Mandatory=$false
 		)]
 		[System.Globalization.CultureInfo]
 		$UICulture = ( Get-Culture )
 	,
-		# РџСѓС‚СЊ РґР»СЏ xml С„Р°Р№Р»Р° СЃРїСЂР°РІРєРё
+		# Путь для xml файла справки
 		[Parameter(
 			ParameterSetName='ModuleInfo'
 			, Mandatory=$false
 		)]
 		[String]
-        [Alias('Path')]
+		[Alias('Path')]
 		$PSPath = ''
 	,
-		# РѕР±РЅРѕРІР»СЏС‚СЊ С„Р°Р№Р» РјРѕРґСѓР»СЏ - РґРѕР±Р°РІР»СЏС‚СЊ РІ С„Р°Р№Р» РјРѕРґСѓР»СЏ РІ РєРѕРјРјРµРЅС‚Р°СЂРёРё Рє С„СѓРЅРєС†РёСЏРј РјРѕРґСѓР»СЏ 
-		# Р·Р°РїРёСЃРё С‚РёРїР° `.ExternalHelp ITG.Readme-help.xml`
+		# обновлять файл модуля - добавлять в файл модуля в комментарии к функциям модуля 
+		# записи типа `.ExternalHelp ITG.Readme-help.xml`
 		[Parameter(
 			ParameterSetName='ModuleInfo'
 		)]
 		[switch]
 		$UpdateModule
 	,
-		# РіРµРЅРµСЂРёСЂРѕРІР°С‚СЊ / РѕР±РЅРѕРІР»СЏС‚СЊ РёР»Рё РЅРµС‚ .cab С„Р°Р№Р»
+		# генерировать / обновлять или нет .cab файл
 		[Parameter(
 			ParameterSetName='ModuleInfo'
 		)]
 		[switch]
 		$Cab
 	,
-		# РџСѓС‚СЊ Рє .cab С„Р°Р№Р»Сѓ
+		# Путь к .cab файлу
 		[Parameter(
 			ParameterSetName='ModuleInfo'
 			, Mandatory=$false
 		)]
 		[String]
-        [Alias('$CabPath')]
+		[Alias('$CabPath')]
 		$PSCabPath = ''
 	,
-		# РџРµСЂРµРґР°РІР°С‚СЊ РїРѕР»СѓС‡РµРЅРЅС‹Р№ РїРѕ РєРѕРЅРІРµР№РµСЂСѓ РѕРїРёСЃР°С‚РµР»СЊ РґР°Р»СЊС€Рµ
+		# Передавать полученный по конвейеру описатель дальше
 		[switch]
 		$PassThru
 	)
@@ -2241,29 +2241,29 @@ Function Set-HelpXML {
 		trap {
 			break;
 		};
-        Import-LocalizedData `
-            -UICulture $UICulture `
-            -BindingVariable loc `
-        ;
+		Import-LocalizedData `
+			-UICulture $UICulture `
+			-BindingVariable loc `
+		;
 		switch ( $PsCmdlet.ParameterSetName ) {
 			'ModuleInfo' {
-                if ( -not $PSPath ) {
-                    $PSPath = `
-	                    $ModuleInfo.ModuleBase `
-	                    | Join-Path -ChildPath ( $UICulture.Name ) `
-	                    | Join-Path -ChildPath "$( $ModuleInfo.Name )-help.xml" `
-                    ;
-                };
-                if ( -not $PSCabPath ) {
-                    $PSCabPath = `
-	                    $ModuleInfo.ModuleBase `
-	                    | Join-Path -ChildPath 'help.cab' `
-	                    | Join-Path -ChildPath "$( $ModuleInfo.Name )_$( $ModuleInfo.GUID )_$( $UICulture )_HelpContent.cab" `
-                    ;
-                };
-                Write-Verbose `
-                    -Message ( [String]::Format( $loc.VerboseWriteHelpXML, $ModuleInfo.Name, $PSPath, $PSCabPath ) ) `
-                ;
+				if ( -not $PSPath ) {
+					$PSPath = `
+						$ModuleInfo.ModuleBase `
+						| Join-Path -ChildPath ( $UICulture.Name ) `
+						| Join-Path -ChildPath "$( $ModuleInfo.Name )-help.xml" `
+					;
+				};
+				if ( -not $PSCabPath ) {
+					$PSCabPath = `
+						$ModuleInfo.ModuleBase `
+						| Join-Path -ChildPath 'help.cab' `
+						| Join-Path -ChildPath "$( $ModuleInfo.Name )_$( $ModuleInfo.GUID )_$( $UICulture )_HelpContent.cab" `
+					;
+				};
+				Write-Verbose `
+					-Message ( [String]::Format( $loc.VerboseWriteHelpXML, $ModuleInfo.Name, $PSPath, $PSCabPath ) ) `
+				;
 
 				[System.Xml.XmlDocument]$HelpContent = New-HelpXML -ModuleInfo $ModuleInfo;
 
@@ -2339,29 +2339,29 @@ Function Set-HelpXML {
 				};
 			}
 		};
-        
-        if ( $PassThru ) { return $input };
+		
+		if ( $PassThru ) { return $input };
 	}
 }
 
 Function New-HelpInfo {
 	<#
 		.Synopsis
-			Р“РµРЅРµСЂРёСЂСѓРµС‚ HelpInfo XML РґР»СЏ РїРµСЂРµРґР°РЅРЅРѕРіРѕ РјРѕРґСѓР»СЏ.
+			Генерирует HelpInfo XML для переданного модуля.
 		.Description
-			Р“РµРЅРµСЂРёСЂСѓРµС‚ HelpInfo XML РґР»СЏ РїРµСЂРµРґР°РЅРЅРѕРіРѕ РјРѕРґСѓР»СЏ, Р±РµР· Р·Р°РїРёСЃРё РІ С„Р°Р№Р». 
-			HelpInfo.XML РїРѕ СЃСѓС‚Рё СЏРІР»СЏРµС‚СЃСЏ РјР°РЅРёС„РµСЃС‚РѕРј РґР»СЏ xml СЃРїСЂР°РІРєРё РјРѕРґСѓР»СЏ.
+			Генерирует HelpInfo XML для переданного модуля, без записи в файл. 
+			HelpInfo.XML по сути является манифестом для xml справки модуля.
 		.Notes
-			Р”Р»СЏ Р·Р°РїРёСЃРё HelpInfo.xml С„Р°Р№Р»Р° РёСЃРїРѕР»СЊР·СѓР№С‚Рµ Set-HelpInfo.
+			Для записи HelpInfo.xml файла используйте Set-HelpInfo.
 		.Role
 			Everyone
 		.Inputs
 			System.Management.Automation.PSModuleInfo
-			РћРїРёСЃР°С‚РµР»Рё РјРѕРґСѓР»РµР№. РРјРµРЅРЅРѕ РґР»СЏ РЅРёС… Рё Р±СѓРґРµС‚ СЃРіРµРЅРµСЂРёСЂРѕРІР°РЅ РјР°РЅРёС„РµСЃС‚ XML СЃРїСЂР°РІРєРё (HelpInfo.xml). 
-			РџРѕР»СѓС‡РµРЅС‹ РѕРїРёСЃР°С‚РµР»Рё РјРѕРіСѓС‚ Р±С‹С‚СЊ С‡РµСЂРµР· `Get-Module`.
+			Описатели модулей. Именно для них и будет сгенерирован манифест XML справки (HelpInfo.xml). 
+			Получены описатели могут быть через `Get-Module`.
 		.Outputs
 			System.Xml.XmlDocument
-			РЎРѕРґРµСЂР¶РёРјРѕРµ XML РјР°РЅРёС„РµСЃС‚Р° (HelpInfo.xml) СЃРїСЂР°РІРєРё.
+			Содержимое XML манифеста (HelpInfo.xml) справки.
 		.Link
 			https://github.com/IT-Service/ITG.Readme#New-HelpInfo
 		.Link
@@ -2372,16 +2372,16 @@ Function New-HelpInfo {
 			[HelpInfo XML Sample File](http://msdn.microsoft.com/en-us/library/windows/desktop/hh852750.aspx)
 		.Example
 			Get-Module 'ITG.Yandex.DnsServer' | New-HelpInfo;
-			Р“РµРЅРµСЂР°С†РёСЏ xml РјР°РЅРёС„РµСЃС‚Р° СЃРїСЂР°РІРєРё РґР»СЏ РјРѕРґСѓР»СЏ `ITG.Yandex.DnsServer`.
+			Генерация xml манифеста справки для модуля `ITG.Yandex.DnsServer`.
 	#>
 	
 	[CmdletBinding(
 		DefaultParametersetName = 'ModuleInfo'
-        , HelpUri = 'https://github.com/IT-Service/ITG.Readme#New-HelpInfo'
+		, HelpUri = 'https://github.com/IT-Service/ITG.Readme#New-HelpInfo'
 	)]
 
 	param (
-		# РћРїРёСЃР°С‚РµР»СЊ РјРѕРґСѓР»СЏ
+		# Описатель модуля
 		[Parameter(
 			Mandatory=$true
 			, Position=0
@@ -2392,15 +2392,15 @@ Function New-HelpInfo {
 		[Alias('Module')]
 		$ModuleInfo
 	,
-		# "Р—Р°РіРѕС‚РѕРІРєР°" РґР»СЏ `HelpContentURI` - С„СѓРЅРєС†РёРѕРЅР°Р» (Р±Р»РѕРє), РІС‹С‡РёСЃР»СЏСЋС‰РёР№ URI РґР»СЏ .cab С„Р°Р№Р»РѕРІ СЃРїСЂР°РІРєРё
+		# "Заготовка" для `HelpContentURI` - функционал (блок), вычисляющий URI для .cab файлов справки
 		[Parameter(
 			Mandatory=$false
 		)]
 		[ScriptBlock]
 		$HelpContentUriTemplate = $GitHubHelpContentURI
 	,
-		# РЎСЃС‹Р»РєР° РґР»СЏ Р·Р°РіСЂСѓР·РєРё РѕР±РЅРѕРІР»СЏРµРјРѕР№ СЃРїСЂР°РІРєРё. РЎРјРѕС‚СЂРёС‚Рµ about_Updatable_Help.
-		# Р—РЅР°С‡РµРЅРёРµ РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ - url Рє СЂРµРїРѕР·РёС‚РѕСЂРёСЋ РїСЂРѕРµРєС‚Р° РЅР° github.
+		# Ссылка для загрузки обновляемой справки. Смотрите about_Updatable_Help.
+		# Значение по умолчанию - url к репозиторию проекта на github.
 		[Parameter(
 			ParameterSetName='ModuleInfo'
 			, Mandatory=$false
@@ -2442,20 +2442,20 @@ Function New-HelpInfo {
 Function Get-HelpInfo {
 	<#
 		.Synopsis
-			Р’РѕР·РІСЂР°С‰Р°РµС‚ HelpInfo.xml (РєР°Рє xml) РґР»СЏ СѓРєР°Р·Р°РЅРЅРѕРіРѕ РјРѕРґСѓР»СЏ.
+			Возвращает HelpInfo.xml (как xml) для указанного модуля.
 		.Description
-			Р’С‹С‡РёСЃР»СЏРµС‚ РЅР°РёРјРµРЅРѕРІР°РЅРёРµ Рё РїРѕР»РѕР¶РµРЅРёРµ HelpInfo.xml С„Р°Р№Р»Р° РґР»СЏ СѓРєР°Р·Р°РЅРЅРѕРіРѕ РјРѕРґСѓР»СЏ
-			Рё РІРѕР·РІСЂР°С‰Р°РµС‚ РµРіРѕ СЃРѕРґРµСЂР¶РёРјРѕРµ. Р•СЃР»Рё С„Р°Р№Р» РЅРµ РѕР±РЅР°СЂСѓР¶РµРЅ - РІРѕР·РІСЂР°С‰Р°РµС‚ РїСѓСЃС‚СѓСЋ
-			xml "Р·Р°РіРѕС‚РѕРІРєСѓ" HelpInfo.xml, РЅРѕ РІР°Р»РёРґРЅСѓСЋ.
+			Вычисляет наименование и положение HelpInfo.xml файла для указанного модуля
+			и возвращает его содержимое. Если файл не обнаружен - возвращает пустую
+			xml "заготовку" HelpInfo.xml, но валидную.
 		.Role
 			Everyone
 		.Inputs
 			System.Management.Automation.PSModuleInfo
-			РћРїРёСЃР°С‚РµР»Рё РјРѕРґСѓР»РµР№. РРјРµРЅРЅРѕ РґР»СЏ РЅРёС… Рё Р±СѓРґРµС‚ РІРѕР·РІСЂР°С‰С‘РЅ РјР°РЅРёС„РµСЃС‚ XML СЃРїСЂР°РІРєРё (HelpInfo.xml). 
-			РџРѕР»СѓС‡РµРЅС‹ РѕРїРёСЃР°С‚РµР»Рё РјРѕРіСѓС‚ Р±С‹С‚СЊ С‡РµСЂРµР· `Get-Module`.
+			Описатели модулей. Именно для них и будет возвращён манифест XML справки (HelpInfo.xml). 
+			Получены описатели могут быть через `Get-Module`.
 		.Outputs
 			System.Xml.XmlDocument
-			РЎРѕРґРµСЂР¶РёРјРѕРµ XML РјР°РЅРёС„РµСЃС‚Р° (HelpInfo.xml) СЃРїСЂР°РІРєРё.
+			Содержимое XML манифеста (HelpInfo.xml) справки.
 		.Link
 			https://github.com/IT-Service/ITG.Readme#Get-HelpInfo
 		.Link
@@ -2470,16 +2470,16 @@ Function Get-HelpInfo {
 			[HelpInfo XML Sample File](http://msdn.microsoft.com/en-us/library/windows/desktop/hh852750.aspx)
 		.Example
 			Get-Module 'ITG.Yandex.DnsServer' | Get-HelpInfo;
-			Р’РѕР·РІСЂР°С‰Р°РµС‚ xml РјР°РЅРёС„РµСЃС‚ СЃРїСЂР°РІРєРё РґР»СЏ РјРѕРґСѓР»СЏ `ITG.Yandex.DnsServer`.
+			Возвращает xml манифест справки для модуля `ITG.Yandex.DnsServer`.
 	#>
 	
 	[CmdletBinding(
 		DefaultParametersetName = 'ModuleInfo'
-        , HelpUri = 'https://github.com/IT-Service/ITG.Readme#Get-HelpInfo'
+		, HelpUri = 'https://github.com/IT-Service/ITG.Readme#Get-HelpInfo'
 	)]
 
 	param (
-		# РћРїРёСЃР°С‚РµР»СЊ РјРѕРґСѓР»СЏ
+		# Описатель модуля
 		[Parameter(
 			Mandatory=$true
 			, Position=0
@@ -2522,17 +2522,17 @@ Function Get-HelpInfo {
 Function Set-HelpInfo {
 	<#
 		.Synopsis
-			Р“РµРЅРµСЂРёСЂСѓРµС‚ HelpInfo XML РґР»СЏ СѓРєР°Р·Р°РЅРЅРѕРіРѕ РјРѕРґСѓР»СЏ.
+			Генерирует HelpInfo XML для указанного модуля.
 		.Description
-			Р“РµРЅРµСЂРёСЂСѓРµС‚ HelpInfo XML РґР»СЏ РїРµСЂРµРґР°РЅРЅРѕРіРѕ РјРѕРґСѓР»СЏ, Рё
-			РІРЅРѕСЃРёС‚ РёР·РјРµРЅРµРЅРёСЏ (РІ С‡Р°СЃС‚Рё С‚РµРєСѓС‰РµР№ РєСѓР»СЊС‚СѓСЂС‹) РІ СЃСѓС‰РµСЃС‚РІСѓСЋС‰РёР№ С„Р°Р№Р»
-			HelpInfo.xml РІ РєР°С‚Р°Р»РѕРіРµ РјРѕРґСѓР»СЏ, Р»РёР±Рѕ СЃРѕР·РґР°С‘С‚ РЅРѕРІС‹Р№ С„Р°Р№Р».
+			Генерирует HelpInfo XML для переданного модуля, и
+			вносит изменения (в части текущей культуры) в существующий файл
+			HelpInfo.xml в каталоге модуля, либо создаёт новый файл.
 		.Role
 			Everyone
 		.Inputs
 			System.Management.Automation.PSModuleInfo
-			РћРїРёСЃР°С‚РµР»Рё РјРѕРґСѓР»РµР№. РРјРµРЅРЅРѕ РґР»СЏ РЅРёС… Рё Р±СѓРґРµС‚ СЃРіРµРЅРµСЂРёСЂРѕРІР°РЅ РјР°РЅРёС„РµСЃС‚ XML СЃРїСЂР°РІРєРё (HelpInfo.xml). 
-			РџРѕР»СѓС‡РµРЅС‹ РѕРїРёСЃР°С‚РµР»Рё РјРѕРіСѓС‚ Р±С‹С‚СЊ С‡РµСЂРµР· `Get-Module`.
+			Описатели модулей. Именно для них и будет сгенерирован манифест XML справки (HelpInfo.xml). 
+			Получены описатели могут быть через `Get-Module`.
 		.Outputs
 			None.
 		.Link
@@ -2547,18 +2547,18 @@ Function Set-HelpInfo {
 			[HelpInfo XML Sample File](http://msdn.microsoft.com/en-us/library/windows/desktop/hh852750.aspx)
 		.Example
 			Set-HelpInfo -ModuleInfo ( Get-Module 'ITG.Yandex.DnsServer' );
-			РЎРѕР·РґР°РЅРёРµ / РјРѕРґРёС„РёРєР°С†РёСЏ HelpInfo.xml С„Р°Р№Р»Р° РґР»СЏ РјРѕРґСѓР»СЏ `ITG.Yandex.DnsServer` РІ РєР°С‚Р°Р»РѕРіРµ РјРѕРґСѓР»СЏ.
+			Создание / модификация HelpInfo.xml файла для модуля `ITG.Yandex.DnsServer` в каталоге модуля.
 	#>
 	
 	[CmdletBinding(
 		DefaultParametersetName = 'ModuleInfo'
 		, SupportsShouldProcess = $true
 		, ConfirmImpact = 'Medium'
-        , HelpUri = 'https://github.com/IT-Service/ITG.Readme#Set-HelpInfo'
+		, HelpUri = 'https://github.com/IT-Service/ITG.Readme#Set-HelpInfo'
 	)]
 
 	param (
-		# РћРїРёСЃР°С‚РµР»СЊ РјРѕРґСѓР»СЏ
+		# Описатель модуля
 		[Parameter(
 			Mandatory=$true
 			, Position=0
@@ -2569,8 +2569,8 @@ Function Set-HelpInfo {
 		[Alias('Module')]
 		$ModuleInfo
 	,
-		# РЎСЃС‹Р»РєР° РґР»СЏ Р·Р°РіСЂСѓР·РєРё РѕР±РЅРѕРІР»СЏРµРјРѕР№ СЃРїСЂР°РІРєРё. РЎРјРѕС‚СЂРёС‚Рµ about_Updatable_Help.
-		# Р—РЅР°С‡РµРЅРёРµ РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ - url Рє СЂРµРїРѕР·РёС‚РѕСЂРёСЋ РїСЂРѕРµРєС‚Р° РЅР° github.
+		# Ссылка для загрузки обновляемой справки. Смотрите about_Updatable_Help.
+		# Значение по умолчанию - url к репозиторию проекта на github.
 		[Parameter(
 			ParameterSetName='ModuleInfo'
 			, Mandatory=$false
@@ -2578,16 +2578,16 @@ Function Set-HelpInfo {
 		[System.Uri]
 		$HelpContentUri = $null
 	,
-		# РћР±РЅРѕРІР»СЏС‚СЊ РёР»Рё РЅРµС‚ РјР°РЅРёС„РµСЃС‚ РјРѕРґСѓР»СЏ. Р РµС‡СЊ РёРґС‘С‚ Рѕ СЃРѕР·РґР°РЅРёРё / РѕР±РЅРѕРІР»РµРЅРёРё РїР°СЂР°РјРµС‚СЂР° 
-		# HelpInfoURI РІ РјР°РЅРёС„РµСЃС‚Рµ, РєРѕС‚РѕСЂС‹Р№ РєР°Рє СЂР°Р· Рё РґРѕР»Р¶РµРЅ СѓРєР°Р·С‹РІР°С‚СЊ РЅР° HelpInfo.xml С„Р°Р№Р»
+		# Обновлять или нет манифест модуля. Речь идёт о создании / обновлении параметра 
+		# HelpInfoURI в манифесте, который как раз и должен указывать на HelpInfo.xml файл
 		[Parameter(
 			ParameterSetName='ModuleInfo'
 		)]
 		[switch]
 		$UpdateManifest
 	,
-		# РСЃРїРѕР»СЊР·СѓРµС‚СЃСЏ С‚РѕР»СЊРєРѕ СЃРѕРІРјРµСЃС‚РЅРѕ
-		# СЃ `UpdateManifest`. Р—РЅР°С‡РµРЅРёРµ РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ - url Рє СЂРµРїРѕР·РёС‚РѕСЂРёСЋ РїСЂРѕРµРєС‚Р° РЅР° github.
+		# Используется только совместно
+		# с `UpdateManifest`. Значение по умолчанию - url к репозиторию проекта на github.
 		[Parameter(
 			ParameterSetName='ModuleInfo'
 			, Mandatory=$false
@@ -2595,7 +2595,7 @@ Function Set-HelpInfo {
 		[System.Uri]
 		$HelpInfoUri = $null
 	,
-		# РџРµСЂРµРґР°РІР°С‚СЊ РїРѕР»СѓС‡РµРЅРЅС‹Р№ РїРѕ РєРѕРЅРІРµР№РµСЂСѓ РѕРїРёСЃР°С‚РµР»СЊ РґР°Р»СЊС€Рµ
+		# Передавать полученный по конвейеру описатель дальше
 		[switch]
 		$PassThru
 	)
@@ -2606,12 +2606,12 @@ Function Set-HelpInfo {
 		};
 		switch ( $PsCmdlet.ParameterSetName ) {
 			'ModuleInfo' {
-                if ( -not $HelpContentUri ) {
-                    $HelpContentURI = "http://raw.github.com/IT-Service/$( $ModuleInfo.Name )/$( $ModuleInfo.Version )/help.cab";
-                };
-                if ( -not $HelpInfoUri ) {
-                    $GitHubHelpInfoURI = "http://raw.github.com/IT-Service/$( $ModuleInfo.Name )/$( $ModuleInfo.Version )/$( $ModuleInfo.Name )_$( $ModuleInfo.GUID )_HelpInfo.xml";
-                };
+				if ( -not $HelpContentUri ) {
+					$HelpContentURI = "http://raw.github.com/IT-Service/$( $ModuleInfo.Name )/$( $ModuleInfo.Version )/help.cab";
+				};
+				if ( -not $HelpInfoUri ) {
+					$GitHubHelpInfoURI = "http://raw.github.com/IT-Service/$( $ModuleInfo.Name )/$( $ModuleInfo.Version )/$( $ModuleInfo.Name )_$( $ModuleInfo.GUID )_HelpInfo.xml";
+				};
 				$HelpInfoContent = Get-HelpInfo `
 					-ModuleInfo $ModuleInfo `
 				;
@@ -2689,15 +2689,15 @@ Function Set-HelpInfo {
 						-ChildPath "$( $ModuleInfo.Name ).psd1" `
 					;
 					if ( -not ( Test-Path -LiteralPath $ModuleManifestPath ) ) {
-					    Write-Error `
-						    -Message ( [String]::Format( $loc.ErrorModuleManifestPathMessage, $ModuleManifestPath ) ) `
-						    -Category ResourceUnavailable `
-						    -CategoryActivity ( $loc.ErrorModuleManifestPathActivity ) `
-						    -CategoryReason ( $loc.ErrorModuleManifestPathReason ) `
-						    -CategoryTargetName ( $FunctionInfo.Module.Name ) `
-						    -TargetObject ( $FunctionInfo.Module ) `
-						    -RecommendedAction ( $loc.ErrorModuleManifestPathRecommendedAction ) `
-					    ;
+						Write-Error `
+							-Message ( [String]::Format( $loc.ErrorModuleManifestPathMessage, $ModuleManifestPath ) ) `
+							-Category ResourceUnavailable `
+							-CategoryActivity ( $loc.ErrorModuleManifestPathActivity ) `
+							-CategoryReason ( $loc.ErrorModuleManifestPathReason ) `
+							-CategoryTargetName ( $FunctionInfo.Module.Name ) `
+							-TargetObject ( $FunctionInfo.Module ) `
+							-RecommendedAction ( $loc.ErrorModuleManifestPathRecommendedAction ) `
+						;
 						return;
 					};
 					( Get-Content `
@@ -2716,8 +2716,8 @@ Function Set-HelpInfo {
 				};
 			}
 		};
-        
-        if ( $PassThru ) { return $input };
+		
+		if ( $PassThru ) { return $input };
 	}
 }
 
@@ -2733,3 +2733,4 @@ Export-ModuleMember `
 	, Get-HelpInfo `
 	, Set-HelpInfo `
 ;
+

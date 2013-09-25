@@ -21,7 +21,7 @@ Import-Module `
 
 <#
 $m = Get-Module -Name 'ITG.Readme';
-$m | Set-Readme `
+$m | Set-Readme ` 
     -Path ( `
 	    $m.ModuleBase `
 	    | Join-Path -ChildPath 'readme.md' `
