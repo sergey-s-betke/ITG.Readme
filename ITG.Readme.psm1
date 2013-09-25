@@ -16,9 +16,9 @@ $reTokenFirstChar = '[a-zA-Z]';
 $reTokenChar = '[-a-zA-Z0-9_]';
 $reTokenLastChar = '[a-zA-Z0-9_]';
 $reToken = "${reTokenFirstChar}(?:${reTokenChar}*$reTokenLastChar)?";
-$reBeforeToken = "(?<!${reTokenChar}|^\t+.*?|^[^``]*``[^``]*)";
+$reBeforeToken = "(?<!${reTokenChar}|^\t+.*?)";
 $reAfterToken = "(?!${reTokenChar})";
-$reBeforeURL = "(?<!${reTokenChar}|^\t+.*?|^[^``]*``[^``]*|\(<?|<)";
+$reBeforeURL = "(?<!${reTokenChar}|^\t+.*?|\(<?|<)";
 
 $reRegExpId = New-Object System.Text.RegularExpressions.Regex -ArgumentList `
 	'(?<=\(\?\<)(?<id>\w+)(?=\>)' `
@@ -389,9 +389,6 @@ Filter Expand-Definitions {
 						if ( $Translator.RegExpResults.$RuleType.expression -eq $null ) {
 							return ( & "MatchEvaluatorFor$RuleType" $Match );
 						} else {
-							if ( $ruleType -eq 'mdRef' ) {
-								$a=1;
-							};
 							return $Match.Result( $Translator.RegExpResults.$RuleType.expression );
 						};
 					}
@@ -567,6 +564,7 @@ $BasicTranslateRules = `
 	(
 		  @{ template='(?<ts>[ \t]+)(?=\r?$)'; expression='' } `
 		, @{ template='(?<=(\r?\n))(?<eol>(?:[ \t]*\r?\n)+)'; expression="`r`n" } `
+		, @{ template='(?<code>`.*?`)'; expression='$0' } `
 		, @{ template='(?<aboutCP>"get-help about_CommonParameters")' } `
 		, @{ template='(?<aboutCP>about_CommonParameters(?:\s+[(].*?[)])?)' } `
 		, @{ template="${reMDRef}"; expression='[${id}][]' } `
@@ -2695,9 +2693,9 @@ Function Set-HelpInfo {
 				Copy-Item `
 					-LiteralPath $TempHelpInfoFile `
 					-Destination $HelpInfoPath `
-					-Force `
-				;
-				$null = [System.IO.File]::Delete( $TempHelpInfoFile );
+							-Force `
+                ;
+                $null = [System.IO.File]::Delete( $TempHelpInfoFile );
 
 				if ( $UpdateManifest ) {
 					$ModuleManifestPath = Join-Path `
@@ -2749,4 +2747,3 @@ Export-ModuleMember `
 	, Get-HelpInfo `
 	, Set-HelpInfo `
 ;
-
