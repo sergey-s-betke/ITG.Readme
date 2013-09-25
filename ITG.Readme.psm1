@@ -2693,9 +2693,9 @@ Function Set-HelpInfo {
 				Copy-Item `
 					-LiteralPath $TempHelpInfoFile `
 					-Destination $HelpInfoPath `
-							-Force `
-                ;
-                $null = [System.IO.File]::Delete( $TempHelpInfoFile );
+					-Force `
+				;
+				$null = [System.IO.File]::Delete( $TempHelpInfoFile );
 
 				if ( $UpdateManifest ) {
 					$ModuleManifestPath = Join-Path `
