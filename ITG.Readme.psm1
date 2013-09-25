@@ -507,7 +507,7 @@ Function MatchEvaluatorForAbout( [System.Text.RegularExpressions.Match] $Match )
 	} else {
 		Write-Warning `
 			-Message @"
-$loc.WarningUnknownAboutTerm
+$( $loc.WarningUnknownAboutTerm )
 
 	$( $Match.Groups['about'].Value )
 	
