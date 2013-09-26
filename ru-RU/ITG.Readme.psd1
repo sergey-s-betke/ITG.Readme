@@ -3,6 +3,7 @@
 ConvertFrom-StringData @'
 ModuleVersion = Версия модуля
 Funtions = Функции
+Variables = Переменные и константы
 Details = Подробнее - {0}.
 FunctionsDescriptionFull = Подробное описание функций модуля
 FunctionDescriptionFull = {0}

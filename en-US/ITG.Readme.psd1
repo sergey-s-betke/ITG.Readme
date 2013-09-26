@@ -3,6 +3,7 @@
 ConvertFrom-StringData @'
 ModuleVersion = Module version
 Funtions = Functions
+Variables = Variables and constants
 Details = Details - {0}.
 FunctionsDescriptionFull = Detailed description of the module's functions
 FunctionDescriptionFull = {0}

@@ -960,6 +960,23 @@ $( $ModuleInfo.Description | Expand-Definitions )
 
 $( $loc.ModuleVersion ): **$( $ModuleInfo.Version.ToString() )**
 "@
+					if ( $ModuleInfo.ExportedVariables.Count ) {
+@"
+
+$( $loc.Variables )
+$( $loc.Variables -replace '.','-')
+"@
+						$ModuleInfo.ExportedVariables.Values `
+						| % {
+@"
+
+### $($_.Name)
+
+$( $_.Description | Expand-Definitions )
+"@
+						};
+					};
+
 					if ( $ModuleInfo.ExportedCommands.Count ) {
 @"
 
