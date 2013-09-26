@@ -960,7 +960,7 @@ $( $ModuleInfo.Description | Expand-Definitions )
 
 $( $loc.ModuleVersion ): **$( $ModuleInfo.Version.ToString() )**
 "@
-					if ( $ModuleInfo.ExportedCommands ) {
+					if ( $ModuleInfo.ExportedCommands.Count ) {
 @"
 
 $( $loc.Funtions )
