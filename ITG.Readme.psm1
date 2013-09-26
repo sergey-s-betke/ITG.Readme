@@ -597,7 +597,7 @@ Function MatchEvaluatorForFunc( [System.Text.RegularExpressions.Match] $Match ) 
 	$HelpUri = Get-HelpUri `
 		-FunctionInfo ( Get-Command $id ) `
 		-Force:( -not $Translator.TokenRules.func.$id.AsExternalModule ) `
-		-Relative `
+		-Relative:( -not $Translator.TokenRules.func.$id.AsExternalModule ) `
 	;
 	$Help = Get-Help -Name $id -Full;
 	## ! следует убедиться, что справка установлена и Get-Help не вернул ошибку в итоге
