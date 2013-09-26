@@ -68,10 +68,16 @@ PowerShell, сценариев PowerShell:
 	| Set-HelpInfo -UpdateManifest `
 	;
 
+Функции данного модуля так же позволяют Вам генерировать перекрёстные ссылки на описания используемых
+Вами фукнций. Например, данная ссылка - [Get-Command][] сгенерирована автоматически.
+Ссылки формируются на описания функций и командлет модулей 'Microsoft.PowerShell.*', тех модулей, которые
+Вы явно указали как необходимые в манифесте Вашего модуля (`RequiredModules`), а также на описания
+функций тех модулей, что Вы явно указали в параметре `ReferencedModules`.
+
 P.S. Надеюсь, функционал данного модуля будет Вам полезен и позволит обеспечить Ваши модули PowerShell
 документацией с существенно меньшими трудозатратами.
 
-Версия модуля: **2.2.3**
+Версия модуля: **2.3.0**
 
 Функции
 -------
@@ -138,7 +144,7 @@ P.S. Надеюсь, функционал данного модуля будет
 
 	New-HelpXML [-ModuleInfo] <PSModuleInfo> <CommonParameters>
 
-	New-HelpXML [-FunctionInfo] <FunctionInfo> <CommonParameters>
+	New-HelpXML [-FunctionInfo] <CommandInfo> <CommonParameters>
 
 Подробнее - [New-HelpXML][].
 
@@ -148,7 +154,7 @@ P.S. Надеюсь, функционал данного модуля будет
 
 	Set-HelpXML [-ModuleInfo] <PSModuleInfo> [-UICulture <CultureInfo>] [-PSPath <String>] [-UpdateModule] [-Cab] [-PSCabPath <String>] [-PassThru] [-WhatIf] [-Confirm] <CommonParameters>
 
-	Set-HelpXML [-FunctionInfo] <FunctionInfo> [-UICulture <CultureInfo>] [-PassThru] [-WhatIf] [-Confirm] <CommonParameters>
+	Set-HelpXML [-FunctionInfo] <CommandInfo> [-UICulture <CultureInfo>] [-PassThru] [-WhatIf] [-Confirm] <CommonParameters>
 
 Подробнее - [Set-HelpXML][].
 
@@ -162,7 +168,7 @@ P.S. Надеюсь, функционал данного модуля будет
 
 	Get-Readme [-ExternalScriptInfo] <ExternalScriptInfo> [-UICulture <CultureInfo>] [-ShortDescription] [-ReferencedModules <PSModuleInfo[]>] [-TranslateRules <Array>] <CommonParameters>
 
-	Get-Readme [-FunctionInfo] <FunctionInfo> [-UICulture <CultureInfo>] [-ShortDescription] [-ReferencedModules <PSModuleInfo[]>] [-TranslateRules <Array>] <CommonParameters>
+	Get-Readme [-FunctionInfo] <CommandInfo> [-UICulture <CultureInfo>] [-ShortDescription] [-ReferencedModules <PSModuleInfo[]>] [-TranslateRules <Array>] <CommonParameters>
 
 Подробнее - [Get-Readme][].
 
@@ -175,7 +181,7 @@ P.S. Надеюсь, функционал данного модуля будет
 
 	Set-Readme [-ExternalScriptInfo] <ExternalScriptInfo> [-UICulture <CultureInfo>] [-ShortDescription] [-ReferencedModules <PSModuleInfo[]>] [-TranslateRules <Array>] [-PassThru] [-WhatIf] [-Confirm] <CommonParameters>
 
-	Set-Readme [-FunctionInfo] <FunctionInfo> [-UICulture <CultureInfo>] [-ShortDescription] [-ReferencedModules <PSModuleInfo[]>] [-TranslateRules <Array>] [-PassThru] [-WhatIf] [-Confirm] <CommonParameters>
+	Set-Readme [-FunctionInfo] <CommandInfo> [-UICulture <CultureInfo>] [-ShortDescription] [-ReferencedModules <PSModuleInfo[]>] [-TranslateRules <Array>] [-PassThru] [-WhatIf] [-Confirm] <CommonParameters>
 
 Подробнее - [Set-Readme][].
 
@@ -205,7 +211,7 @@ Readme
 
 - System.Management.Automation.PSModuleInfo.
 Описатели модулей, для которых будет сгенерирован about.txt.
-Получены описатели могут быть через Get-Module.
+Получены описатели могут быть через [Get-Module][].
 
 ##### Передаваемые по конвейеру данные
 
@@ -228,7 +234,7 @@ Readme
 
         Требуется? false
         Позиция? named
-        Значение по умолчанию ( Get-Culture )
+        Значение по умолчанию ( [Get-Culture][] )
         Принимать входные данные конвейера?false
         Принимать подстановочные знаки?false
 
@@ -286,7 +292,7 @@ Readme
 
 - System.Management.Automation.PSModuleInfo.
 Описатели модулей, для которых будет сгенерирован readme.md.
-Получены описатели могут быть через Get-Module.
+Получены описатели могут быть через [Get-Module][].
 
 ##### Параметры
 
@@ -304,7 +310,7 @@ Readme
 
         Требуется? false
         Позиция? named
-        Значение по умолчанию ( Get-Culture )
+        Значение по умолчанию ( [Get-Culture][] )
         Принимать входные данные конвейера?false
         Принимать подстановочные знаки?false
 
@@ -667,7 +673,7 @@ HelpInfo.xml в каталоге модуля, либо создаёт новы�
 
         Требуется? false
         Позиция? named
-        Значение по умолчанию ( Get-Culture )
+        Значение по умолчанию ( [Get-Culture][] )
         Принимать входные данные конвейера?false
         Принимать подстановочные знаки?false
 
@@ -712,7 +718,7 @@ HelpInfo.xml в каталоге модуля, либо создаёт новы�
 
 	New-HelpXML [-ModuleInfo] <PSModuleInfo> <CommonParameters>
 
-	New-HelpXML [-FunctionInfo] <FunctionInfo> <CommonParameters>
+	New-HelpXML [-FunctionInfo] <CommandInfo> <CommonParameters>
 
 ##### Требуемая роль пользователя
 
@@ -724,11 +730,8 @@ HelpInfo.xml в каталоге модуля, либо создаёт новы�
 - System.Management.Automation.PSModuleInfo
 Описатели модулей. Именно для них и будет сгенерирована XML справка.
 Получены описатели могут быть через `Get-Module`.
-- System.Management.Automation.FunctionInfo
+- System.Management.Automation.CommandInfo
 Описатели функций. Именно для них и будет сгенерирована XML справка.
-Получены описатели могут быть через `Get-Command`.
-- System.Management.Automation.CmdletInfo
-Описатели командлет. Именно для них и будет сгенерирована XML справка.
 Получены описатели могут быть через `Get-Command`.
 
 ##### Передаваемые по конвейеру данные
@@ -747,7 +750,7 @@ HelpInfo.xml в каталоге модуля, либо создаёт новы�
         Принимать входные данные конвейера?true (ByValue)
         Принимать подстановочные знаки?false
 
-- `FunctionInfo <FunctionInfo>`
+- `FunctionInfo <CommandInfo>`
         Описатель функции
 
         Требуется? true
@@ -790,7 +793,7 @@ HelpInfo.xml в каталоге модуля, либо создаёт новы�
 
 	Set-HelpXML [-ModuleInfo] <PSModuleInfo> [-UICulture <CultureInfo>] [-PSPath <String>] [-UpdateModule] [-Cab] [-PSCabPath <String>] [-PassThru] [-WhatIf] [-Confirm] <CommonParameters>
 
-	Set-HelpXML [-FunctionInfo] <FunctionInfo> [-UICulture <CultureInfo>] [-PassThru] [-WhatIf] [-Confirm] <CommonParameters>
+	Set-HelpXML [-FunctionInfo] <CommandInfo> [-UICulture <CultureInfo>] [-PassThru] [-WhatIf] [-Confirm] <CommonParameters>
 
 ##### Требуемая роль пользователя
 
@@ -802,11 +805,8 @@ HelpInfo.xml в каталоге модуля, либо создаёт новы�
 - System.Management.Automation.PSModuleInfo
 Описатели модулей. Именно для них и будет сгенерирована XML справка.
 Получены описатели могут быть через `Get-Module`.
-- System.Management.Automation.FunctionInfo
+- System.Management.Automation.CommandInfo
 Описатели функций. Именно для них и будет сгенерирована XML справка.
-Получены описатели могут быть через `Get-Command`.
-- System.Management.Automation.CmdletInfo
-Описатели командлет. Именно для них и будет сгенерирована XML справка.
 Получены описатели могут быть через `Get-Command`.
 
 ##### Параметры
@@ -820,7 +820,7 @@ HelpInfo.xml в каталоге модуля, либо создаёт новы�
         Принимать входные данные конвейера?true (ByValue)
         Принимать подстановочные знаки?false
 
-- `FunctionInfo <FunctionInfo>`
+- `FunctionInfo <CommandInfo>`
         Описатель функции
 
         Требуется? true
@@ -834,7 +834,7 @@ HelpInfo.xml в каталоге модуля, либо создаёт новы�
 
         Требуется? false
         Позиция? named
-        Значение по умолчанию ( Get-Culture )
+        Значение по умолчанию ( [Get-Culture][] )
         Принимать входные данные конвейера?false
         Принимать подстановочные знаки?false
 
@@ -939,7 +939,7 @@ HelpInfo.xml в каталоге модуля, либо создаёт новы�
 
 	Get-Readme [-ExternalScriptInfo] <ExternalScriptInfo> [-UICulture <CultureInfo>] [-ShortDescription] [-ReferencedModules <PSModuleInfo[]>] [-TranslateRules <Array>] <CommonParameters>
 
-	Get-Readme [-FunctionInfo] <FunctionInfo> [-UICulture <CultureInfo>] [-ShortDescription] [-ReferencedModules <PSModuleInfo[]>] [-TranslateRules <Array>] <CommonParameters>
+	Get-Readme [-FunctionInfo] <CommandInfo> [-UICulture <CultureInfo>] [-ShortDescription] [-ReferencedModules <PSModuleInfo[]>] [-TranslateRules <Array>] <CommonParameters>
 
 ##### Функциональность
 
@@ -954,15 +954,15 @@ Readme
 
 - System.Management.Automation.PSModuleInfo.
 Описатели модулей, для которых будет сгенерирован readme.md.
-Получены описатели могут быть через Get-Module.
+Получены описатели могут быть через [Get-Module][].
 - System.Management.Automation.ExternalScriptInfo.
 Описатели сценариев, для которых будет сгенерирован readme.md.
 - System.Management.Automation.CmdletInfo.
 Описатели командлет, для которых будет сгенерирован readme.md.
-Получены описатели могут быть через Get-Command.
-- System.Management.Automation.FunctionInfo.
+Получены описатели могут быть через [Get-Command][].
+- System.Management.Automation.CommandInfo.
 Описатели функций, для которых будет сгенерирован readme.md.
-Получены описатели могут быть через Get-Command.
+Получены описатели могут быть через [Get-Command][].
 
 ##### Передаваемые по конвейеру данные
 
@@ -989,7 +989,7 @@ Readme
         Принимать входные данные конвейера?true (ByValue)
         Принимать подстановочные знаки?false
 
-- `FunctionInfo <FunctionInfo>`
+- `FunctionInfo <CommandInfo>`
         Описатель функции
 
         Требуется? true
@@ -1003,7 +1003,7 @@ Readme
 
         Требуется? false
         Позиция? named
-        Значение по умолчанию ( Get-Culture )
+        Значение по умолчанию ( [Get-Culture][] )
         Принимать входные данные конвейера?false
         Принимать подстановочные знаки?false
 
@@ -1076,7 +1076,7 @@ Readme
 
 	Set-Readme [-ExternalScriptInfo] <ExternalScriptInfo> [-UICulture <CultureInfo>] [-ShortDescription] [-ReferencedModules <PSModuleInfo[]>] [-TranslateRules <Array>] [-PassThru] [-WhatIf] [-Confirm] <CommonParameters>
 
-	Set-Readme [-FunctionInfo] <FunctionInfo> [-UICulture <CultureInfo>] [-ShortDescription] [-ReferencedModules <PSModuleInfo[]>] [-TranslateRules <Array>] [-PassThru] [-WhatIf] [-Confirm] <CommonParameters>
+	Set-Readme [-FunctionInfo] <CommandInfo> [-UICulture <CultureInfo>] [-ShortDescription] [-ReferencedModules <PSModuleInfo[]>] [-TranslateRules <Array>] [-PassThru] [-WhatIf] [-Confirm] <CommonParameters>
 
 ##### Функциональность
 
@@ -1091,15 +1091,15 @@ Readme
 
 - System.Management.Automation.PSModuleInfo.
 Описатели модулей, для которых будет сгенерирован readme.md.
-Получены описатели могут быть через Get-Module.
+Получены описатели могут быть через [Get-Module][].
 - System.Management.Automation.ExternalScriptInfo.
 Описатели сценариев, для которых будет сгенерирован readme.md.
 - System.Management.Automation.CmdletInfo.
 Описатели командлет, для которых будет сгенерирован readme.md.
-Получены описатели могут быть через Get-Command.
-- System.Management.Automation.FunctionInfo.
+Получены описатели могут быть через [Get-Command][].
+- System.Management.Automation.CommandInfo.
 Описатели функций, для которых будет сгенерирован readme.md.
-Получены описатели могут быть через Get-Command.
+Получены описатели могут быть через [Get-Command][].
 
 ##### Параметры
 
@@ -1121,7 +1121,7 @@ Readme
         Принимать входные данные конвейера?true (ByValue)
         Принимать подстановочные знаки?false
 
-- `FunctionInfo <FunctionInfo>`
+- `FunctionInfo <CommandInfo>`
         Описатель функции
 
         Требуется? true
@@ -1135,7 +1135,7 @@ Readme
 
         Требуется? false
         Позиция? named
-        Значение по умолчанию ( Get-Culture )
+        Значение по умолчанию ( [Get-Culture][] )
         Принимать входные данные конвейера?false
         Принимать подстановочные знаки?false
 
@@ -1236,8 +1236,11 @@ Readme
 [about_CommonParameters]: http://go.microsoft.com/fwlink/?LinkID=113216 "Describes the parameters that can be used with any cmdlet."
 [about_Updatable_Help]: http://go.microsoft.com/fwlink/?LinkID=235801 "SHORT DESCRIPTION..."
 [Get-AboutModule]: <#get-aboutmodule> "Генерирует содержимое файла `about_$(ModuleInfo.Name).txt` с MarkDown разметкой по данным модуля и комментариям к его функциям."
+[Get-Command]: <http://go.microsoft.com/fwlink/?linkid=113309> "Gets all commands."
+[Get-Culture]: <http://go.microsoft.com/fwlink/?linkid=113312> "Gets the current culture set in the operating system."
 [Get-HelpInfo]: <#get-helpinfo> "Возвращает HelpInfo.xml (как xml) для указанного модуля."
 [Get-HelpXML]: <#get-helpxml> "Возващает XML содержимое xml файла справки для переданного модуля."
+[Get-Module]: <http://go.microsoft.com/fwlink/?linkid=141552> "Gets the modules that have been imported or that can be imported into the current session."
 [Get-Readme]: <#get-readme> "Генерирует readme с MarkDown разметкой по данным модуля и комментариям к его функциям."
 [MarkDown]: http://daringfireball.net/projects/markdown/syntax "MarkDown (md) Syntax"
 [New-HelpInfo]: <#new-helpinfo> "Генерирует HelpInfo XML для переданного модуля."

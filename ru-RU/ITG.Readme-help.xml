@@ -12,7 +12,7 @@
 			<maml:copyright>
 				<maml:para>(c) 2012 Sergey S. Betke. All rights reserved.</maml:para>
 			</maml:copyright>
-			<dev:version>2.2.3</dev:version>
+			<dev:version>2.3.0</dev:version>
 		</details>
 		<maml:functionality>Readme</maml:functionality>
 		<maml:role>Everyone</maml:role>
@@ -125,7 +125,7 @@
 			<maml:copyright>
 				<maml:para>(c) 2012 Sergey S. Betke. All rights reserved.</maml:para>
 			</maml:copyright>
-			<dev:version>2.2.3</dev:version>
+			<dev:version>2.3.0</dev:version>
 		</details>
 		<maml:role>Everyone</maml:role>
 		<maml:description>
@@ -219,7 +219,7 @@
 			<maml:copyright>
 				<maml:para>(c) 2012 Sergey S. Betke. All rights reserved.</maml:para>
 			</maml:copyright>
-			<dev:version>2.2.3</dev:version>
+			<dev:version>2.3.0</dev:version>
 		</details>
 		<maml:role>Everyone</maml:role>
 		<maml:description>
@@ -327,7 +327,7 @@
 			<maml:copyright>
 				<maml:para>(c) 2012 Sergey S. Betke. All rights reserved.</maml:para>
 			</maml:copyright>
-			<dev:version>2.2.3</dev:version>
+			<dev:version>2.3.0</dev:version>
 		</details>
 		<maml:functionality>Readme</maml:functionality>
 		<maml:role>Everyone</maml:role>
@@ -383,7 +383,7 @@
 				<maml:name>Get-Readme</maml:name>
 				<parameter required="true" position="1" pipelineInput="true (ByValue)" globbing="false">
 					<maml:name>FunctionInfo</maml:name>
-					<parameterValue required="true">FunctionInfo</parameterValue>
+					<parameterValue required="true">CommandInfo</parameterValue>
 				</parameter>
 				<parameter required="false" position="named" pipelineInput="false" globbing="false">
 					<maml:name>UICulture</maml:name>
@@ -422,7 +422,7 @@
 				<maml:description>
 					<maml:para>Описатель функции</maml:para>
 				</maml:description>
-				<parameterValue required="True">FunctionInfo</parameterValue>
+				<parameterValue required="True">CommandInfo</parameterValue>
 			</parameter>
 			<parameter required="false" position="named" pipelineInput="false" globbing="false">
 				<maml:name>UICulture</maml:name>
@@ -493,7 +493,7 @@
 			</inputType>
 			<inputType>
 				<dev:type>
-					<maml:name>System.Management.Automation.FunctionInfo.</maml:name>
+					<maml:name>System.Management.Automation.CommandInfo.</maml:name>
 					<maml:description>
 						<maml:para>Описатели функций, для которых будет сгенерирован readme.md. Получены описатели могут быть через Get-Command.</maml:para>
 					</maml:description>
@@ -564,7 +564,7 @@
 			<maml:copyright>
 				<maml:para>(c) 2012 Sergey S. Betke. All rights reserved.</maml:para>
 			</maml:copyright>
-			<dev:version>2.2.3</dev:version>
+			<dev:version>2.3.0</dev:version>
 		</details>
 		<maml:role>Everyone</maml:role>
 		<maml:description>
@@ -681,7 +681,7 @@
 			<maml:copyright>
 				<maml:para>(c) 2012 Sergey S. Betke. All rights reserved.</maml:para>
 			</maml:copyright>
-			<dev:version>2.2.3</dev:version>
+			<dev:version>2.3.0</dev:version>
 		</details>
 		<maml:role>Everyone</maml:role>
 		<maml:description>
@@ -700,7 +700,7 @@
 				<maml:name>New-HelpXML</maml:name>
 				<parameter required="true" position="1" pipelineInput="true (ByValue)" globbing="false">
 					<maml:name>FunctionInfo</maml:name>
-					<parameterValue required="true">FunctionInfo</parameterValue>
+					<parameterValue required="true">CommandInfo</parameterValue>
 				</parameter>
 			</syntaxItem>
 		</syntax>
@@ -717,7 +717,7 @@
 				<maml:description>
 					<maml:para>Описатель функции</maml:para>
 				</maml:description>
-				<parameterValue required="True">FunctionInfo</parameterValue>
+				<parameterValue required="True">CommandInfo</parameterValue>
 			</parameter>
 		</parameters>
 		<inputTypes>
@@ -734,24 +734,13 @@
 			</inputType>
 			<inputType>
 				<dev:type>
-					<maml:name>System.Management.Automation.FunctionInfo</maml:name>
+					<maml:name>System.Management.Automation.CommandInfo</maml:name>
 					<maml:description>
 						<maml:para>Описатели функций. Именно для них и будет сгенерирована XML справка. Получены описатели могут быть через `Get-Command`.</maml:para>
 					</maml:description>
 				</dev:type>
 				<maml:description>
 					<maml:para>Описатели функций. Именно для них и будет сгенерирована XML справка. Получены описатели могут быть через `Get-Command`.</maml:para>
-				</maml:description>
-			</inputType>
-			<inputType>
-				<dev:type>
-					<maml:name>System.Management.Automation.CmdletInfo</maml:name>
-					<maml:description>
-						<maml:para>Описатели командлет. Именно для них и будет сгенерирована XML справка. Получены описатели могут быть через `Get-Command`.</maml:para>
-					</maml:description>
-				</dev:type>
-				<maml:description>
-					<maml:para>Описатели командлет. Именно для них и будет сгенерирована XML справка. Получены описатели могут быть через `Get-Command`.</maml:para>
 				</maml:description>
 			</inputType>
 		</inputTypes>
@@ -806,7 +795,7 @@
 			<maml:copyright>
 				<maml:para>(c) 2012 Sergey S. Betke. All rights reserved.</maml:para>
 			</maml:copyright>
-			<dev:version>2.2.3</dev:version>
+			<dev:version>2.3.0</dev:version>
 		</details>
 		<maml:functionality>Readme</maml:functionality>
 		<maml:role>Everyone</maml:role>
@@ -945,7 +934,7 @@
 			<maml:copyright>
 				<maml:para>(c) 2012 Sergey S. Betke. All rights reserved.</maml:para>
 			</maml:copyright>
-			<dev:version>2.2.3</dev:version>
+			<dev:version>2.3.0</dev:version>
 		</details>
 		<maml:role>Everyone</maml:role>
 		<maml:description>
@@ -1088,7 +1077,7 @@
 			<maml:copyright>
 				<maml:para>(c) 2012 Sergey S. Betke. All rights reserved.</maml:para>
 			</maml:copyright>
-			<dev:version>2.2.3</dev:version>
+			<dev:version>2.3.0</dev:version>
 		</details>
 		<maml:role>Everyone</maml:role>
 		<maml:description>
@@ -1134,7 +1123,7 @@
 				<maml:name>Set-HelpXML</maml:name>
 				<parameter required="true" position="1" pipelineInput="true (ByValue)" globbing="false">
 					<maml:name>FunctionInfo</maml:name>
-					<parameterValue required="true">FunctionInfo</parameterValue>
+					<parameterValue required="true">CommandInfo</parameterValue>
 				</parameter>
 				<parameter required="false" position="named" pipelineInput="false" globbing="false">
 					<maml:name>UICulture</maml:name>
@@ -1164,7 +1153,7 @@
 				<maml:description>
 					<maml:para>Описатель функции</maml:para>
 				</maml:description>
-				<parameterValue required="True">FunctionInfo</parameterValue>
+				<parameterValue required="True">CommandInfo</parameterValue>
 			</parameter>
 			<parameter required="false" position="named" pipelineInput="false" globbing="false">
 				<maml:name>UICulture</maml:name>
@@ -1235,24 +1224,13 @@
 			</inputType>
 			<inputType>
 				<dev:type>
-					<maml:name>System.Management.Automation.FunctionInfo</maml:name>
+					<maml:name>System.Management.Automation.CommandInfo</maml:name>
 					<maml:description>
 						<maml:para>Описатели функций. Именно для них и будет сгенерирована XML справка. Получены описатели могут быть через `Get-Command`.</maml:para>
 					</maml:description>
 				</dev:type>
 				<maml:description>
 					<maml:para>Описатели функций. Именно для них и будет сгенерирована XML справка. Получены описатели могут быть через `Get-Command`.</maml:para>
-				</maml:description>
-			</inputType>
-			<inputType>
-				<dev:type>
-					<maml:name>System.Management.Automation.CmdletInfo</maml:name>
-					<maml:description>
-						<maml:para>Описатели командлет. Именно для них и будет сгенерирована XML справка. Получены описатели могут быть через `Get-Command`.</maml:para>
-					</maml:description>
-				</dev:type>
-				<maml:description>
-					<maml:para>Описатели командлет. Именно для них и будет сгенерирована XML справка. Получены описатели могут быть через `Get-Command`.</maml:para>
 				</maml:description>
 			</inputType>
 		</inputTypes>
@@ -1299,7 +1277,7 @@
 			<maml:copyright>
 				<maml:para>(c) 2012 Sergey S. Betke. All rights reserved.</maml:para>
 			</maml:copyright>
-			<dev:version>2.2.3</dev:version>
+			<dev:version>2.3.0</dev:version>
 		</details>
 		<maml:functionality>Readme</maml:functionality>
 		<maml:role>Everyone</maml:role>
@@ -1377,7 +1355,7 @@
 				<maml:name>Set-Readme</maml:name>
 				<parameter required="true" position="1" pipelineInput="true (ByValue)" globbing="false">
 					<maml:name>FunctionInfo</maml:name>
-					<parameterValue required="true">FunctionInfo</parameterValue>
+					<parameterValue required="true">CommandInfo</parameterValue>
 				</parameter>
 				<parameter required="false" position="named" pipelineInput="false" globbing="false">
 					<maml:name>UICulture</maml:name>
@@ -1425,7 +1403,7 @@
 				<maml:description>
 					<maml:para>Описатель функции</maml:para>
 				</maml:description>
-				<parameterValue required="True">FunctionInfo</parameterValue>
+				<parameterValue required="True">CommandInfo</parameterValue>
 			</parameter>
 			<parameter required="false" position="named" pipelineInput="false" globbing="false">
 				<maml:name>UICulture</maml:name>
@@ -1519,7 +1497,7 @@
 			</inputType>
 			<inputType>
 				<dev:type>
-					<maml:name>System.Management.Automation.FunctionInfo.</maml:name>
+					<maml:name>System.Management.Automation.CommandInfo.</maml:name>
 					<maml:description>
 						<maml:para>Описатели функций, для которых будет сгенерирован readme.md. Получены описатели могут быть через Get-Command.</maml:para>
 					</maml:description>
