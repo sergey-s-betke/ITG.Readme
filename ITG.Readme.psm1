@@ -81,6 +81,13 @@ Filter ConvertTo-TranslateRule {
 		[System.Management.Automation.CommandInfo]
 		$FunctionInfo
 	,
+		[Parameter(
+			Mandatory = $false
+			, ValueFromPipeline = $true
+		)]
+		[PSModuleInfo]
+		$ModuleInfo
+	,
 		# Генерировать правила для формирования ссылок как на функции внешнего модуля
 		[Parameter(
 			Mandatory = $false
@@ -138,6 +145,15 @@ Filter ConvertTo-TranslateRule {
 		return `
 			New-Object PSObject -Property $TranslateRule `
 			| ConvertTo-TranslateRule @PSBoundParameters `
+		;
+	} elseif ( $ModuleInfo ) {
+		$ModuleInfo `
+		| % {
+			$_ | Get-FunctionsReferenceTranslateRules -AsExternalModule:$AsExternalModule;
+			$_ | Get-TagReferenceTranslateRules;
+		} `
+    	| ConvertTo-TranslateRule `
+			-AsExternalModule:$AsExternalModule `
 		;
 	} else {
 		$PSBoundParameters.ruleCategory = $ruleCategory;
@@ -873,17 +889,14 @@ Function Get-Readme {
 				| Sort-Object `
 					-Unique `
 					-Property Name `
-				| % {
-					$_ | Get-FunctionsReferenceTranslateRules -AsExternalModule;
-					$_ | Get-TagReferenceTranslateRules;
-				};
+				| ConvertTo-TranslateRule `
+					-AsExternalModule `
+				;
 				switch ( $PsCmdlet.ParameterSetName ) {
 					'ModuleInfo' {
 						$ModuleInfo `
-						| % {
-							$_ | Get-FunctionsReferenceTranslateRules;
-							$_ | Get-TagReferenceTranslateRules;
-						};
+						| ConvertTo-TranslateRule `
+						;
 					}
 					'ExternalScriptInfo' {
 					}
@@ -2848,11 +2861,7 @@ $BasicTranslateRules = `
 		Get-Module `
 			-ListAvailable `
 			-Name 'Microsoft.PowerShell.*' `
-		| % {
-			$_ | Get-FunctionsReferenceTranslateRules -AsExternalModule;
-			$_ | Get-TagReferenceTranslateRules;
-		} `
-		| ConvertTo-TranslateRule `
+		| ConvertTo-TranslateRule -AsExternalModule `
 	) `
 	+ (
 		Get-Command `
