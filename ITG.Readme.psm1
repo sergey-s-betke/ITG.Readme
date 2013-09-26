@@ -12,6 +12,7 @@ $Translator = @{
 	TokenRules = @{};
 };
 
+$reDotNetTokenChar = '[a-zA-Z0-9_]';
 $reTokenFirstChar = '[a-zA-Z]';
 $reTokenChar = '[-a-zA-Z0-9_]';
 $reTokenLastChar = '[a-zA-Z0-9_]';
@@ -152,7 +153,7 @@ Filter ConvertTo-TranslateRule {
 			$_ | Get-FunctionsReferenceTranslateRules -AsExternalModule:$AsExternalModule;
 			$_ | Get-TagReferenceTranslateRules;
 		} `
-    	| ConvertTo-TranslateRule `
+		| ConvertTo-TranslateRule `
 			-AsExternalModule:$AsExternalModule `
 		;
 	} else {
@@ -466,6 +467,34 @@ Function MatchEvaluatorForAboutCP( [System.Text.RegularExpressions.Match] $Match
 $PowerShellAboutTopicsTranslateRules = @(
 	"about_$reFirstChar(?:[-a-zA-Z0-9_.]*$reTokenLastChar)?" `
 	| ConvertTo-TranslateRule -ruleType 'about' `
+);
+
+Function MatchEvaluatorForPSType( [System.Text.RegularExpressions.Match] $Match ) {
+	$PSType = $Match.Groups['pstype'].Value;
+	$PSTypeInfo = `
+		'System.Management.Automation' `
+		| % {
+			[System.Reflection.Assembly]::Load( $_ ).GetType( $PSType );
+		} `
+	;
+	if ( $PSTypeInfo ) {
+		Add-EndReference `
+			-id ( $PSTypeInfo.FullName ) `
+			-url "<http://msdn.microsoft.com/ru-ru/library/$( $PSTypeInfo.FullName.ToLower() ).aspx>" `
+			-title "$( $PSTypeInfo.Name ) Class ($( $PSTypeInfo.Namespace ))" `
+		;
+		return "[$( $PSTypeInfo.FullName )][]";
+	} else {
+		return $PSType;
+	};
+};
+
+$PowerShellTypes = @(
+	"System\.Management\.Automation(?:\.$reDotNetTokenChar+)*" `
+	, "Microsoft\.PowerShell(?:\.$reDotNetTokenChar+)*" `
+	-join '|' `
+	| ConvertTo-TranslateRule -ruleType 'pstype' `
+	;
 );
 
 # [test]: <http://novgaro.ru> "заголовок такой"
@@ -2857,6 +2886,7 @@ $BasicTranslateRules = `
 		| ConvertTo-TranslateRule -ruleCategory regExp `
 	) `
 	+ $PowerShellAboutTopicsTranslateRules `
+	+ $PowerShellTypes `
 	+ (
 		Get-Module `
 			-ListAvailable `

@@ -209,7 +209,7 @@ Readme
 
 ##### Принимаемые данные по конвейеру
 
-- System.Management.Automation.PSModuleInfo.
+- [System.Management.Automation.PSModuleInfo][].
 Описатели модулей, для которых будет сгенерирован about.txt.
 Получены описатели могут быть через [Get-Module][].
 
@@ -290,7 +290,7 @@ Readme
 
 ##### Принимаемые данные по конвейеру
 
-- System.Management.Automation.PSModuleInfo.
+- [System.Management.Automation.PSModuleInfo][].
 Описатели модулей, для которых будет сгенерирован readme.md.
 Получены описатели могут быть через [Get-Module][].
 
@@ -397,7 +397,7 @@ xml "заготовку" HelpInfo.xml, но валидную.
 
 ##### Принимаемые данные по конвейеру
 
-- System.Management.Automation.PSModuleInfo
+- [System.Management.Automation.PSModuleInfo][]
 Описатели модулей. Именно для них и будет возвращён манифест XML справки (HelpInfo.xml).
 Получены описатели могут быть через `Get-Module`.
 
@@ -456,7 +456,7 @@ HelpInfo.XML по сути является манифестом для xml сп
 
 ##### Принимаемые данные по конвейеру
 
-- System.Management.Automation.PSModuleInfo
+- [System.Management.Automation.PSModuleInfo][]
 Описатели модулей. Именно для них и будет сгенерирован манифест XML справки (HelpInfo.xml).
 Получены описатели могут быть через `Get-Module`.
 
@@ -537,7 +537,7 @@ HelpInfo.xml в каталоге модуля, либо создаёт новы�
 
 ##### Принимаемые данные по конвейеру
 
-- System.Management.Automation.PSModuleInfo
+- [System.Management.Automation.PSModuleInfo][]
 Описатели модулей. Именно для них и будет сгенерирован манифест XML справки (HelpInfo.xml).
 Получены описатели могут быть через `Get-Module`.
 
@@ -648,7 +648,7 @@ HelpInfo.xml в каталоге модуля, либо создаёт новы�
 
 ##### Принимаемые данные по конвейеру
 
-- System.Management.Automation.PSModuleInfo
+- [System.Management.Automation.PSModuleInfo][]
 Описатели модулей. Именно для них и будет сгенерирована XML справка.
 Получены описатели могут быть через `Get-Module`.
 
@@ -727,10 +727,10 @@ HelpInfo.xml в каталоге модуля, либо создаёт новы�
 
 ##### Принимаемые данные по конвейеру
 
-- System.Management.Automation.PSModuleInfo
+- [System.Management.Automation.PSModuleInfo][]
 Описатели модулей. Именно для них и будет сгенерирована XML справка.
 Получены описатели могут быть через `Get-Module`.
-- System.Management.Automation.CommandInfo
+- [System.Management.Automation.CommandInfo][]
 Описатели функций. Именно для них и будет сгенерирована XML справка.
 Получены описатели могут быть через `Get-Command`.
 
@@ -802,10 +802,10 @@ HelpInfo.xml в каталоге модуля, либо создаёт новы�
 
 ##### Принимаемые данные по конвейеру
 
-- System.Management.Automation.PSModuleInfo
+- [System.Management.Automation.PSModuleInfo][]
 Описатели модулей. Именно для них и будет сгенерирована XML справка.
 Получены описатели могут быть через `Get-Module`.
-- System.Management.Automation.CommandInfo
+- [System.Management.Automation.CommandInfo][]
 Описатели функций. Именно для них и будет сгенерирована XML справка.
 Получены описатели могут быть через `Get-Command`.
 
@@ -952,15 +952,15 @@ Readme
 
 ##### Принимаемые данные по конвейеру
 
-- System.Management.Automation.PSModuleInfo.
+- [System.Management.Automation.PSModuleInfo][].
 Описатели модулей, для которых будет сгенерирован readme.md.
 Получены описатели могут быть через [Get-Module][].
-- System.Management.Automation.ExternalScriptInfo.
+- [System.Management.Automation.ExternalScriptInfo][].
 Описатели сценариев, для которых будет сгенерирован readme.md.
-- System.Management.Automation.CmdletInfo.
+- [System.Management.Automation.CmdletInfo][].
 Описатели командлет, для которых будет сгенерирован readme.md.
 Получены описатели могут быть через [Get-Command][].
-- System.Management.Automation.CommandInfo.
+- [System.Management.Automation.CommandInfo][].
 Описатели функций, для которых будет сгенерирован readme.md.
 Получены описатели могут быть через [Get-Command][].
 
@@ -1089,15 +1089,15 @@ Readme
 
 ##### Принимаемые данные по конвейеру
 
-- System.Management.Automation.PSModuleInfo.
+- [System.Management.Automation.PSModuleInfo][].
 Описатели модулей, для которых будет сгенерирован readme.md.
 Получены описатели могут быть через [Get-Module][].
-- System.Management.Automation.ExternalScriptInfo.
+- [System.Management.Automation.ExternalScriptInfo][].
 Описатели сценариев, для которых будет сгенерирован readme.md.
-- System.Management.Automation.CmdletInfo.
+- [System.Management.Automation.CmdletInfo][].
 Описатели командлет, для которых будет сгенерирован readme.md.
 Получены описатели могут быть через [Get-Command][].
-- System.Management.Automation.CommandInfo.
+- [System.Management.Automation.CommandInfo][].
 Описатели функций, для которых будет сгенерирован readme.md.
 Получены описатели могут быть через [Get-Command][].
 
@@ -1249,6 +1249,10 @@ Readme
 [Set-HelpInfo]: <#set-helpinfo> "Генерирует HelpInfo XML для указанного модуля."
 [Set-HelpXML]: <#set-helpxml> "Генерирует XML файл справки для переданного модуля, функции, командлеты."
 [Set-Readme]: <#set-readme> "Генерирует readme файл с MarkDown разметкой по данным модуля и комментариям к его функциям. Файл предназначен, в частности, для размещения в репозиториях github."
+[System.Management.Automation.CmdletInfo]: <http://msdn.microsoft.com/ru-ru/library/system.management.automation.cmdletinfo.aspx> "CmdletInfo Class (System.Management.Automation)"
+[System.Management.Automation.CommandInfo]: <http://msdn.microsoft.com/ru-ru/library/system.management.automation.commandinfo.aspx> "CommandInfo Class (System.Management.Automation)"
+[System.Management.Automation.ExternalScriptInfo]: <http://msdn.microsoft.com/ru-ru/library/system.management.automation.externalscriptinfo.aspx> "ExternalScriptInfo Class (System.Management.Automation)"
+[System.Management.Automation.PSModuleInfo]: <http://msdn.microsoft.com/ru-ru/library/system.management.automation.psmoduleinfo.aspx> "PSModuleInfo Class (System.Management.Automation)"
 
 ---------------------------------------
 
