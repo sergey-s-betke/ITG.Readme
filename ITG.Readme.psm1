@@ -577,29 +577,141 @@ $BasicTranslateRules = `
 	+ $PowerShellAboutTopicsTranslateRules `
 ;
 
-Function MatchEvaluatorForFunc( [System.Text.RegularExpressions.Match] $Match ) {
-	$id = $Match.Groups['func'].Value;
-	$title = ( ( Get-Help $id ).Synopsis -split '\s*\r?\n' ) -join ' ';
-	$ModuleReadmeURL = '';
-	if ( $Translator.TokenRules.func.$id.AsExternalModule ) {
-		$ModuleReadmeURL = $Translator.TokenRules.func.$id.Module.PrivateData.ReadmeURL;
+Function Get-ReadmeUrl {
+	<#
+		.Synopsis
+			Данная функция возвращает `ReadmeURL` для указанного модуля
+	#>
+
+	[CmdletBinding(
+	)]
+
+	param (
+		# Описатель модуля
+		[Parameter(
+			Mandatory=$true
+			, ValueFromPipeline=$true
+		)]
+		[System.Management.Automation.PSModuleInfo]
+		$ModuleInfo
+	)
+
+	process {
+		[System.Uri] $ModuleReadmeURL = $ModuleInfo.PrivateData.ReadmeURL;
 		if ( -not $ModuleReadmeURL ) {
 			Write-Warning `
 				-Message @"
-$( [String]::Format( $loc.WarningUnknownModuleReadmeURL, $Translator.TokenRules.func.$id.Module.Name ) )
+$( [String]::Format( $loc.WarningUnknownModuleReadmeURL, $ModuleInfo.Name ) )
 
 PrivateData = @{
-	ReadmeURL = 'https://github.com/$( $Translator.TokenRules.func.$id.Module.CompanyName )/$( $Translator.TokenRules.func.$id.Module.Name )';
+	ReadmeURL = 'https://github.com/$( $ModuleInfo.CompanyName )/$( $ModuleInfo.Name )';
 }
 	
 "@ `
 			;
-			$ModuleReadmeURL = "https://github.com/IT-Service/$( $Translator.TokenRules.func.$id.Module.Name )";
+			$ModuleReadmeURL = "https://github.com/IT-Service/$( $ModuleInfo.Name )";
 		};
-	};
+		return $ModuleReadmeURL;
+	}
+}
+
+Function New-HelpUri {
+	<#
+		.Synopsis
+			Данная функция генерирует `HelpUri` для указанной функции
+	#>
+
+	[CmdletBinding(
+	)]
+
+	param (
+		# Описатель функции
+		[Parameter(
+			Mandatory=$true
+			, ValueFromPipeline=$true
+		)]
+		[System.Management.Automation.FunctionInfo]
+		$FunctionInfo
+	)
+
+	process {
+		$ModuleReadmeURL = Get-ReadmeUrl ( $FunctionInfo.Module );
+		$HelpUri = [System.Uri] "$( $ModuleReadmeURL.AbsoluteUri )#$( $FunctionInfo.Name.ToLower() )";
+		return $HelpUri;
+	}
+}
+
+Function Get-HelpUri {
+	<#
+		.Synopsis
+			Данная функция возвращает `HelpUri` либо генерирует его при отсутствии
+	#>
+
+	[CmdletBinding(
+	)]
+
+	param (
+		# Описатель функции
+		[Parameter(
+			Mandatory=$true
+			, ValueFromPipeline=$true
+		)]
+		[System.Management.Automation.FunctionInfo]
+		$FunctionInfo
+	,
+		# Генерировать ли HelpUri при его отсутствии
+		[switch]
+		$Force
+	,
+		# возвращать ссылку относительно `ReadmeURL`по возможности
+		[switch]
+		$Relative
+
+	)
+
+	process {
+		[System.Uri] $HelpUri = $FunctionInfo.HelpUri;
+		$Help = Get-Help -Name $FunctionInfo.Name -Full;
+		## ! следует убедиться, что справка установлена и Get-Help не вернул ошибку в итоге
+		if ( -not $HelpUri ) {
+			Write-Warning `
+				-Message ( [String]::Format( $loc.WarningFunctionHelpUriNotDefined, $id ) ) `
+			;
+			$HelpUri = `
+				$Help.relatedLinks.navigationLink `
+				| ? { $_.uri } `
+				| Select-Object `
+					-ExpandProperty uri `
+					-First `
+			;
+			if ( -not $HelpUri ) {
+				Write-Warning `
+					-Message ( [String]::Format( $loc.WarningFunctionHelpUriAndLinkNotDefined, $id ) ) `
+				;
+				if ( $Force ) { $HelpUri = New-HelpUri $FunctionInfo; };
+			};
+		};
+		if ( $Relative ) {
+			$ModuleReadmeURL = Get-ReadmeUrl ( $FunctionInfo.Module );
+			$HelpUri = $ModuleReadmeURL.MakeRelativeUri( $HelpUri );
+		};
+		return $HelpUri;
+	}
+}
+
+Function MatchEvaluatorForFunc( [System.Text.RegularExpressions.Match] $Match ) {
+	$id = $Match.Groups['func'].Value;
+	$HelpUri = Get-HelpUri `
+		-FunctionInfo ( Get-Command $id ) `
+		-Force:( -not $Translator.TokenRules.func.$id.AsExternalModule ) `
+		-Relative `
+	;
+	$Help = Get-Help -Name $id -Full;
+	## ! следует убедиться, что справка установлена и Get-Help не вернул ошибку в итоге
+	$title = ( $Help.Synopsis -split '\s*\r?\n' ) -join ' ';
 	Add-EndReference `
 		-id $id `
-		-url "<$ModuleReadmeURL#$( $id.ToLower() )>" `
+		-url "<$( $HelpUri.OriginalString.ToLower() )>" `
 		-title $title `
 	;
 	return "[${id}][]";
