@@ -26,6 +26,8 @@ GeneratorXmlAbout = Generator: {0} ({1}).
 WarningUnknownAboutTerm = Discovered term about_ *, for which the definition is not found.\nPlease check the spelling of the term:
 WarningUnknownModuleReadmeURL = Required module {0} hasn't specified ReadmeURL in PrivateData.\n Please, specify ReadmeURL in the module manifest, by example:
 WarningLinkError = Error detected at .Link comment section for fuction {0}.\nIf the contents of the specified section begins with a URL, then it is interpreted as a reference to online help,\n and it can't contain something with the URL.\nThe partition with erroneous content:
+WarningCommandHelpUriNotDefined = For command {0} doesn't specified HelpUri.
+WarningCommandHelpUriAndLinkNotDefined = For command {0} doesn't specified HelpUri, and cann't detect .Link comment section with correct online help uri.
 
 ErrorModuleManifestPathMessage = Module {0} manifest not found. XMLHelp can't be generated without module manifest.
 ErrorModuleManifestPathActivity = Module manifest loading

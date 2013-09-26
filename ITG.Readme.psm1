@@ -566,7 +566,7 @@ Function Get-HelpUri {
 		## ! следует убедиться, что справка установлена и Get-Help не вернул ошибку в итоге
 		if ( -not $HelpUri ) {
 			Write-Warning `
-				-Message ( [String]::Format( $loc.WarningFunctionHelpUriNotDefined, $id ) ) `
+				-Message ( [String]::Format( $loc.WarningCommandHelpUriNotDefined, $id ) ) `
 			;
 			$HelpUri = `
 				$Help.relatedLinks.navigationLink `
@@ -577,7 +577,7 @@ Function Get-HelpUri {
 			;
 			if ( -not $HelpUri ) {
 				Write-Warning `
-					-Message ( [String]::Format( $loc.WarningFunctionHelpUriAndLinkNotDefined, $id ) ) `
+					-Message ( [String]::Format( $loc.WarningCommandHelpUriAndLinkNotDefined, $id ) ) `
 				;
 				if ( $Force ) { $HelpUri = New-HelpUri $FunctionInfo; };
 			};
