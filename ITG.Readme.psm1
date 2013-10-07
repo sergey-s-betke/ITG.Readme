@@ -1172,13 +1172,58 @@ $( [String]::Format( $loc.RoleDetails, "**$( $Help.Role )**", "``$( $FunctionInf
 "@
 							};
 						};
-						if ( $Help.Parameters ) {
+						if ( ( $Help.Parameters ) -or ( $FunctionInfo.CmdletBinding ) ) {
 							$Description = `
-								( $Help.Parameters | Out-String ) `
-								-replace '<CommonParameters>', '-<CommonParameters>' `
-								-replace '(?m)(?<=^)\p{Z}{4}-([^\r\n]+)?(?=\s*$)', '- `$1`' `
-								-replace '(?<=\S)[ \t]{2,}(?=\S)', ' ' `
-								| Expand-Definitions `
+								@(
+									$Help.Parameters.parameter `
+									| % {
+										$Param = $FunctionInfo.Parameters[( $_.Name )];
+										if ( -not $Param.SwitchParameter ) {
+@"
+
+- ``$( $_.name ) <$( $_.type.name )>``
+"@
+										} else {
+@"
+
+- ``$( $_.name ) [<$( $_.type.name )>]``
+"@
+										};
+										if ( $_.description ) {
+											(
+												$_.description.text `
+												| Expand-Definitions `
+											) `
+											-split "`r`n" `
+											| % {
+@"
+	$_
+"@
+											} `
+										};
+@"
+
+	Требуется? $( $_.required )
+	Позиция? $( $_.position )
+	Значение по умолчанию $( $_.defaultValue )
+	Принимать входные данные конвейера?$( $_.pipelineInput )
+	Принимать подстановочные знаки?$( $_.globbing )
+"@
+									} `
+								) `
+								+ ( & {
+									if ( $FunctionInfo.CmdletBinding ) {
+@"
+
+- ``<CommonParameters>``
+	Этот командлет поддерживает общие параметры: Verbose, Debug,
+	ErrorAction, ErrorVariable, WarningAction, WarningVariable,
+	OutBuffer и OutVariable. Для получения дополнительных сведений см. раздел
+	[about_CommonParameters][].
+"@
+									};
+								} )`
+								| Out-String `
 							;
 @"
 
