@@ -1206,17 +1206,10 @@ $( [String]::Format( $loc.RoleDetails, "**$( $Help.Role )**", "``$( $FunctionInf
 									$Help.Parameters.parameter `
 									| % {
 										$Param = $FunctionInfo.Parameters[( $_.Name )];
-										if ( -not $Param.SwitchParameter ) {
 @"
 
-- ``$( $_.name ) <$( $_.type.name )>``
+- ``[$( $Param.ParameterType.Name )] $( $_.name )``
 "@
-										} else {
-@"
-
-- ``$( $_.name ) [<$( $_.type.name )>]``
-"@
-										};
 										if ( $_.description ) {
 											(
 												$_.description.text `
@@ -1226,12 +1219,31 @@ $( [String]::Format( $loc.RoleDetails, "**$( $Help.Role )**", "``$( $FunctionInf
 											-replace '(?m)\s+$', '' `
 										};
 @"
-
-	$( $loc.ParameterRequired ) $( $_.required )
+	$( $loc.TypeColon ) $( $Param.ParameterType.FullName | Expand-Definitions )
+"@
+										if ( $Param.Aliases ) {
+@"
+	$( $loc.AliasesColon ) $( $Param.Aliases -join ', ' )
+"@
+										};
+										if ( -not $Param.SwitchParameter ) {
+@"
+	$( $loc.ParameterRequired ) $( $loc."$( $_.required )Short" )
+"@
+										};
+@"
 	$( $loc.ParameterPosition ) $( $_.position )
+"@
+										if ( ( -not $Param.SwitchParameter ) -and ( $_.defaultValue ) ) {
+@"
 	$( $loc.ParameterDefaultValue ) ``$( $_.defaultValue )``
+"@
+										};
+@"
 	$( $loc.AcceptsPipelineInput ) $( $_.pipelineInput )
-	$( $loc.AcceptsWildCardCharacters ) $( $_.globbing )
+"@
+@"
+	$( $loc.AcceptsWildCardCharacters ) $( $loc."$( $_.globbing )Short" )
 "@
 									} `
 								) `

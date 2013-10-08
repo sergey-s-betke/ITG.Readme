@@ -14,6 +14,8 @@ RoleDetails = Для выполнения функции {1} требуется 
 ## InputType = Принимаемые данные по конвейеру
 ## ReturnType = Передаваемые по конвейеру данные
 ## Parameters = Параметры
+## TypeColon = Тип:
+AliasesColon = Псевдонимы:
 ## Examples = Примеры использования
 ## Example = Пример {0}
 ## Notes = Примечания
@@ -21,6 +23,8 @@ RoleDetails = Для выполнения функции {1} требуется 
 OnlineHelp = Интернет версия
 GeneratorAbout= Генератор: [{0}]({1} "Модуль PowerShell для генерации readme для модулей PowerShell").
 GeneratorXmlAbout = Генератор: {0} ({1}).
+FalseShort = нет
+TrueShort = да
 
 WarningUnknownAboutTerm = Обнаружен термин about_*, для которого не найдено определение. \nПроверьте правильность написания термина:
 WarningUnknownModuleReadmeURL = В качестве зависимости при генерации справки использован модуль {0},\nв манифесте которого в PrivateData не определён ReadmeURL (url документа с описаниями функций модуля).\nРекомендуем указать url в манифесте модуля следующим образом (пример):
