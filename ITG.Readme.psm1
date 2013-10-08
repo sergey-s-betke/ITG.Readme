@@ -1,6 +1,37 @@
-Import-LocalizedData `
-	-BindingVariable loc `
+$PSLocRM = New-Object `
+	-Type 'System.Resources.ResourceManager' `
+	-ArgumentList `
+		'HelpDisplayStrings' `
+		, ( [System.Reflection.Assembly]::Load('System.Management.Automation') ) `
 ;
+
+Function Import-ReadmeLocalizedData {
+	<#
+		.Synopsis
+			Загружает локализованные строковые ресурсы.
+	#>
+
+	param (
+		# культура, для которой загрузить ресурсы
+		[Parameter(
+			Mandatory=$false
+		)]
+		[System.Globalization.CultureInfo]
+		$UICulture = ( Get-Culture )
+	)
+
+	$loc = Import-LocalizedData @PSBoundParameters;
+	$PSloc = $PSLocRM.GetResourceSet( $UICulture, $true, $true );
+	$PSloc `
+	| % {
+		if ( -not $loc.ContainsKey( $_.Name ) ) {
+			$loc.Add( $_.Name, $_.Value.Trim() );
+		};
+	};
+	return $loc;
+}
+
+$loc = Import-ReadmeLocalizedData;
 
 $Translator = @{
 	RegExp = $null;
@@ -905,9 +936,8 @@ Function Get-Readme {
 
 	process {
 		if ( -not $GetReadmeStatus.level ) {
-			Import-LocalizedData `
+			$loc = Import-ReadmeLocalizedData `
 				-UICulture $UICulture `
-				-BindingVariable loc `
 			;
 
 			if ( $PsCmdlet.ParameterSetName -eq 'ModuleInfo' ) {
@@ -1194,20 +1224,16 @@ $( [String]::Format( $loc.RoleDetails, "**$( $Help.Role )**", "``$( $FunctionInf
 												$_.description.text `
 												| Expand-Definitions `
 											) `
-											-split "`r`n" `
-											| % {
-@"
-	$_
-"@
-											} `
+											-replace '(?m)^\s*', "`t" `
+											-replace '(?m)\s+$', '' `
 										};
 @"
 
-	Требуется? $( $_.required )
-	Позиция? $( $_.position )
-	Значение по умолчанию $( $_.defaultValue )
-	Принимать входные данные конвейера?$( $_.pipelineInput )
-	Принимать подстановочные знаки?$( $_.globbing )
+	$( $loc.ParameterRequired ) $( $_.required )
+	$( $loc.ParameterPosition ) $( $_.position )
+	$( $loc.ParameterDefaultValue ) ``$( $_.defaultValue )``
+	$( $loc.AcceptsPipelineInput ) $( $_.pipelineInput )
+	$( $loc.AcceptsWildCardCharacters ) $( $_.globbing )
 "@
 									} `
 								) `
@@ -1215,12 +1241,15 @@ $( [String]::Format( $loc.RoleDetails, "**$( $Help.Role )**", "``$( $FunctionInf
 									if ( $FunctionInfo.CmdletBinding ) {
 @"
 
-- ``<CommonParameters>``
-	Этот командлет поддерживает общие параметры: Verbose, Debug,
-	ErrorAction, ErrorVariable, WarningAction, WarningVariable,
-	OutBuffer и OutVariable. Для получения дополнительных сведений см. раздел
-	[about_CommonParameters][].
-"@
+- ``$( $loc.CommonParameters )``
+$(
+	$loc.BaseCmdletInformation `
+		-replace '(?m)^\s*', "`t" `
+		-replace '(?m)\s+$', '' `
+)
+"@ `
+										| Expand-Definitions `
+										;
 									};
 								} )`
 								| Out-String `
@@ -1480,9 +1509,8 @@ Function Set-Readme {
 		$null = $PSBoundParameters.Remove( 'WhatIf' );
 		$null = $PSBoundParameters.Remove( 'Confirm' );
 
-		Import-LocalizedData `
+		$loc = Import-ReadmeLocalizedData `
 			-UICulture $UICulture `
-			-BindingVariable loc `
 		;
 
 		switch ( $PsCmdlet.ParameterSetName ) {
@@ -1676,9 +1704,8 @@ Function Set-AboutModule {
 	)
 
 	process {
-		Import-LocalizedData `
+		$loc = Import-ReadmeLocalizedData `
 			-UICulture $UICulture `
-			-BindingVariable loc `
 		;
 		if ( -not $PSPath ) {
 			$PSPath = `
@@ -2192,9 +2219,8 @@ Function Get-HelpXML {
 		trap {
 			break;
 		};
-		Import-LocalizedData `
+		$loc = Import-ReadmeLocalizedData `
 			-UICulture $UICulture `
-			-BindingVariable loc `
 		;
 		switch ( $PsCmdlet.ParameterSetName ) {
 			'ModuleInfo' {
@@ -2344,9 +2370,8 @@ Function Set-HelpXML {
 		trap {
 			break;
 		};
-		Import-LocalizedData `
+		$loc = Import-ReadmeLocalizedData `
 			-UICulture $UICulture `
-			-BindingVariable loc `
 		;
 		switch ( $PsCmdlet.ParameterSetName ) {
 			'ModuleInfo' {
