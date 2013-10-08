@@ -315,21 +315,13 @@ Readme
 
 - `[SwitchParameter] PassThru`
 	Передавать полученный по конвейеру описатель дальше
-	* Тип: [System.Management.Automation.SwitchParameter][]
-	* Принимать входные данные конвейера? false
-	* Принимать подстановочные знаки? нет
+	
 
 - `[SwitchParameter] WhatIf`
-	* Тип: [System.Management.Automation.SwitchParameter][]
 	* Псевдонимы: wi
-	* Принимать входные данные конвейера? false
-	* Принимать подстановочные знаки? нет
 
 - `[SwitchParameter] Confirm`
-	* Тип: [System.Management.Automation.SwitchParameter][]
 	* Псевдонимы: cf
-	* Принимать входные данные конвейера? false
-	* Принимать подстановочные знаки? нет
 
 - `<CommonParameters>`
 	Этот командлет поддерживает общие параметры: Verbose, Debug,
@@ -539,9 +531,7 @@ HelpInfo.xml в каталоге модуля, либо создаёт новы�
 - `[SwitchParameter] UpdateManifest`
 	Обновлять или нет манифест модуля. Речь идёт о создании / обновлении параметра
 	HelpInfoURI в манифесте, который как раз и должен указывать на HelpInfo.xml файл
-	* Тип: [System.Management.Automation.SwitchParameter][]
-	* Принимать входные данные конвейера? false
-	* Принимать подстановочные знаки? нет
+	
 
 - `[Uri] HelpInfoUri`
 	Используется только совместно
@@ -554,21 +544,13 @@ HelpInfo.xml в каталоге модуля, либо создаёт новы�
 
 - `[SwitchParameter] PassThru`
 	Передавать полученный по конвейеру описатель дальше
-	* Тип: [System.Management.Automation.SwitchParameter][]
-	* Принимать входные данные конвейера? false
-	* Принимать подстановочные знаки? нет
+	
 
 - `[SwitchParameter] WhatIf`
-	* Тип: [System.Management.Automation.SwitchParameter][]
 	* Псевдонимы: wi
-	* Принимать входные данные конвейера? false
-	* Принимать подстановочные знаки? нет
 
 - `[SwitchParameter] Confirm`
-	* Тип: [System.Management.Automation.SwitchParameter][]
 	* Псевдонимы: cf
-	* Принимать входные данные конвейера? false
-	* Принимать подстановочные знаки? нет
 
 - `<CommonParameters>`
 	Этот командлет поддерживает общие параметры: Verbose, Debug,
@@ -804,15 +786,11 @@ HelpInfo.xml в каталоге модуля, либо создаёт новы�
 - `[SwitchParameter] UpdateModule`
 	обновлять файл модуля - добавлять в файл модуля в комментарии к функциям модуля
 	записи типа `.ExternalHelp ITG.Readme-help.xml`
-	* Тип: [System.Management.Automation.SwitchParameter][]
-	* Принимать входные данные конвейера? false
-	* Принимать подстановочные знаки? нет
+	
 
 - `[SwitchParameter] Cab`
 	генерировать / обновлять или нет .cab файл
-	* Тип: [System.Management.Automation.SwitchParameter][]
-	* Принимать входные данные конвейера? false
-	* Принимать подстановочные знаки? нет
+	
 
 - `[String] PSCabPath`
 	Путь к .cab файлу
@@ -825,21 +803,13 @@ HelpInfo.xml в каталоге модуля, либо создаёт новы�
 
 - `[SwitchParameter] PassThru`
 	Передавать полученный по конвейеру описатель дальше
-	* Тип: [System.Management.Automation.SwitchParameter][]
-	* Принимать входные данные конвейера? false
-	* Принимать подстановочные знаки? нет
+	
 
 - `[SwitchParameter] WhatIf`
-	* Тип: [System.Management.Automation.SwitchParameter][]
 	* Псевдонимы: wi
-	* Принимать входные данные конвейера? false
-	* Принимать подстановочные знаки? нет
 
 - `[SwitchParameter] Confirm`
-	* Тип: [System.Management.Automation.SwitchParameter][]
 	* Псевдонимы: cf
-	* Принимать входные данные конвейера? false
-	* Принимать подстановочные знаки? нет
 
 - `<CommonParameters>`
 	Этот командлет поддерживает общие параметры: Verbose, Debug,
@@ -947,10 +917,7 @@ Readme
 
 - `[SwitchParameter] ShortDescription`
 	Генерировать только краткое описание
-	* Тип: [System.Management.Automation.SwitchParameter][]
 	* Псевдонимы: Short
-	* Принимать входные данные конвейера? false
-	* Принимать подстановочные знаки? нет
 
 - `[PSModuleInfo[]] ReferencedModules`
 	Перечень модулей, упоминания функций которых будут заменены на ссылки
@@ -1084,10 +1051,7 @@ Readme
 
 - `[SwitchParameter] ShortDescription`
 	Генерировать только краткое описание
-	* Тип: [System.Management.Automation.SwitchParameter][]
 	* Псевдонимы: Short
-	* Принимать входные данные конвейера? false
-	* Принимать подстановочные знаки? нет
 
 - `[PSModuleInfo[]] ReferencedModules`
 	Перечень модулей, упоминания функций которых будут заменены на ссылки
@@ -1110,21 +1074,13 @@ Readme
 
 - `[SwitchParameter] PassThru`
 	Передавать полученный по конвейеру описатель дальше
-	* Тип: [System.Management.Automation.SwitchParameter][]
-	* Принимать входные данные конвейера? false
-	* Принимать подстановочные знаки? нет
+	
 
 - `[SwitchParameter] WhatIf`
-	* Тип: [System.Management.Automation.SwitchParameter][]
 	* Псевдонимы: wi
-	* Принимать входные данные конвейера? false
-	* Принимать подстановочные знаки? нет
 
 - `[SwitchParameter] Confirm`
-	* Тип: [System.Management.Automation.SwitchParameter][]
 	* Псевдонимы: cf
-	* Принимать входные данные конвейера? false
-	* Принимать подстановочные знаки? нет
 
 - `<CommonParameters>`
 	Этот командлет поддерживает общие параметры: Verbose, Debug,
@@ -1178,7 +1134,6 @@ Readme
 [System.Management.Automation.ExternalScriptInfo]: <http://msdn.microsoft.com/ru-ru/library/system.management.automation.externalscriptinfo.aspx> "ExternalScriptInfo Class (System.Management.Automation)"
 [System.Management.Automation.PSModuleInfo]: <http://msdn.microsoft.com/ru-ru/library/system.management.automation.psmoduleinfo.aspx> "PSModuleInfo Class (System.Management.Automation)"
 [System.Management.Automation.ScriptBlock]: <http://msdn.microsoft.com/ru-ru/library/system.management.automation.scriptblock.aspx> "ScriptBlock Class (System.Management.Automation)"
-[System.Management.Automation.SwitchParameter]: <http://msdn.microsoft.com/ru-ru/library/system.management.automation.switchparameter.aspx> "SwitchParameter Class (System.Management.Automation)"
 
 ---------------------------------------
 

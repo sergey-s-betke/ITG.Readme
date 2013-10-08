@@ -1221,9 +1221,11 @@ $( [String]::Format( $loc.RoleDetails, "**$( $Help.Role )**", "``$( $FunctionInf
 										(
 										& {
 											$ParamDefs = & {
-												@{
-													Attr = ( $loc.TypeColon );
-													Value = ( $Param.ParameterType.FullName | Expand-Definitions );
+												if ( -not $Param.SwitchParameter ) {
+													@{
+														Attr = ( $loc.TypeColon );
+														Value = ( $Param.ParameterType.FullName | Expand-Definitions );
+													};
 												};
 												if ( $Param.Aliases ) {
 													@{
@@ -1249,13 +1251,17 @@ $( [String]::Format( $loc.RoleDetails, "**$( $Help.Role )**", "``$( $FunctionInf
 														Value = "``$( $_.defaultValue )``";
 													};
 												};
-												@{
-													Attr = ( $loc.AcceptsPipelineInput );
-													Value = ( $_.pipelineInput );
+												if ( ( -not $Param.SwitchParameter ) -or ( -not $_.pipelineInput.ToLower().Equals( 'false' ) ) ) {
+													@{
+														Attr = ( $loc.AcceptsPipelineInput );
+														Value = ( $_.pipelineInput );
+													};
 												};
-												@{
-													Attr = ( $loc.AcceptsWildCardCharacters );
-													Value = ( $loc."$( $_.globbing )Short" );
+												if ( -not $Param.SwitchParameter ) {
+													@{
+														Attr = ( $loc.AcceptsWildCardCharacters );
+														Value = ( $loc."$( $_.globbing )Short" );
+													};
 												};
 											};
 <#
