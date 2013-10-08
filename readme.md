@@ -211,7 +211,7 @@ Readme
 
 - `[CultureInfo] UICulture`
 	культура, для которой генерировать данные.
-	* Тип: System.Globalization.CultureInfo
+	* Тип: [System.Globalization.CultureInfo][]
 	* Требуется? нет
 	* Позиция? named
 	* Значение по умолчанию `( Get-Culture )`
@@ -287,7 +287,7 @@ Readme
 
 - `[CultureInfo] UICulture`
 	культура, для которой генерировать данные.
-	* Тип: System.Globalization.CultureInfo
+	* Тип: [System.Globalization.CultureInfo][]
 	* Требуется? нет
 	* Позиция? named
 	* Значение по умолчанию `( Get-Culture )`
@@ -296,7 +296,7 @@ Readme
 
 - `[String] PSPath`
 	Путь для about.txt файла. По умолчанию - в подкаталоге указанной культуры.
-	* Тип: System.String
+	* Тип: [System.String][]
 	* Псевдонимы: Path
 	* Требуется? нет
 	* Позиция? named
@@ -610,7 +610,7 @@ HelpInfo.xml в каталоге модуля, либо создаёт новы�
 
 - `[CultureInfo] UICulture`
 	культура, для которой вернуть данные.
-	* Тип: System.Globalization.CultureInfo
+	* Тип: [System.Globalization.CultureInfo][]
 	* Требуется? нет
 	* Позиция? named
 	* Значение по умолчанию `( Get-Culture )`
@@ -619,7 +619,7 @@ HelpInfo.xml в каталоге модуля, либо создаёт новы�
 
 - `[String] PSPath`
 	Путь для xml файла справки
-	* Тип: System.String
+	* Тип: [System.String][]
 	* Псевдонимы: Path
 	* Требуется? нет
 	* Позиция? named
@@ -767,7 +767,7 @@ HelpInfo.xml в каталоге модуля, либо создаёт новы�
 
 - `[CultureInfo] UICulture`
 	культура, для которой генерировать данные.
-	* Тип: System.Globalization.CultureInfo
+	* Тип: [System.Globalization.CultureInfo][]
 	* Требуется? нет
 	* Позиция? named
 	* Значение по умолчанию `( Get-Culture )`
@@ -776,7 +776,7 @@ HelpInfo.xml в каталоге модуля, либо создаёт новы�
 
 - `[String] PSPath`
 	Путь для xml файла справки
-	* Тип: System.String
+	* Тип: [System.String][]
 	* Псевдонимы: Path
 	* Требуется? нет
 	* Позиция? named
@@ -794,7 +794,7 @@ HelpInfo.xml в каталоге модуля, либо создаёт новы�
 
 - `[String] PSCabPath`
 	Путь к .cab файлу
-	* Тип: System.String
+	* Тип: [System.String][]
 	* Псевдонимы: $CabPath
 	* Требуется? нет
 	* Позиция? named
@@ -908,7 +908,7 @@ Readme
 
 - `[CultureInfo] UICulture`
 	культура, для которой генерировать данные.
-	* Тип: System.Globalization.CultureInfo
+	* Тип: [System.Globalization.CultureInfo][]
 	* Требуется? нет
 	* Позиция? named
 	* Значение по умолчанию `( Get-Culture )`
@@ -931,7 +931,7 @@ Readme
 
 - `[Array] TranslateRules`
 	Правила для обработки readme регулярными выражениями
-	* Тип: System.Array
+	* Тип: [System.Array][]
 	* Требуется? нет
 	* Позиция? named
 	* Значение по умолчанию `@()`
@@ -1033,7 +1033,7 @@ Readme
 
 - `[CultureInfo] UICulture`
 	культура, для которой генерировать данные.
-	* Тип: System.Globalization.CultureInfo
+	* Тип: [System.Globalization.CultureInfo][]
 	* Требуется? нет
 	* Позиция? named
 	* Значение по умолчанию `( Get-Culture )`
@@ -1042,7 +1042,7 @@ Readme
 
 - `[String] PSPath`
 	Путь для readme файла. По умолчанию - `readme.md` в каталоге модуля
-	* Тип: System.String
+	* Тип: [System.String][]
 	* Псевдонимы: Path
 	* Требуется? нет
 	* Позиция? named
@@ -1065,7 +1065,7 @@ Readme
 
 - `[Array] TranslateRules`
 	Правила для обработки readme регулярными выражениями
-	* Тип: System.Array
+	* Тип: [System.Array][]
 	* Требуется? нет
 	* Позиция? named
 	* Значение по умолчанию `@()`
@@ -1129,11 +1129,14 @@ Readme
 [Set-HelpInfo]: <#set-helpinfo> "Генерирует HelpInfo XML для указанного модуля."
 [Set-HelpXML]: <#set-helpxml> "Генерирует XML файл справки для переданного модуля, функции, командлеты."
 [Set-Readme]: <#set-readme> "Генерирует readme файл с MarkDown разметкой по данным модуля и комментариям к его функциям. Файл предназначен, в частности, для размещения в репозиториях github."
+[System.Array]: <http://msdn.microsoft.com/ru-ru/library/system.array.aspx> "Array Class (System)"
+[System.Globalization.CultureInfo]: <http://msdn.microsoft.com/ru-ru/library/system.globalization.cultureinfo.aspx> "CultureInfo Class (System.Globalization)"
 [System.Management.Automation.CmdletInfo]: <http://msdn.microsoft.com/ru-ru/library/system.management.automation.cmdletinfo.aspx> "CmdletInfo Class (System.Management.Automation)"
 [System.Management.Automation.CommandInfo]: <http://msdn.microsoft.com/ru-ru/library/system.management.automation.commandinfo.aspx> "CommandInfo Class (System.Management.Automation)"
 [System.Management.Automation.ExternalScriptInfo]: <http://msdn.microsoft.com/ru-ru/library/system.management.automation.externalscriptinfo.aspx> "ExternalScriptInfo Class (System.Management.Automation)"
 [System.Management.Automation.PSModuleInfo]: <http://msdn.microsoft.com/ru-ru/library/system.management.automation.psmoduleinfo.aspx> "PSModuleInfo Class (System.Management.Automation)"
 [System.Management.Automation.ScriptBlock]: <http://msdn.microsoft.com/ru-ru/library/system.management.automation.scriptblock.aspx> "ScriptBlock Class (System.Management.Automation)"
+[System.String]: <http://msdn.microsoft.com/ru-ru/library/system.string.aspx> "String Class (System)"
 [System.Uri]: <http://msdn.microsoft.com/ru-ru/library/system.uri.aspx> "Uri Class (System)"
 [System.Xml.XmlDocument]: <http://msdn.microsoft.com/ru-ru/library/system.xml.xmldocument.aspx> "XmlDocument Class (System.Xml)"
 

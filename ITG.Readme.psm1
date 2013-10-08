@@ -502,25 +502,24 @@ $PowerShellAboutTopicsTranslateRules = @(
 
 Function MatchEvaluatorForPSType( [System.Text.RegularExpressions.Match] $Match ) {
 	$PSType = $Match.Groups['pstype'].Value;
-	$PSTypeInfo = `
+	foreach ( $_ in `
 		'System.Management.Automation' `
+		, 'mscorlib' `
 		, 'System' `
-		, 'System.Xml' `
-		| % {
-			$TypeInfo = [System.Reflection.Assembly]::LoadWithPartialName( $_ ).GetType( $PSType );
-			if ( $TypeInfo ) { return $TypeInfo; };
-		} `
-	;
-	if ( $PSTypeInfo ) {
-		Add-EndReference `
-			-id ( $PSTypeInfo.FullName ) `
-			-url "<http://msdn.microsoft.com/ru-ru/library/$( $PSTypeInfo.FullName.ToLower() ).aspx>" `
-			-title "$( $PSTypeInfo.Name ) Class ($( $PSTypeInfo.Namespace ))" `
-		;
-		return "[$( $PSTypeInfo.FullName )][]";
-	} else {
-		return $PSType;
+		, 'System.XML' `
+	) {
+		$PSTypeInfo = [System.Reflection.Assembly]::LoadWithPartialName( $_ ).GetType( $PSType );
+		if ( $PSTypeInfo ) {
+			Add-EndReference `
+				-id ( $PSTypeInfo.FullName ) `
+				-url "<http://msdn.microsoft.com/ru-ru/library/$( $PSTypeInfo.FullName.ToLower() ).aspx>" `
+				-title "$( $PSTypeInfo.Name ) Class ($( $PSTypeInfo.Namespace ))" `
+			;
+			return "[$( $PSTypeInfo.FullName )][]";
+		};
 	};
+	;
+	return $PSType;
 };
 
 $PowerShellTypes = @(
