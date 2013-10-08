@@ -983,8 +983,8 @@ Function Get-Readme {
 			'ModuleInfo' {
 				$ReadMeContent = & { `
 @"
-$($ModuleInfo.Name)
-$($ModuleInfo.Name -replace '.','=')
+$( $ModuleInfo.Name )
+$( $ModuleInfo.Name -replace '.','=' )
 
 $( $ModuleInfo.Description | Expand-Definitions )
 
@@ -1010,8 +1010,8 @@ $( $_.Description | Expand-Definitions )
 					if ( $ModuleInfo.ExportedCommands.Count ) {
 @"
 
-$( $loc.Funtions )
-$( $loc.Funtions -replace '.','-')
+$( $loc.CmdletsSupportedCaps )
+$( $loc.CmdletsSupportedCaps -replace '.','-')
 "@
 						# генерация краткого описания функций
 						$ModuleInfo.ExportedCommands.Values `
@@ -1024,7 +1024,7 @@ $( $loc.Funtions -replace '.','-')
 							if ( $_.Name ) {
 @"
 
-### $($_.Name)
+### $( $_.Name )
 "@
 							};
 							$_.Group `
@@ -1033,20 +1033,14 @@ $( $loc.Funtions -replace '.','-')
 								| Get-Readme `
 									-ShortDescription `
 								;
-								if ( -not $ShortDescription ) {
-@"
-
-$( [String]::Format( $loc.Details, ( $_.Name | Expand-Definitions ) ) )
-"@
-								};
 							};
 						};
 
 						if ( -not $ShortDescription ) {
 @"
 
-$( $loc.FunctionsDescriptionFull )
-$( $loc.FunctionsDescriptionFull -replace '.','-')
+$( $loc.DetailedDescription )
+$( $loc.DetailedDescription -replace '.','-')
 "@
 							$ModuleInfo.ExportedCommands.Values `
 							| Sort-Object -Property `
@@ -1102,7 +1096,7 @@ $( $loc.FunctionsDescriptionFull -replace '.','-')
 					if ( $ShortDescription ) {
 @"
 
-#### $( [String]::Format( $loc.Overview, ( $FunctionInfo.Name | Expand-Definitions ) ) )
+#### $( $loc.ShortDescription ) $( $FunctionInfo.Name | Expand-Definitions )
 
 "@
 						$Help.Synopsis `
@@ -1120,7 +1114,7 @@ $( $loc.FunctionsDescriptionFull -replace '.','-')
 					} else {
 @"
 
-#### $( [String]::Format( $loc.FunctionDescriptionFull, $($FunctionInfo.Name) ) )
+#### $( $FunctionInfo.Name )
 
 "@
 						if ( $Help.Description ) {
@@ -1155,7 +1149,7 @@ $( $Help.Component )
 						if ( $Help.Functionality ) {
 @"
 
-##### $( $loc.Functionality )
+##### $( $loc.Capabilities )
 
 $( $Help.Functionality )
 "@
@@ -1171,7 +1165,7 @@ $( [String]::Format( $loc.RoleDetails, "**$( $Help.Role )**", "``$( $FunctionInf
 						if ( $Help.inputTypes ) {
 @"
 
-##### $( $loc.InputTypes )
+##### $( $loc.InputType )
 
 "@
 							$Help.inputTypes.inputType `
@@ -1188,7 +1182,7 @@ $( [String]::Format( $loc.RoleDetails, "**$( $Help.Role )**", "``$( $FunctionInf
 						if ( $Help.returnValues ) {
 @"
 
-##### $( $loc.ReturnValues )
+##### $( $loc.ReturnType )
 
 "@
 							$Help.returnValues.returnValue `
@@ -1203,6 +1197,10 @@ $( [String]::Format( $loc.RoleDetails, "**$( $Help.Role )**", "``$( $FunctionInf
 							};
 						};
 						if ( ( $Help.Parameters ) -or ( $FunctionInfo.CmdletBinding ) ) {
+@"
+
+##### $( $loc.Parameters )
+"@
 							$Description = `
 								@(
 									$Help.Parameters.parameter `
@@ -1255,8 +1253,6 @@ $(
 								| Out-String `
 							;
 @"
-
-##### $( $loc.Parameters )
 $Description
 "@
 						};

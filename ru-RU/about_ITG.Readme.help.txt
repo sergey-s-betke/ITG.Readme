@@ -79,19 +79,19 @@ P.S. Надеюсь, функционал данного модуля будет
 
 Версия модуля: **2.3.1**
 
-Функции
--------
+ПОДДЕРЖИВАЮТСЯ КОМАНДЛЕТЫ
+-------------------------
 
 ### AboutModule
 
-#### Обзор [Get-AboutModule][]
+#### КРАТКОЕ ОПИСАНИЕ [Get-AboutModule][]
 
 Генерирует содержимое файла `about_$(ModuleInfo.Name).txt` с [MarkDown][] разметкой
 по данным модуля и комментариям к его функциям.
 
 	Get-AboutModule [-ModuleInfo] <PSModuleInfo> [-UICulture <CultureInfo>] [-ReferencedModules <PSModuleInfo[]>] <CommonParameters>
 
-#### Обзор [Set-AboutModule][]
+#### КРАТКОЕ ОПИСАНИЕ [Set-AboutModule][]
 
 Генерирует файл `about_$(ModuleInfo.Name).txt` с [MarkDown][] разметкой
 по данным модуля и комментариям к его функциям.
@@ -100,19 +100,19 @@ P.S. Надеюсь, функционал данного модуля будет
 
 ### HelpInfo
 
-#### Обзор [Get-HelpInfo][]
+#### КРАТКОЕ ОПИСАНИЕ [Get-HelpInfo][]
 
 Возвращает HelpInfo.xml (как xml) для указанного модуля.
 
 	Get-HelpInfo [-ModuleInfo] <PSModuleInfo> <CommonParameters>
 
-#### Обзор [New-HelpInfo][]
+#### КРАТКОЕ ОПИСАНИЕ [New-HelpInfo][]
 
 Генерирует HelpInfo XML для переданного модуля.
 
 	New-HelpInfo [-ModuleInfo] <PSModuleInfo> [-HelpContentUriTemplate <ScriptBlock>] [-HelpContentUri <Uri>] <CommonParameters>
 
-#### Обзор [Set-HelpInfo][]
+#### КРАТКОЕ ОПИСАНИЕ [Set-HelpInfo][]
 
 Генерирует HelpInfo XML для указанного модуля.
 
@@ -120,13 +120,13 @@ P.S. Надеюсь, функционал данного модуля будет
 
 ### HelpXML
 
-#### Обзор [Get-HelpXML][]
+#### КРАТКОЕ ОПИСАНИЕ [Get-HelpXML][]
 
 Возващает XML содержимое xml файла справки для переданного модуля.
 
 	Get-HelpXML [-ModuleInfo] <PSModuleInfo> [-UICulture <CultureInfo>] [-PSPath <String>] <CommonParameters>
 
-#### Обзор [New-HelpXML][]
+#### КРАТКОЕ ОПИСАНИЕ [New-HelpXML][]
 
 Генерирует XML справку для переданного модуля, функции, командлеты.
 
@@ -134,7 +134,7 @@ P.S. Надеюсь, функционал данного модуля будет
 
 	New-HelpXML [-FunctionInfo] <CommandInfo> <CommonParameters>
 
-#### Обзор [Set-HelpXML][]
+#### КРАТКОЕ ОПИСАНИЕ [Set-HelpXML][]
 
 Генерирует XML файл справки для переданного модуля, функции, командлеты.
 
@@ -144,7 +144,7 @@ P.S. Надеюсь, функционал данного модуля будет
 
 ### Readme
 
-#### Обзор [Get-Readme][]
+#### КРАТКОЕ ОПИСАНИЕ [Get-Readme][]
 
 Генерирует readme с [MarkDown][] разметкой по данным модуля и комментариям к его функциям.
 
@@ -154,7 +154,7 @@ P.S. Надеюсь, функционал данного модуля будет
 
 	Get-Readme [-FunctionInfo] <CommandInfo> [-UICulture <CultureInfo>] [-ShortDescription] [-ReferencedModules <PSModuleInfo[]>] [-TranslateRules <Array>] <CommonParameters>
 
-#### Обзор [Set-Readme][]
+#### КРАТКОЕ ОПИСАНИЕ [Set-Readme][]
 
 Генерирует readme файл с [MarkDown][] разметкой по данным модуля и комментариям к его функциям.
 Файл предназначен, в частности, для размещения в репозиториях github.

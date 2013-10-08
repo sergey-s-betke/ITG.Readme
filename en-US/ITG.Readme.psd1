@@ -2,24 +2,22 @@
 
 ConvertFrom-StringData @'
 ModuleVersion = Module version
-Funtions = Functions
+## CmdletsSupportedCaps = Functions
 Variables = Variables and constants
-Details = Details - {0}.
-FunctionsDescriptionFull = Detailed description of the module's functions
-FunctionDescriptionFull = {0}
-Overview = Overview {0}
-Syntax = Syntax
+## DetailedDescription = Detailed description
+## ShortDescription = Overview {0}
+## Syntax = Syntax
 Component = Component
-Functionality = Functionality
+## Capabilities = Functionality
 Role = The required user role
 RoleDetails = To perform the functions {1} is required role {0} to account on behalf\nof which will be executed the function.
-InputTypes = Input types
-ReturnValues = Return values
-Parameters = Parameters
-Examples = Examples
-Example = Example {0}.
-Notes = Notes
-RelatedLinks = Related links
+## InputType = Input types
+## ReturnType = Return values
+## Parameters = Parameters
+## Examples = Examples
+## Example = Example
+## Notes = Notes
+## RelatedLinks = Related links
 OnlineHelp = Online help
 GeneratorAbout = Generator: [{0}]({1} "PowerShell module for readme.md creating").
 GeneratorXmlAbout = Generator: {0} ({1}).

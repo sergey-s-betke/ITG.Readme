@@ -2,24 +2,22 @@
 
 ConvertFrom-StringData @'
 ModuleVersion = Версия модуля
-Funtions = Функции
+## CmdletsSupportedCaps = Функции
 Variables = Переменные и константы
-Details = Подробнее - {0}.
-FunctionsDescriptionFull = Подробное описание функций модуля
-FunctionDescriptionFull = {0}
-Overview = Обзор {0}
-Syntax = Синтаксис
+## DetailedDescription  = Подробное описание
+## ShortDescription = Краткое описание {0}
+## Syntax = Синтаксис
 Component = Компонент
-Functionality = Функциональность
+## Capabilities = Функциональность
 Role = Требуемая роль пользователя
 RoleDetails = Для выполнения функции {1} требуется роль {0} для учётной записи,\nот имени которой будет выполнена описываемая функция.
-InputTypes = Принимаемые данные по конвейеру
-ReturnValues = Передаваемые по конвейеру данные
-Parameters = Параметры
-Examples = Примеры использования
-Example = Пример {0}.
-Notes = Примечания
-RelatedLinks = См. также
+## InputType = Принимаемые данные по конвейеру
+## ReturnType = Передаваемые по конвейеру данные
+## Parameters = Параметры
+## Examples = Примеры использования
+## Example = Пример {0}
+## Notes = Примечания
+## RelatedLinks = См. также
 OnlineHelp = Online версия справки
 GeneratorAbout= Генератор: [{0}]({1} "Модуль PowerShell для генерации readme для модулей PowerShell").
 GeneratorXmlAbout = Генератор: {0} ({1}).
