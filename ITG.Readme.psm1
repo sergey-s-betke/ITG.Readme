@@ -1218,33 +1218,66 @@ $( [String]::Format( $loc.RoleDetails, "**$( $Help.Role )**", "``$( $FunctionInf
 											-replace '(?m)^\s*', "`t" `
 											-replace '(?m)\s+$', '' `
 										};
-@"
-	$( $loc.TypeColon ) $( $Param.ParameterType.FullName | Expand-Definitions )
-"@
-										if ( $Param.Aliases ) {
-@"
-	$( $loc.AliasesColon ) $( $Param.Aliases -join ', ' )
-"@
-										};
-										if ( -not $Param.SwitchParameter ) {
-@"
-	$( $loc.ParameterRequired ) $( $loc."$( $_.required )Short" )
-"@
-										};
-@"
-	$( $loc.ParameterPosition ) $( $_.position )
-"@
-										if ( ( -not $Param.SwitchParameter ) -and ( $_.defaultValue ) ) {
-@"
-	$( $loc.ParameterDefaultValue ) ``$( $_.defaultValue )``
-"@
-										};
-@"
-	$( $loc.AcceptsPipelineInput ) $( $_.pipelineInput )
-"@
-@"
-	$( $loc.AcceptsWildCardCharacters ) $( $loc."$( $_.globbing )Short" )
-"@
+										(
+										& {
+											"<table>"
+											& {
+												@{
+													Attr = ( $loc.TypeColon );
+													Value = ( $Param.ParameterType.FullName | Expand-Definitions );
+												};
+												if ( $Param.Aliases ) {
+													@{
+														Attr = ( $loc.AliasesColon );
+														Value = ( $Param.Aliases -join ', ' );
+													};
+												};
+												if ( -not $Param.SwitchParameter ) {
+													@{
+														Attr = ( $loc.ParameterRequired );
+														Value = ( $loc."$( $_.required )Short" );
+													};
+												};
+												@{
+													Attr = ( $loc.ParameterPosition );
+													Value = ( $_.position );
+												};
+												if ( ( -not $Param.SwitchParameter ) -and ( $_.defaultValue ) ) {
+													@{
+														Attr = ( $loc.ParameterDefaultValue );
+														Value = "``$( $_.defaultValue )``";
+													};
+												};
+												@{
+													Attr = ( $loc.AcceptsPipelineInput );
+													Value = ( $_.pipelineInput );
+												};
+												@{
+													Attr = ( $loc.AcceptsWildCardCharacters );
+													Value = ( $loc."$( $_.globbing )Short" );
+												};
+											} `
+											| % {
+												$_.RB = '<tr><td>';
+												$_.CD = '</td><td>';
+												$_.RE = '</td></tr>';
+												New-Object `
+													-TypeName PSObject `
+													-Property $_ `
+												;
+											} `
+											| Format-Table `
+												-AutoSize `
+												-HideTableHeaders `
+												-Property RB, Attr, CD, Value, RE `
+											;
+											"</table>";
+										} `
+										| Out-String `
+										) `
+										-replace '((\r?\n)\s*){2,}', "`r`n" `
+										-replace '(?s)(\s*\r?\n\s*$)', '' `
+										-replace '(?m)^\s*', "`t" `
 									} `
 								) `
 								+ ( & {
@@ -1255,7 +1288,6 @@ $( [String]::Format( $loc.RoleDetails, "**$( $Help.Role )**", "``$( $FunctionInf
 $(
 	$loc.BaseCmdletInformation `
 		-replace '(?m)^\s*', "`t" `
-		-replace '(?m)\s+$', '' `
 )
 "@ `
 										| Expand-Definitions `
