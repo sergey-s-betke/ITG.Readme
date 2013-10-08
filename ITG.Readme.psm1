@@ -1220,8 +1220,7 @@ $( [String]::Format( $loc.RoleDetails, "**$( $Help.Role )**", "``$( $FunctionInf
 										};
 										(
 										& {
-											"<table>"
-											& {
+											$ParamDefs = & {
 												@{
 													Attr = ( $loc.TypeColon );
 													Value = ( $Param.ParameterType.FullName | Expand-Definitions );
@@ -1256,7 +1255,10 @@ $( [String]::Format( $loc.RoleDetails, "**$( $Help.Role )**", "``$( $FunctionInf
 													Attr = ( $loc.AcceptsWildCardCharacters );
 													Value = ( $loc."$( $_.globbing )Short" );
 												};
-											} `
+											};
+<#
+											"<table>"
+											$ParamDefs `
 											| % {
 												$_.RB = '<tr><td>';
 												$_.CD = '</td><td>';
@@ -1272,6 +1274,13 @@ $( [String]::Format( $loc.RoleDetails, "**$( $Help.Role )**", "``$( $FunctionInf
 												-Property RB, Attr, CD, Value, RE `
 											;
 											"</table>";
+#>
+											$ParamDefs `
+											| % {
+@"
+	* $( $_.Attr ) $( $_.Value )
+"@
+											} `
 										} `
 										| Out-String `
 										) `
