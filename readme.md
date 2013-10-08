@@ -368,7 +368,7 @@ xml "заготовку" HelpInfo.xml, но валидную.
 
 ##### ВЫХОДНЫЕ ДАННЫЕ
 
-- System.Xml.XmlDocument
+- [System.Xml.XmlDocument][]
 Содержимое XML манифеста (HelpInfo.xml) справки.
 
 ##### ПАРАМЕТРЫ
@@ -426,7 +426,7 @@ HelpInfo.XML по сути является манифестом для xml сп
 
 ##### ВЫХОДНЫЕ ДАННЫЕ
 
-- System.Xml.XmlDocument
+- [System.Xml.XmlDocument][]
 Содержимое XML манифеста (HelpInfo.xml) справки.
 
 ##### ПАРАМЕТРЫ
@@ -452,7 +452,7 @@ HelpInfo.XML по сути является манифестом для xml сп
 - `[Uri] HelpContentUri`
 	Ссылка для загрузки обновляемой справки. Смотрите [about_Updatable_Help][].
 	Значение по умолчанию - url к репозиторию проекта на github.
-	* Тип: System.Uri
+	* Тип: [System.Uri][]
 	* Требуется? нет
 	* Позиция? named
 	* Значение по умолчанию `( & $HelpContentUriTemplate )`
@@ -522,7 +522,7 @@ HelpInfo.xml в каталоге модуля, либо создаёт новы�
 - `[Uri] HelpContentUri`
 	Ссылка для загрузки обновляемой справки. Смотрите [about_Updatable_Help][].
 	Значение по умолчанию - url к репозиторию проекта на github.
-	* Тип: System.Uri
+	* Тип: [System.Uri][]
 	* Требуется? нет
 	* Позиция? named
 	* Принимать входные данные конвейера? false
@@ -536,7 +536,7 @@ HelpInfo.xml в каталоге модуля, либо создаёт новы�
 - `[Uri] HelpInfoUri`
 	Используется только совместно
 	с `UpdateManifest`. Значение по умолчанию - url к репозиторию проекта на github.
-	* Тип: System.Uri
+	* Тип: [System.Uri][]
 	* Требуется? нет
 	* Позиция? named
 	* Принимать входные данные конвейера? false
@@ -594,7 +594,7 @@ HelpInfo.xml в каталоге модуля, либо создаёт новы�
 
 ##### ВЫХОДНЫЕ ДАННЫЕ
 
-- System.Xml.XmlDocument
+- [System.Xml.XmlDocument][]
 Содержимое XML справки.
 
 ##### ПАРАМЕТРЫ
@@ -675,7 +675,7 @@ HelpInfo.xml в каталоге модуля, либо создаёт новы�
 
 ##### ВЫХОДНЫЕ ДАННЫЕ
 
-- System.Xml.XmlDocument
+- [System.Xml.XmlDocument][]
 Содержимое XML справки.
 
 ##### ПАРАМЕТРЫ
@@ -1134,6 +1134,8 @@ Readme
 [System.Management.Automation.ExternalScriptInfo]: <http://msdn.microsoft.com/ru-ru/library/system.management.automation.externalscriptinfo.aspx> "ExternalScriptInfo Class (System.Management.Automation)"
 [System.Management.Automation.PSModuleInfo]: <http://msdn.microsoft.com/ru-ru/library/system.management.automation.psmoduleinfo.aspx> "PSModuleInfo Class (System.Management.Automation)"
 [System.Management.Automation.ScriptBlock]: <http://msdn.microsoft.com/ru-ru/library/system.management.automation.scriptblock.aspx> "ScriptBlock Class (System.Management.Automation)"
+[System.Uri]: <http://msdn.microsoft.com/ru-ru/library/system.uri.aspx> "Uri Class (System)"
+[System.Xml.XmlDocument]: <http://msdn.microsoft.com/ru-ru/library/system.xml.xmldocument.aspx> "XmlDocument Class (System.Xml)"
 
 ---------------------------------------
 

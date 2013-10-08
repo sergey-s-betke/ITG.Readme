@@ -504,8 +504,11 @@ Function MatchEvaluatorForPSType( [System.Text.RegularExpressions.Match] $Match 
 	$PSType = $Match.Groups['pstype'].Value;
 	$PSTypeInfo = `
 		'System.Management.Automation' `
+		, 'System' `
+		, 'System.Xml' `
 		| % {
-			[System.Reflection.Assembly]::Load( $_ ).GetType( $PSType );
+			$TypeInfo = [System.Reflection.Assembly]::LoadWithPartialName( $_ ).GetType( $PSType );
+			if ( $TypeInfo ) { return $TypeInfo; };
 		} `
 	;
 	if ( $PSTypeInfo ) {
@@ -522,6 +525,7 @@ Function MatchEvaluatorForPSType( [System.Text.RegularExpressions.Match] $Match 
 
 $PowerShellTypes = @(
 	"System\.Management\.Automation(?:\.$reDotNetTokenChar+)*" `
+	, "System(?:\.$reDotNetTokenChar+)+" `
 	, "Microsoft\.PowerShell(?:\.$reDotNetTokenChar+)*" `
 	-join '|' `
 	| ConvertTo-TranslateRule -ruleType 'pstype' `
