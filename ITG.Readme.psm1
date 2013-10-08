@@ -1237,9 +1237,11 @@ $( [String]::Format( $loc.RoleDetails, "**$( $Help.Role )**", "``$( $FunctionInf
 														Value = ( $loc."$( $_.required )Short" );
 													};
 												};
-												@{
-													Attr = ( $loc.ParameterPosition );
-													Value = ( $_.position );
+												if ( -not $Param.SwitchParameter ) {
+													@{
+														Attr = ( $loc.ParameterPosition );
+														Value = ( $_.position );
+													};
 												};
 												if ( ( -not $Param.SwitchParameter ) -and ( $_.defaultValue ) ) {
 													@{
