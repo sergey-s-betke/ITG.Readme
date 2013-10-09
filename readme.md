@@ -110,7 +110,7 @@ P.S. Надеюсь, функционал данного модуля будет
 
 Генерирует HelpInfo XML для переданного модуля.
 
-	New-HelpInfo [-ModuleInfo] <PSModuleInfo> [-HelpContentUriTemplate <ScriptBlock>] [-HelpContentUri <Uri>] <CommonParameters>
+	New-HelpInfo [-ModuleInfo] <PSModuleInfo> [-HelpContentUri <Uri>] <CommonParameters>
 
 #### КРАТКОЕ ОПИСАНИЕ [Set-HelpInfo][]
 
@@ -411,7 +411,7 @@ HelpInfo.XML по сути является манифестом для xml сп
 
 ##### СИНТАКСИС
 
-	New-HelpInfo [-ModuleInfo] <PSModuleInfo> [-HelpContentUriTemplate <ScriptBlock>] [-HelpContentUri <Uri>] <CommonParameters>
+	New-HelpInfo [-ModuleInfo] <PSModuleInfo> [-HelpContentUri <Uri>] <CommonParameters>
 
 ##### РОЛЬ ПОЛЬЗОВАТЕЛЯ
 
@@ -440,22 +440,12 @@ HelpInfo.XML по сути является манифестом для xml сп
 	* Принимать входные данные конвейера? true (ByValue)
 	* Принимать подстановочные знаки? нет
 
-- `[ScriptBlock] HelpContentUriTemplate`
-	"Заготовка" для `HelpContentURI` - функционал (блок), вычисляющий URI для .cab файлов справки
-	* Тип: [System.Management.Automation.ScriptBlock][]
-	* Требуется? нет
-	* Позиция? named
-	* Значение по умолчанию `$GitHubHelpContentURI`
-	* Принимать входные данные конвейера? false
-	* Принимать подстановочные знаки? нет
-
 - `[Uri] HelpContentUri`
 	Ссылка для загрузки обновляемой справки. Смотрите [about_Updatable_Help][].
 	Значение по умолчанию - url к репозиторию проекта на github.
 	* Тип: [System.Uri][]
 	* Требуется? нет
 	* Позиция? named
-	* Значение по умолчанию `( & $HelpContentUriTemplate )`
 	* Принимать входные данные конвейера? false
 	* Принимать подстановочные знаки? нет
 
@@ -1135,7 +1125,6 @@ Readme
 [System.Management.Automation.CommandInfo]: <http://msdn.microsoft.com/ru-ru/library/system.management.automation.commandinfo.aspx> "CommandInfo Class (System.Management.Automation)"
 [System.Management.Automation.ExternalScriptInfo]: <http://msdn.microsoft.com/ru-ru/library/system.management.automation.externalscriptinfo.aspx> "ExternalScriptInfo Class (System.Management.Automation)"
 [System.Management.Automation.PSModuleInfo]: <http://msdn.microsoft.com/ru-ru/library/system.management.automation.psmoduleinfo.aspx> "PSModuleInfo Class (System.Management.Automation)"
-[System.Management.Automation.ScriptBlock]: <http://msdn.microsoft.com/ru-ru/library/system.management.automation.scriptblock.aspx> "ScriptBlock Class (System.Management.Automation)"
 [System.String]: <http://msdn.microsoft.com/ru-ru/library/system.string.aspx> "String Class (System)"
 [System.Uri]: <http://msdn.microsoft.com/ru-ru/library/system.uri.aspx> "Uri Class (System)"
 [System.Xml.XmlDocument]: <http://msdn.microsoft.com/ru-ru/library/system.xml.xmldocument.aspx> "XmlDocument Class (System.Xml)"

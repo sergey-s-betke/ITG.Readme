@@ -578,10 +578,6 @@
 					<parameterValue required="true">PSModuleInfo</parameterValue>
 				</parameter>
 				<parameter required="false" position="named" pipelineInput="false" globbing="false">
-					<maml:name>HelpContentUriTemplate</maml:name>
-					<parameterValue required="false">ScriptBlock</parameterValue>
-				</parameter>
-				<parameter required="false" position="named" pipelineInput="false" globbing="false">
 					<maml:name>HelpContentUri</maml:name>
 					<parameterValue required="false">Uri</parameterValue>
 				</parameter>
@@ -596,20 +592,11 @@
 				<parameterValue required="True">PSModuleInfo</parameterValue>
 			</parameter>
 			<parameter required="false" position="named" pipelineInput="false" globbing="false">
-				<maml:name>HelpContentUriTemplate</maml:name>
-				<maml:description>
-					<maml:para>"Заготовка" для `HelpContentURI` - функционал (блок), вычисляющий URI для .cab файлов справки</maml:para>
-				</maml:description>
-				<parameterValue required="True">ScriptBlock</parameterValue>
-				<defaultValue>$GitHubHelpContentURI</defaultValue>
-			</parameter>
-			<parameter required="false" position="named" pipelineInput="false" globbing="false">
 				<maml:name>HelpContentUri</maml:name>
 				<maml:description>
 					<maml:para>Ссылка для загрузки обновляемой справки. Смотрите about_Updatable_Help. Значение по умолчанию - url к репозиторию проекта на github.</maml:para>
 				</maml:description>
 				<parameterValue required="True">Uri</parameterValue>
-				<defaultValue>( &amp; $HelpContentUriTemplate )</defaultValue>
 			</parameter>
 		</parameters>
 		<inputTypes>

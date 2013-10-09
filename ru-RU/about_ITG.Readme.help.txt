@@ -110,7 +110,7 @@ P.S. Надеюсь, функционал данного модуля будет
 
 Генерирует HelpInfo XML для переданного модуля.
 
-	New-HelpInfo [-ModuleInfo] <PSModuleInfo> [-HelpContentUriTemplate <ScriptBlock>] [-HelpContentUri <Uri>] <CommonParameters>
+	New-HelpInfo [-ModuleInfo] <PSModuleInfo> [-HelpContentUri <Uri>] <CommonParameters>
 
 #### КРАТКОЕ ОПИСАНИЕ [Set-HelpInfo][]
 

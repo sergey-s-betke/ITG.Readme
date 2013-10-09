@@ -2586,13 +2586,6 @@ Function New-HelpInfo {
 		[Alias('Module')]
 		$ModuleInfo
 	,
-		# "Заготовка" для `HelpContentURI` - функционал (блок), вычисляющий URI для .cab файлов справки
-		[Parameter(
-			Mandatory=$false
-		)]
-		[ScriptBlock]
-		$HelpContentUriTemplate = $GitHubHelpContentURI
-	,
 		# Ссылка для загрузки обновляемой справки. Смотрите about_Updatable_Help.
 		# Значение по умолчанию - url к репозиторию проекта на github.
 		[Parameter(
@@ -2600,7 +2593,7 @@ Function New-HelpInfo {
 			, Mandatory=$false
 		)]
 		[System.Uri]
-		$HelpContentUri = ( & $HelpContentUriTemplate )
+		$HelpContentUri = $null
 	)
 
 	process {
@@ -2609,6 +2602,9 @@ Function New-HelpInfo {
 		};
 		switch ( $PsCmdlet.ParameterSetName ) {
 			'ModuleInfo' {
+				if ( -not $HelpContentUri ) {
+					$HelpContentURI = "http://raw.github.com/IT-Service/$( $ModuleInfo.Name )/$( $ModuleInfo.Version )/help.cab";
+				};
 				$HelpInfoContent = New-Object -TypeName System.Xml.XmlDocument;
 				$HelpInfo = $HelpInfoContent.AppendChild(
 					$HelpInfoContent.CreateElement( '', 'HelpInfo', ( $HelpXMLNS.HelpInfo ) )
@@ -2804,7 +2800,7 @@ Function Set-HelpInfo {
 					$HelpContentURI = "http://raw.github.com/IT-Service/$( $ModuleInfo.Name )/$( $ModuleInfo.Version )/help.cab";
 				};
 				if ( -not $HelpInfoUri ) {
-					$GitHubHelpInfoURI = "http://raw.github.com/IT-Service/$( $ModuleInfo.Name )/$( $ModuleInfo.Version )/$( $ModuleInfo.Name )_$( $ModuleInfo.GUID )_HelpInfo.xml";
+					$HelpInfoURI = "http://raw.github.com/IT-Service/$( $ModuleInfo.Name )/$( $ModuleInfo.Version )/$( $ModuleInfo.Name )_$( $ModuleInfo.GUID )_HelpInfo.xml";
 				};
 				$HelpInfoContent = Get-HelpInfo `
 					-ModuleInfo $ModuleInfo `
