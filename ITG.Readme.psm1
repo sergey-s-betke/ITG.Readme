@@ -828,7 +828,7 @@ Function Get-Readme {
 			Генерирует readme с MarkDown разметкой по данным модуля и комментариям к его функциям. 
 			Предназначен, в частности, для размещения в репозиториях github. Для сохранения в файл
 			используйте Set-Readme.
-			Описание может быть сгенерировано функцией Get-Readme для модуля, функции, внешего сценария.
+			Описание может быть сгенерировано функцией Get-Readme для модуля, функции, внешнего сценария.
 		.Functionality
 			Readme
 		.Role
@@ -1129,6 +1129,18 @@ $( $loc.DetailedDescription -replace '.','-')
 							$Help.Synopsis `
 							| Expand-Definitions `
 							;
+						};
+						$Aliases = Get-Alias `
+							-Definition ( $FunctionInfo.Name ) `
+							-ErrorAction SilentlyContinue `
+						;
+						if ( $Aliases ) {
+@"
+
+##### $( $loc.AliasesSection )
+
+$( $Aliases -join ', ' )
+"@
 						};
 @"
 
@@ -1680,6 +1692,11 @@ Function Get-AboutModule {
 	}
 }
 
+New-Alias `
+	-Name Get-About `
+	-Value Get-AboutModule `
+;
+
 Function Set-AboutModule {
 	<#
 		.Synopsis
@@ -1809,6 +1826,11 @@ $( [String]::Format( $loc.GeneratorAbout, 'ITG.Readme', 'https://github.com/IT-S
 		if ( $PassThru ) { return $input };
 	}
 }
+
+New-Alias `
+	-Name Set-About `
+	-Value Set-AboutModule `
+;
 
 Filter Split-Para {
 	<#

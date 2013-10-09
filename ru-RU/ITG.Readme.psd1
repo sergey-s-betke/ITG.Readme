@@ -4,7 +4,8 @@ ConvertFrom-StringData @'
 ModuleVersion = Версия модуля
 ## CmdletsSupportedCaps = Функции
 Variables = Переменные и константы
-## DetailedDescription  = Подробное описание
+## AliasesSection = ПСЕВДОНИМЫ
+## DetailedDescription = Подробное описание
 ## ShortDescription = Краткое описание {0}
 ## Syntax = Синтаксис
 Component = КОМПОНЕНТ

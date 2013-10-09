@@ -4,6 +4,7 @@ ConvertFrom-StringData @'
 ModuleVersion = Module version
 ## CmdletsSupportedCaps = Functions
 Variables = Variables and constants
+## AliasesSection = ALIASES
 ## DetailedDescription = Detailed description
 ## ShortDescription = Overview {0}
 ## Syntax = Syntax

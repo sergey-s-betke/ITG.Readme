@@ -332,7 +332,7 @@
 		<maml:functionality>Readme</maml:functionality>
 		<maml:role>Everyone</maml:role>
 		<maml:description>
-			<maml:para>Генерирует readme с MarkDown разметкой по данным модуля и комментариям к его функциям. Предназначен, в частности, для размещения в репозиториях github. Для сохранения в файл используйте Set-Readme. Описание может быть сгенерировано функцией Get-Readme для модуля, функции, внешего сценария.</maml:para>
+			<maml:para>Генерирует readme с MarkDown разметкой по данным модуля и комментариям к его функциям. Предназначен, в частности, для размещения в репозиториях github. Для сохранения в файл используйте Set-Readme. Описание может быть сгенерировано функцией Get-Readme для модуля, функции, внешнего сценария.</maml:para>
 		</maml:description>
 		<syntax>
 			<syntaxItem>
