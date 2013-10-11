@@ -9,7 +9,7 @@ Import-Module `
 ;
 #>
 
-Describe 'TranslateRules' {
+Describe 'Expand-Definitions' {
 
     Mock Export-ModuleMember;
 
@@ -26,35 +26,29 @@ Describe 'TranslateRules' {
 		-Force `
 	;
 
-	It 'Expand-Definitions function must be avaliable for testing puprposes' {
+	It 'must be avaliable for testing puprposes' {
 		Test-PositiveAssertion( PesterExist 'Function:Expand-Definitions' );
 	}
 
-	It 'Use-TranslateRule run on $BasicTranslateRules without errors' {
+	It 'Use-TranslateRule must run on $BasicTranslateRules without errors' {
 		$BasicTranslateRules | Use-TranslateRule;
 	}
 
-	It 'hello, World test for Expand-Definitions' {
+	It 'must return ''hello, World'' without changes' {
 		'hello, World' | Expand-Definitions | Should Be 'hello, World';
 	}
 
-	It 'test about_* definitions: ''about_Aliases''' {
+	It 'must expand ''about_*'' definitions to markdown links ''[about_*][]''' {
 		'hello, about_Aliases World' | Expand-Definitions | Should Be 'hello, [about_Aliases][] World';
-	}
-
-	It 'test about_* definitions: change charcase for ''about_assignment_operators''' {
 		'hello, about_assignment_operators' | Expand-Definitions | Should Be 'hello, [about_Assignment_Operators][]';
 	}
 
-	It 'test type definition: System.String' {
+	It 'must expand system and PowerShell types' {
 		'Return System.String type' | Expand-Definitions | Should Be 'Return [System.String][] type';
-	}
-
-	It 'test type definition: System.UnknownType' {
 		'Return System.UnknownType type' | Expand-Definitions | Should Be 'Return System.UnknownType type';
 	}
 
-	It 'test definitions in code' {
+	It 'must not expand terms in code' {
 		'`[System.String] $param`' | Expand-Definitions | Should Be '`[System.String] $param`';
 		@"
 	[System.String] `$param
@@ -63,6 +57,10 @@ Describe 'TranslateRules' {
 	[System.String] `$param
 "@ `
 		;
+	}
+
+	It 'must expand PowerShell cmdlets names to links' {
+		'Use Get-Command for this purpose' | Expand-Definitions | Should Be 'Use [Get-Command][] for this purpose';
 	}
 
 }
