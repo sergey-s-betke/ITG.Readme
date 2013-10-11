@@ -1,3 +1,9 @@
+Import-Module `
+	-Name ITG.RegExps `
+	-MinimumVersion '1.1' `
+	-ErrorAction Stop `
+;
+
 $PSLocRM = New-Object `
 	-Type 'System.Resources.ResourceManager' `
 	-ArgumentList `
