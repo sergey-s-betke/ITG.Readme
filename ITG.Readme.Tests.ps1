@@ -1,13 +1,5 @@
 $ModuleName = Split-Path -Path '.' -Leaf -Resolve;
-
-<#
-Import-Module `
-	-Name $ModuleName `
-	-Function Expand-Definitions `
-	-Force `
-	-ErrorAction Stop `
-;
-#>
+$ModuleDir = Resolve-Path -Path '.';
 
 Describe 'Expand-Definitions' {
 
@@ -54,4 +46,50 @@ Describe 'Expand-Definitions' {
 		'Use Get-Command for this purpose' | Expand-Definitions | Should Be 'Use [Get-Command][] for this purpose';
 	}
 
+}
+
+Describe 'Set-Readme' {
+
+	Import-Module `
+		-Name "$ModuleDir\$ModuleName.psd1" `
+		-Force `
+	;
+
+	Copy-Item `
+		-Path "$ModuleDir\Tests" `
+		-Destination 'TestDrive:' `
+		-Recurse `
+		-Force `
+	;
+
+	It 'must be avaliable' {
+		'Function:Set-Readme' | Should Exist;
+		'Function:Get-Readme' | Should Exist;
+	}
+
+	It 'test module must be avaliable' {
+		'TestDrive:\Tests\TestModule1\TestModule1.psd1' | Should Exist;
+		'TestDrive:\Tests\TestModule1\TestModule1.psm1' | Should Exist;
+		{
+			Import-Module 'TestDrive:\Tests\TestModule1\TestModule1.psd1' -Force;
+		} | Should Not Throw;
+	}
+
+	It 'must run for TestModule1 without errors' {
+		{
+			Get-Module 'TestModule1' `
+			| Set-Readme `
+			;
+		} | Should Not Throw;
+	}
+
+	It 'readme.md for TestModule.md must exist' {
+		'TestDrive:\Tests\TestModule1\readme.md' | Should Exist;
+	}
+
+	It 'must produce description for functions' {
+		'TestDrive:\Tests\TestModule1\readme.md' | Should Contain '^#### Get-AboutTestFunction$';
+	}
+
+	Remove-Module 'TestModule1' -Force;
 }
