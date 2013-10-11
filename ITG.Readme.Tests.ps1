@@ -13,18 +13,9 @@ Describe 'Expand-Definitions' {
 
     Mock Export-ModuleMember;
 
-	Get-Content `
-		-Path ".\$ModuleName.psm1" `
-		-ErrorAction Stop `
-	| Set-Content `
-		-Path ".\$ModuleName.ps1" `
-		-ErrorAction Stop `
-	;
-	. ".\$ModuleName.ps1";
-	Remove-Item `
-		-Path  ".\$ModuleName.ps1" `
-		-Force `
-	;
+	Setup -File "$ModuleName.ps1" ( Get-Content ".\$ModuleName.psm1" );
+
+	. "TestDrive:$ModuleName.ps1";
 
 	It 'must be avaliable for testing puprposes' {
 		'Function:Expand-Definitions' | Should Exist;
