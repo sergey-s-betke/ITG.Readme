@@ -1701,6 +1701,7 @@ Function Get-AboutModule {
 New-Alias `
 	-Name Get-About `
 	-Value Get-AboutModule `
+	-Force `
 ;
 
 Function Set-AboutModule {
@@ -1836,6 +1837,7 @@ $( [String]::Format( $loc.GeneratorAbout, 'ITG.Readme', 'https://github.com/IT-S
 New-Alias `
 	-Name Set-About `
 	-Value Set-AboutModule `
+	-Force `
 ;
 
 Filter Split-Para {
