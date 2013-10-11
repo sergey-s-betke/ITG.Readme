@@ -1,45 +1,23 @@
 $psake.use_exit_on_error = $true;
 
-Properties {
+properties {
 	$CurrentDir = Resolve-Path . ;
 	$ModuleName = Split-Path -Path '.' -Leaf -Resolve;
 	$Invocation = Get-Variable MyInvocation -Scope 1 -ValueOnly;
 }
 
-Task default -depends Build;
-Task Build -depends Test, BuildHelpSystem;
-Task Release -depends Build;
-Task BuildHelpSystem -depends BuildReadme, BuildModuleAboutFile, BuildUpdatableHelp;
+task default -depends Build;
+task Build -depends Test, BuildHelpSystem;
+task Release -depends Build;
 
-Task Test {
-<#
-	CD "$baseDir"
-	exec {."$baseDir\bin\Pester.bat"}
-	CD $currentDir
-#>
+task BuildHelpSystem -depends Test {
+	Invoke-Psake '.\build.psake.HelpSystem.ps1';
+}
+
+task Test {
+	Invoke-Psake '.\build.psake.Test.ps1';
 };
 
-Task BuildReadme {
-	Import-Module 'ITG.Readme';
-	Import-Module $ModuleName -Force;
-	Get-Module $ModuleName `
-	| Set-Readme -Verbose `
-	;
-};
-
-Task BuildModuleAboutFile {
-	Import-Module 'ITG.Readme';
-	Import-Module $ModuleName -Force;
-	Get-Module $ModuleName `
-	| Set-AboutModule -Verbose `
-	;
-};
-
-Task BuildUpdatableHelp {
-	Import-Module 'ITG.Readme';
-	Import-Module $ModuleName -Force;
-	Get-Module $ModuleName `
-	| Set-HelpXML -PassThru -Cab -Verbose `
-	| Set-HelpInfo -Verbose `
-	;
-};
+task ? -description "Helper to display task info" {
+	Write-Documentation;
+}
