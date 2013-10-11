@@ -27,11 +27,11 @@ Describe 'Expand-Definitions' {
 	;
 
 	It 'must be avaliable for testing puprposes' {
-		Test-PositiveAssertion( PesterExist 'Function:Expand-Definitions' );
+		'Function:Expand-Definitions' | Should Exist;
 	}
 
 	It 'Use-TranslateRule must run on $BasicTranslateRules without errors' {
-		$BasicTranslateRules | Use-TranslateRule;
+		{ $BasicTranslateRules | Use-TranslateRule } | Should Not Throw;
 	}
 
 	It 'must return ''hello, World'' without changes' {
