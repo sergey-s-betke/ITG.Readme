@@ -2524,6 +2524,14 @@ Function Set-HelpXML {
 							-Message ( [String]::Format( $loc.ErrorMakeCabMessage, $MakeCabProcess.ExitCode ) ) `
 						;
 					};
+					$PSCabDir = ( Split-Path -Path $PSCabPath -Parent );
+					if ( -not ( Test-Path -Path $PSCabDir ) ) {
+						New-Item `
+							-Path ( Split-Path -Path $PSCabDir -Parent ) `
+							-Name ( Split-Path -Path $PSCabDir -Leaf ) `
+							-ItemType Directory `
+						;
+					};
 					Copy-Item `
 						-LiteralPath $TempCabFile `
 						-Destination $PSCabPath `
