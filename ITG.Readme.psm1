@@ -2040,6 +2040,7 @@ Function New-HelpXML {
 "@
 				if ( $ModuleInfo.ExportedCommands ) {
 					$ModuleInfo.ExportedCommands.Values `
+					| ? { $_.CommandType -ne [System.Management.Automation.CommandTypes]::Alias } `
 					| New-HelpXML `
 					| % {
 						$null = $HelpContent.DocumentElement.AppendChild( $HelpContent.ImportNode( $_.DocumentElement, $true ) );
