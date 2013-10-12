@@ -95,5 +95,9 @@ Describe 'Set-Readme' {
 		'TestDrive:\Tests\TestModule1\readme.md' | Should Not Contain '^#### Get-AboutTest$';
 	}
 
+	It 'must generate alias section for functions' {
+		'TestDrive:\Tests\TestModule1\readme.md' | Should Contain "\bGet-AboutTest\b";
+	}
+
 	Remove-Module 'TestModule1' -Force;
 }
