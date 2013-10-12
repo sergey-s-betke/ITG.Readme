@@ -99,5 +99,14 @@ Describe 'Set-Readme' {
 		'TestDrive:\Tests\TestModule1\readme.md' | Should Contain "\bGet-AboutTest\b";
 	}
 
+	It 'must generate readme.md as origin-readme.md' {
+		Get-Content 'TestDrive:\Tests\TestModule1\readme.md' `
+		| Out-String `
+        | Should Be ( 
+			Get-Content 'TestDrive:\Tests\TestModule1\origin-readme.md' `
+			| Out-String `
+		);
+	}
+
 	Remove-Module 'TestModule1' -Force;
 }
