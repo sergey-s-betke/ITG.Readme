@@ -1024,6 +1024,7 @@ $( $loc.CmdletsSupportedCaps -replace '.','-')
 "@
 						# генерация краткого описания функций
 						$ModuleInfo.ExportedCommands.Values `
+						| ? { $_.CommandType -ne [System.Management.Automation.CommandTypes]::Alias } `
 						| Sort-Object -Property `
 							@{ Expression={ ( $_.Name -split '-' )[1] } } `
 							, @{ Expression={ ( $_.Name -split '-' )[0] } } `
@@ -1052,6 +1053,7 @@ $( $loc.DetailedDescription )
 $( $loc.DetailedDescription -replace '.','-')
 "@
 							$ModuleInfo.ExportedCommands.Values `
+							| ? { $_.CommandType -ne [System.Management.Automation.CommandTypes]::Alias } `
 							| Sort-Object -Property `
 								@{ Expression={ ( $_.Name -split '-' )[1] } } `
 								, @{ Expression={ ( $_.Name -split '-' )[0] } } `
@@ -3074,14 +3076,18 @@ $BasicTranslateRules = `
 ;
 
 Export-ModuleMember `
-	  Get-Readme `
-	, Set-Readme `
-	, Get-AboutModule `
-	, Set-AboutModule `
-	, New-HelpXML `
-	, Get-HelpXML `
-	, Set-HelpXML `
-	, New-HelpInfo `
-	, Get-HelpInfo `
-	, Set-HelpInfo `
+	-Function `
+		  Get-Readme `
+		, Set-Readme `
+		, Get-AboutModule `
+		, Set-AboutModule `
+		, New-HelpXML `
+		, Get-HelpXML `
+		, Set-HelpXML `
+		, New-HelpInfo `
+		, Get-HelpInfo `
+		, Set-HelpInfo `
+	-Alias `
+		  Get-About `
+		, Set-About `
 ;
