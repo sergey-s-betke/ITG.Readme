@@ -5,9 +5,15 @@ Describe 'Expand-Definitions' {
 
     Mock Export-ModuleMember;
 
-	Setup -File "$ModuleName.ps1" ( Get-Content ".\$ModuleName.psm1" );
+	Setup -File "$ModuleName\$ModuleName.ps1" ( Get-Content "$ModuleDir\$ModuleName.psm1" | Out-String );
+	Copy-Item `
+		-Path "$ModuleDir" `
+		-Destination 'TestDrive:' `
+		-Recurse `
+		-Force `
+	;
 
-	. "TestDrive:$ModuleName.ps1";
+	. "TestDrive:\$ModuleName\$ModuleName.ps1";
 
 	It 'must be avaliable for testing puprposes' {
 		'Function:Expand-Definitions' | Should Exist;
