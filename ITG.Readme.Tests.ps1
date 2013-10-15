@@ -3,7 +3,7 @@ $ModuleDir = Resolve-Path -Path '.';
 
 Describe 'Expand-Definitions' {
 
-    Mock Export-ModuleMember;
+	Mock Export-ModuleMember;
 
 	Setup -File "$ModuleName\$ModuleName.ps1" ( Get-Content "$ModuleDir\$ModuleName.psm1" | Out-String );
 	Copy-Item `
@@ -27,9 +27,19 @@ Describe 'Expand-Definitions' {
 		'hello, World' | Expand-Definitions | Should Be 'hello, World';
 	}
 
+	Mock Add-EndReference;
+
 	It 'must expand ''about_*'' definitions to markdown links ''[about_*][]''' {
 		'hello, about_Aliases World' | Expand-Definitions | Should Be 'hello, [about_Aliases][] World';
 		'hello, about_assignment_operators' | Expand-Definitions | Should Be 'hello, [about_Assignment_Operators][]';
+		'hello, about_ActiveDirectory' | Expand-Definitions | Should Be 'hello, [about_ActiveDirectory][]';
+		'hello, about_ActiveDirectory_Filter' | Expand-Definitions | Should Be 'hello, [about_ActiveDirectory_Filter][]';
+		'hello, about_ActiveDirectory_Identity' | Expand-Definitions | Should Be 'hello, [about_ActiveDirectory_Identity][]';
+
+		'hello, about_ActiveDirectory_ObjectModel' | Expand-Definitions | Should Be 'hello, [about_ActiveDirectory_ObjectModel][]';
+		Assert-MockCalled Add-EndReference -Exactly 1 `
+			-parameterFilter { $url -eq 'http://technet.microsoft.com/library/hh531528.aspx' } `
+		;
 	}
 
 	It 'must expand system and PowerShell types' {
@@ -108,7 +118,7 @@ Describe 'Set-Readme' {
 	It 'must generate readme.md as origin-readme.md' {
 		Get-Content 'TestDrive:\Tests\TestModule1\readme.md' `
 		| Out-String `
-        | Should Be ( 
+		| Should Be ( 
 			Get-Content 'TestDrive:\Tests\TestModule1\origin-readme.md' `
 			| Out-String `
 		);

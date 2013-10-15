@@ -489,9 +489,20 @@ Function Add-EndReferenceForAbout( [String] $Id ) {
 	if ( $title -match '[^.]\s*$' ) {
 		$title += '...';
 	};
+	switch -exact ( $PowerShellAboutTopics[ $id ].GetType().Name ) {
+		'Uri' {
+			$url = $PowerShellAboutTopics[ $id ];
+		}
+		'String' {
+			$url = "http://go.microsoft.com/fwlink/?LinkID=$( $PowerShellAboutTopics[ $id ] )";
+		}
+		'Int32' {
+			$url = "http://go.microsoft.com/fwlink/?LinkID=$( $PowerShellAboutTopics[ $id ] )";
+		}
+	};
 	Add-EndReference `
 		-id $id `
-		-url "http://go.microsoft.com/fwlink/?LinkID=$( $PowerShellAboutTopics[ $id ] )" `
+		-url $url `
 		-title $title `
 	;
 };
@@ -3053,6 +3064,10 @@ $PowerShellAboutTopics = @{
 	'about_Windows_PowerShell_ISE' = 135178
 	'about_WMI_Cmdlets' = 145766
 	'about_WS-Management_Cmdlets' = 145774
+	'about_ActiveDirectory' = [System.Uri]'http://technet.microsoft.com/library/hh531529.aspx'
+	'about_ActiveDirectory_Filter' = [System.Uri]'http://technet.microsoft.com/library/hh531527.aspx'
+	'about_ActiveDirectory_Identity' = [System.Uri]'http://technet.microsoft.com/library/hh531526.aspx'
+	'about_ActiveDirectory_ObjectModel' = [System.Uri]'http://technet.microsoft.com/library/hh531528.aspx'
 };
 
 $BasicTranslateRules = `
