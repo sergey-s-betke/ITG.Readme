@@ -45,6 +45,11 @@ Describe 'Expand-Definitions' {
 	It 'must expand system and PowerShell types' {
 		'Return System.String type' | Expand-Definitions | Should Be 'Return [System.String][] type';
 		'Return System.UnknownType type' | Expand-Definitions | Should Be 'Return System.UnknownType type';
+
+		'Return Microsoft.ActiveDirectory.Management.ADSearchScope type' | Expand-Definitions | Should Be 'Return [Microsoft.ActiveDirectory.Management.ADSearchScope][] type';
+		Assert-MockCalled Add-EndReference -Exactly 1 `
+			-parameterFilter { $url -eq '<http://msdn.microsoft.com/ru-ru/library/microsoft.activedirectory.management.adsearchscope.aspx>' } `
+		;
 	}
 
 	It 'must not expand terms in code' {

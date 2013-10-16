@@ -524,6 +524,7 @@ Function MatchEvaluatorForPSType( [System.Text.RegularExpressions.Match] $Match 
 		, 'mscorlib' `
 		, 'System' `
 		, 'System.XML' `
+		, 'Microsoft.ActiveDirectory.Management' `
 	) {
 		$PSTypeInfo = [System.Reflection.Assembly]::LoadWithPartialName( $_ ).GetType( $PSType );
 		if ( $PSTypeInfo ) {
@@ -543,6 +544,7 @@ $PowerShellTypes = @(
 	"System\.Management\.Automation(?:\.$reDotNetTokenChar+)*" `
 	, "System(?:\.$reDotNetTokenChar+)+" `
 	, "Microsoft\.PowerShell(?:\.$reDotNetTokenChar+)*" `
+	, "Microsoft\.ActiveDirectory\.Management(?:\.$reDotNetTokenChar+)*" `
 	-join '|' `
 	| ConvertTo-TranslateRule -ruleType 'pstype' `
 	;
