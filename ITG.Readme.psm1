@@ -825,8 +825,7 @@ Function Get-TagReferenceTranslateRules {
 				| Select-Object -ExpandProperty Text `
 				| Get-TagReferenceTranslateRules `
 				;
-				$Help.relatedLinks `
-				| Select-Object -ExpandProperty navigationLink `
+				$Help.relatedLinks.navigationLink `
 				| ? { $_.LinkText } `
 				| Select-Object -ExpandProperty LinkText `
 				| Get-TagReferenceTranslateRules `
