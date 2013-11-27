@@ -262,7 +262,7 @@ Function Add-EndReference {
 						-Property @{
 							id = $id;
 							refType = $refType;
-							url = $url;
+							url = "<$url>";
 							title = $title;
 						}
 					)
@@ -530,7 +530,7 @@ Function MatchEvaluatorForPSType( [System.Text.RegularExpressions.Match] $Match 
 		if ( $PSTypeInfo ) {
 			Add-EndReference `
 				-id ( $PSTypeInfo.FullName ) `
-				-url "<http://msdn.microsoft.com/ru-ru/library/$( $PSTypeInfo.FullName.ToLower() ).aspx>" `
+				-url "http://msdn.microsoft.com/ru-ru/library/$( $PSTypeInfo.FullName.ToLower() ).aspx" `
 				-title "$( $PSTypeInfo.Name ) Class ($( $PSTypeInfo.Namespace ))" `
 			;
 			return "[$( $PSTypeInfo.FullName )][]";
@@ -702,7 +702,7 @@ Function MatchEvaluatorForFunc( [System.Text.RegularExpressions.Match] $Match ) 
 	$title = ( $Help.Synopsis -split '\s*\r?\n' ) -join ' ';
 	Add-EndReference `
 		-id $id `
-		-url "<$( $HelpUri.OriginalString.ToLower() )>" `
+		-url $HelpUri.OriginalString.ToLower() `
 		-title $title `
 	;
 	return "[${id}][]";
@@ -739,6 +739,16 @@ Function Get-FunctionsReferenceTranslateRules {
 
 Function MatchEvaluatorForTag( [System.Text.RegularExpressions.Match] $Match ) {
 	$id = $Match.Value;
+	Add-EndReference `
+		-id $id `
+		-url $Translator.TokenRules.tag.$id.url `
+		-title $Translator.TokenRules.tag.$id.title `
+	;
+	return "[${id}][]";
+};
+
+Function MatchEvaluatorForMDRef( [System.Text.RegularExpressions.Match] $Match ) {
+	$id = $Match.Groups['id'].Value;
 	Add-EndReference `
 		-id $id `
 		-url $Translator.TokenRules.tag.$id.url `
@@ -3079,7 +3089,7 @@ $BasicTranslateRules = `
 		, @{ template='(?<code>`.*?`)'; expression='$0' } `
 		, @{ template='(?<aboutCP>"get-help about_CommonParameters")' } `
 		, @{ template='(?<aboutCP>about_CommonParameters(?:\s+[(].*?[)])?)' } `
-		, @{ template="${reMDRef}"; expression='[${id}][]' } `
+		, @{ template="${reMDRef}" } `
 		, @{ template="${reMDLink}"; expression='[${id}](${url})' } `
 		, @{ template="${reBeforeURL}(?<fullUrl>${reURL})"; expression='<${fullUrl}>' } `
 		, @{ template="${reBeforeURL}(?<wwwUrl>${reURLShortHTTP})"; expression='<http://${wwwUrl}>' } `
