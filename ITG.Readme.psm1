@@ -1088,8 +1088,9 @@ $( $loc.DetailedDescription -replace '.','-')
 							$Help.Syntax.SyntaxItem `
 							| % {
 								,$_.Name `
-								+ ( 
+								+ @( 
 									$_.Parameter `
+									| ? { $_ } `
 									| % {
 										#MamlCommandHelpInfo#parameter
 										$name="-$($_.Name)";
